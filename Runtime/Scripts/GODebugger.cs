@@ -1,3 +1,4 @@
+using Packages.co.koenraadt.proteus.Runtime.Controllers;
 using Packages.co.koenraadt.proteus.Runtime.Repository;
 using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using System.Collections;
@@ -39,6 +40,10 @@ public class GODebugger : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.D))
         {
             Repository.Instance.DeleteNodeById("debug-node");
+        }
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            MQTTController.Instance.Init();
         }
     }
 }
