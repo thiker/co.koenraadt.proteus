@@ -1,4 +1,4 @@
-using Packages.co.koenraadt.proteus.Runtime.Repository;
+using Packages.co.koenraadt.proteus.Runtime.Repositories;
 using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

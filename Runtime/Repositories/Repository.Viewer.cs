@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Packages.co.koenraadt.proteus.Runtime.Repository
+namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 {
     public partial class Repository
     {

@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
+using Packages.co.koenraadt.proteus.Runtime.Controllers;
 using UnityEngine;
 
-public class DTLinkerComponent : MonoBehaviour
+public class GOCommsController : MonoBehaviour
 {
-    public List<string> _relatedPTNodeIds = new();
-
     // Start is called before the first frame update
     void Start()
     {
@@ -15,6 +12,6 @@ public class DTLinkerComponent : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        CommsController.Instance.Update();
     }
 }

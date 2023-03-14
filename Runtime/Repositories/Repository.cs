@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Packages.co.koenraadt.proteus.Runtime.Repository
+namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 {
     public partial class Repository
     {
@@ -80,9 +80,9 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repository
         /// </summary>
         /// <param name="id">the node's identifier.</param>
         /// <returns>The PTNode with the respective Id</returns>
-        public PTNode GetNodeById(string id) 
+        public PTNode GetNodeById(string id)
         {
-            PTNode foundNode = _ptNodes.FirstOrDefault(x => x.Id == id );
+            PTNode foundNode = _ptNodes.FirstOrDefault(x => x.Id == id);
             return foundNode;
         }
 
@@ -91,7 +91,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repository
         /// </summary>
         /// <param name="id">the edge's identifier.</param>
         /// <returns>The PTEdge with the respective Id</returns>
-        public PTEdge GetEdgeById(string id) 
+        public PTEdge GetEdgeById(string id)
         {
             PTEdge foundEdge = _ptEdges.FirstOrDefault(x => x.Id == id);
             return foundEdge;
@@ -101,7 +101,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repository
         /// Removes a node by its id
         /// </summary>
         /// <param name="id">the node's identifier</param>
-        public void DeleteNodeById(string id) 
+        public void DeleteNodeById(string id)
         {
             PTNode nodeToDelete = GetNodeById(id);
             if (nodeToDelete is not null)
@@ -118,7 +118,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repository
         public void DeleteEdgeById(string id)
         {
             PTEdge edgeToDelete = GetEdgeById(id);
-            if (edgeToDelete is not null) {
+            if (edgeToDelete is not null)
+            {
                 int ix = _ptEdges.IndexOf(edgeToDelete);
                 _ptEdges.RemoveAt(ix);
             }
