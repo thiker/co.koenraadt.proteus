@@ -36,7 +36,7 @@ public class GODebugger : MonoBehaviour
 
         // Test Command
         if (Input.GetKeyDown(KeyCode.S)) {
-            Repository.Instance.AddNode(new PTNode("debug-node", "DebugNode"));
+            Repository.Instance.UpdateNode(new PTNode() { Id = "debug-node-test", Name="DebugNodeTest"});
         }
         if (Input.GetKeyDown(KeyCode.D))
         {

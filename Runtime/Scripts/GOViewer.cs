@@ -14,6 +14,8 @@ public class GOViewer : MonoBehaviour
     private ObservableCollection<PTNode> _nodesData;
     private Dictionary<string, GameObject> _nodesPrefabGo;
 
+    private float _debugLocationOffset = 0.0f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -79,7 +81,8 @@ public class GOViewer : MonoBehaviour
         DestroyNode(nodeData.Id);    
 
         // Create new node
-        GameObject nodePrefabGo = Instantiate(nodePrefab);
+        GameObject nodePrefabGo = Instantiate(nodePrefab, new Vector3(0,0, _debugLocationOffset), Quaternion.identity);
+        _debugLocationOffset += 10;
         _nodesPrefabGo[nodeData.Id] = nodePrefabGo;
 
         // Setup node with Node Data

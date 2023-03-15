@@ -20,9 +20,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
             set => SetProperty(ref _id, value);
         }
 
-        public PTEdge (string id)
+        public PTEdge ()
         {
-            _id = id;
         }
     }
 }

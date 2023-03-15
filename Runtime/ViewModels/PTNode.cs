@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
 {
@@ -15,6 +16,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         /// <value>
         /// The identifier of the node.
         /// </value>
+        [SerializeField]
         public string Id
         {
             get => _id;
@@ -24,6 +26,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         /// <value>
         /// The name of the node.
         /// </value>
+        [SerializeField]
         public string Name
         {
             get => _name;
@@ -31,10 +34,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         }
 
 
-        public PTNode (string id, string name)
+        public PTNode ()
         {
-           _id = id;
-            _name = name;
         }
     }
 }

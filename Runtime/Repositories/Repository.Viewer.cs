@@ -14,7 +14,10 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         
         public PTViewer CreatePTViewer()
         {
-            PTViewer viewer = new("test");
+            PTViewer viewer = new()
+            {
+                Id = "test"
+            };
             _viewers[viewer.Id] = viewer;
             return viewer;
         }

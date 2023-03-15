@@ -30,9 +30,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
             set => SetProperty(ref _selectedPTNodeId, value);
         }
 
-        public PTViewer(string id)
+        public PTViewer()
         {
-            _id = id;
         }
     }
 }

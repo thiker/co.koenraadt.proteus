@@ -8,6 +8,8 @@ using Packages.co.koenraadt.proteus.Runtime.Repositories;
 using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using UnityEngine;
 using System.Collections.Concurrent;
+using System.Text.Json.Serialization;
+using Unity.Plastic.Newtonsoft.Json;
 
 namespace Packages.co.koenraadt.proteus.Runtime.Controllers
 {
@@ -17,7 +19,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
         private static MqttFactory _mqttFactory = new();
         private static ConcurrentQueue<MqttApplicationMessage> _mqttMessageQueue = new();
         private IMqttClient _mqttClient;
-
+        private MqttServer _mqttServer;
         public static CommsController Instance
         {
             get
@@ -25,6 +27,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
                 if (_instance == null)
                 {
                     _instance = new ();
+                    _instance.Init();
                 }
                 return _instance;
             }
@@ -36,9 +39,29 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
         /// <returns></returns>
         public async Task Init()
         {
+            Debug.Log("Initializing Server...");
+            await InitServer();
+            Debug.Log("Initializing Client...");
+            await InitClient();
+            Debug.Log("CommsController Init Completed.");
+            
+        }
+
+        private async Task InitClient()
+        {
             _mqttClient = _mqttFactory.CreateMqttClient();
             await ConnectClient();
             await SubscribeTopics();
+        }
+
+        private async Task InitServer()
+        {
+            Debug.Log("starting server...");
+            MqttServerOptions optionsBuilder = new MqttServerOptionsBuilder()
+            .WithDefaultEndpoint().WithDefaultEndpointPort(1883).Build();
+            _mqttServer = _mqttFactory.CreateMqttServer(optionsBuilder);
+            await _mqttServer.StartAsync();
+            Debug.Log("Server Started.");
         }
 
         /// <summary>
@@ -67,7 +90,21 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
         /// <param name="message"></param>
         private void ProcessMessage(MqttApplicationMessage message)
         {
-            Debug.Log($"Processing message: {message.ConvertPayloadToString()} of topic {message.Topic}");
+            string t = message.Topic;
+
+            if (t.StartsWith("proteus/data/update/3dml/nodes"))
+            {
+                PTNode nodeData = JsonConvert.DeserializeObject<PTNode>(message.ConvertPayloadToString());
+                Repository.Instance.UpdateNode(nodeData);
+                return;
+            }
+
+            if (t.StartsWith("proteus/data/delete/3dml/nodes"))
+            {
+                string id = message.ConvertPayloadToString();
+                Repository.Instance.DeleteNodeById(id);
+                return;
+            }
         }
 
         /// <summary>
@@ -76,7 +113,13 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
         /// <returns></returns>
         private async Task SubscribeTopics()
         {
-            await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/debug").Build());
+            if (Debug.isDebugBuild)
+            {
+                await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/debug/#").Build());
+            }
+
+            await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/update/3dml/nodes/#").Build());
+            await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/delete/3dml/nodes/#").Build());
         }
 
         /// <summary>

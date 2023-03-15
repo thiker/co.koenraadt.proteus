@@ -1,11 +1,7 @@
-﻿using CommunityToolkit.Mvvm.Collections;
-using Packages.co.koenraadt.proteus.Runtime.ViewModels;
-using System;
-using System.Collections.Generic;
+﻿using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Packages.co.koenraadt.proteus.Runtime.Other;
 using UnityEngine;
 
 namespace Packages.co.koenraadt.proteus.Runtime.Repositories
@@ -42,19 +38,37 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         /// Adds a PTNode to the repository.
         /// </summary>
         /// <param name="node">The PTNode to add.</param>
-        public void AddNode(PTNode node)
-        {
-            _ptNodes.Add(node);
+        public void UpdateNode(PTNode newNode)
+        {         
+            PTNode oldNode = GetNodeById(newNode.Id);
 
+            // If not already existing add the node
+            if (oldNode is null)
+            {
+                _ptNodes.Add(newNode);
+            } else
+            {
+                Helpers.CombineValues(oldNode, newNode);
+            }
         }
 
         /// <summary>
         /// Adds a PTEdge to the repository.
         /// </summary>
         /// <param name="edge">The PTEdge to add.</param>
-        public void AddEdge(PTEdge edge)
+        public void AddEdge(PTEdge newEdge)
         {
-            _ptEdges.Add(edge);
+            PTEdge oldEdge = GetEdgeById(newEdge.Id);
+
+            // If not already existing add the edge
+            if (oldEdge is null)
+            {
+                _ptEdges.Add(newEdge);
+            }
+            else
+            {
+                Helpers.CombineValues(oldEdge, newEdge);
+            }
         }
 
         /// <summary>
