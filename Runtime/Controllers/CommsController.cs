@@ -10,6 +10,7 @@ using UnityEngine;
 using System.Collections.Concurrent;
 using System.Text.Json.Serialization;
 using Unity.Plastic.Newtonsoft.Json;
+using System.Linq;
 
 namespace Packages.co.koenraadt.proteus.Runtime.Controllers
 {
@@ -92,18 +93,36 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
         {
             string t = message.Topic;
 
+            // Node Updates
             if (t.StartsWith("proteus/data/update/3dml/nodes"))
             {
-                PTNode nodeData = JsonConvert.DeserializeObject<PTNode>(message.ConvertPayloadToString());
-                Repository.Instance.UpdateNode(nodeData);
+                PTNode nodeUpdate = JsonConvert.DeserializeObject<PTNode>(message.ConvertPayloadToString());
+                Repository.Instance.UpdateNode(nodeUpdate);
                 return;
             }
 
+            // Node Deletion
             if (t.StartsWith("proteus/data/delete/3dml/nodes"))
             {
                 string id = message.ConvertPayloadToString();
                 Repository.Instance.DeleteNodeById(id);
                 return;
+            }
+
+            // Node Image update
+            if (t.StartsWith("proteus/data/update/3dml/images/"))
+            {
+                string id = message.Topic.Split("/").Last();
+
+                Texture2D tex = new Texture2D(1080,1080);
+                tex.LoadImage(message.Payload);
+
+                PTNode nodeUpdate = new()
+                {
+                    Id = id,
+                    ImageTexture = tex,
+                };
+                Repository.Instance.UpdateNode(nodeUpdate);
             }
         }
 
@@ -118,8 +137,10 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
                 await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/debug/#").Build());
             }
 
+            // Nodes Data
             await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/update/3dml/nodes/#").Build());
             await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/delete/3dml/nodes/#").Build());
+            await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/update/3dml/images/#").Build());
         }
 
         /// <summary>

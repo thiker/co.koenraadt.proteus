@@ -8,6 +8,8 @@ using UnityEngine;
 public class GODebugger : MonoBehaviour
 {
     bool debugMode = true;
+    KeyCode debugKey = KeyCode.F3;
+    bool isHoldingDebugKey = false;
 
     // Start is called before the first frame update
     void Start()
@@ -34,17 +36,30 @@ public class GODebugger : MonoBehaviour
             }
         }
 
-        // Test Command
-        if (Input.GetKeyDown(KeyCode.S)) {
-            Repository.Instance.UpdateNode(new PTNode() { Id = "debug-node-test", Name="DebugNodeTest"});
-        }
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(debugKey))
         {
-            Repository.Instance.DeleteNodeById("debug-node");
+            isHoldingDebugKey = true;
         }
-        if (Input.GetKeyDown(KeyCode.M))
+
+        if (Input.GetKeyUp(debugKey) )
         {
-            CommsController.Instance.Init();
+            isHoldingDebugKey = false;
+        }
+
+        if (isHoldingDebugKey)
+        {
+            // Test Command
+            if (Input.GetKeyDown(KeyCode.S)) {
+                Repository.Instance.UpdateNode(new PTNode() { Id = "debug-node-test", Name = "DebugNodeTest" });
+            }
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                Repository.Instance.DeleteNodeById("debug-node-test");
+            }
+            if (Input.GetKeyDown(KeyCode.M))
+            {
+                CommsController.Instance.Init();
+            }
         }
     }
 }
