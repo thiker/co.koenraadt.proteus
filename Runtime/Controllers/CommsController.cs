@@ -114,7 +114,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             {
                 string id = message.Topic.Split("/").Last();
 
-                Texture2D tex = new Texture2D(1080,1080);
+                Debug.Log($"Node Update received for node {id}");
+                Texture2D tex = new Texture2D(2, 2);
                 tex.LoadImage(message.Payload);
 
                 PTNode nodeUpdate = new()

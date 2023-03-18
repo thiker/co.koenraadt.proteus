@@ -81,7 +81,7 @@ public class GOViewer : MonoBehaviour
         DestroyNode(nodeData.Id);    
 
         // Create new node
-        GameObject nodePrefabGo = Instantiate(nodePrefab, new Vector3(0,0, _debugLocationOffset), Quaternion.identity);
+        GameObject nodePrefabGo = Instantiate(nodePrefab, new Vector3(_debugLocationOffset, 0,0), Quaternion.identity);
         _debugLocationOffset += 10;
         _nodesPrefabGo[nodeData.Id] = nodePrefabGo;
 
