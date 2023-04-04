@@ -40,11 +40,11 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
         /// <returns></returns>
         public async Task Init()
         {
-            Debug.Log("Initializing Server...");
+            Debug.Log("<color=lightblue>PROTEUS</color> Initializing Server...");
             await InitServer();
-            Debug.Log("Initializing Client...");
+            Debug.Log("<color=lightblue>PROTEUS</color> Initializing Client...");
             await InitClient();
-            Debug.Log("CommsController Init Completed.");
+            Debug.Log("<color=lightblue>PROTEUS</color> CommsController Init Completed.");
             
         }
 
@@ -57,12 +57,12 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
 
         private async Task InitServer()
         {
-            Debug.Log("starting server...");
+            Debug.Log("<color=lightblue>PROTEUS</color> starting server...");
             MqttServerOptions optionsBuilder = new MqttServerOptionsBuilder()
             .WithDefaultEndpoint().WithDefaultEndpointPort(1883).Build();
             _mqttServer = _mqttFactory.CreateMqttServer(optionsBuilder);
             await _mqttServer.StartAsync();
-            Debug.Log("Server Started.");
+            Debug.Log("<color=lightblue>PROTEUS</color> Server Started.");
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             if (t.StartsWith("proteus/data/update/3dml/nodes"))
             {
                 PTNode nodeUpdate = JsonConvert.DeserializeObject<PTNode>(message.ConvertPayloadToString());
-                Repository.Instance.UpdateNode(nodeUpdate);
+                Repository.Instance.Models.UpdateNode(nodeUpdate);
                 return;
             }
 
@@ -105,7 +105,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             if (t.StartsWith("proteus/data/delete/3dml/nodes"))
             {
                 string id = message.ConvertPayloadToString();
-                Repository.Instance.DeleteNodeById(id);
+                Repository.Instance.Models.DeleteNodeById(id);
                 return;
             }
 
@@ -114,7 +114,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             {
                 string id = message.Topic.Split("/").Last();
 
-                Debug.Log($"Node Update received for node {id}");
+                Debug.Log($"<color=lightblue>PROTEUS</color> Node Update received for node {id}");
                 Texture2D tex = new Texture2D(2, 2);
                 tex.LoadImage(message.Payload);
 
@@ -123,7 +123,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
                     Id = id,
                     ImageTexture = tex,
                 };
-                Repository.Instance.UpdateNode(nodeUpdate);
+                Repository.Instance.Models.UpdateNode(nodeUpdate);
             }
         }
 

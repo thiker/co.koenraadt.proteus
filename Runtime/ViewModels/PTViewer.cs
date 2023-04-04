@@ -1,16 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
 {
     public class PTViewer : ObservableObject
     {
         private string _id;
-        private string _selectedPTNodeId;
+        private Vector3 _position;
+        private Quaternion _rotation;
 
         /// <value>
         /// The identifier of the viewer.
@@ -22,16 +19,21 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         }
 
         /// <value>
-        /// The Id of the currently selected PTNode.
-        /// </value>
-        public string SelectedPTNodeId
+        /// The position of the viewer.
+        /// <value>
+        public Vector3 Position 
         {
-            get => _selectedPTNodeId;
-            set => SetProperty(ref _selectedPTNodeId, value);
+            get => _position;
+            set => SetProperty(ref _position, value);
         }
 
-        public PTViewer()
+        /// <value>
+        /// The rotation of the viewer.
+        /// <value>
+        public Quaternion Rotation 
         {
+            get => _rotation;
+            set => SetProperty(ref _rotation, value);
         }
     }
 }

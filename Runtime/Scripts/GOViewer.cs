@@ -3,45 +3,72 @@ using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Animations;
 
 public class GOViewer : MonoBehaviour
 {
     public string Id { get; internal set; }
     public GameObject nodePrefab;
     public GameObject edgePrefab;
+    private PTViewer _viewerData;
+    private GameObject _modelAnchor;
     private ObservableCollection<PTNode> _nodesData;
-    private Dictionary<string, GameObject> _nodesPrefabGo;
+    private Dictionary<string, GameObject> _nodePrefabGOs;
 
     private float _debugLocationOffset = 0.0f;
 
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log($"PROTEUS: Starting viewer {_viewerData.Id}");
+
         // Initialize dictionaries
         _nodesData = new();
-        _nodesPrefabGo = new();
+        _nodePrefabGOs = new();
 
-        InitViewer();
+        // Get the viewer inner container
+        _modelAnchor = transform.Find("ModelAnchor").gameObject;
+        
+        // Get the nodes
+        _nodesData = Repository.Instance.Models.GetNodes();
+
+        // Link event listeners
+        linkEventListeners();
+
+        // Spawn the nodes in the viewer
+        SpawnNodes(_nodesData.Cast<PTNode>().ToList());
     }
 
     /// <summary>
     /// Inializes a Viewer Instance
     /// </summary>
-    void InitViewer()
+    public void Init(string viewerId)
     {
-        _nodesData = Repository.Instance.GetNodes();
-        _nodesData.CollectionChanged += OnNodesDataChanged;
-        SpawnNodes(_nodesData.Cast<PTNode>().ToList());
+        _viewerData = Repository.Instance.Viewers.GetViewerById(viewerId);
     }
+
+    private void linkEventListeners()
+    {
+        _viewerData.PropertyChanged += OnViewerDataChanged;
+        _nodesData.CollectionChanged += OnNodesDataChanged;
+    }
+
+
+    private void OnViewerDataChanged(object obj, PropertyChangedEventArgs e)
+    {
+        UpdateViewerPresentation();
+    }
+
 
     /// <summary>
     /// Update when the nodes data collection has changed.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    void OnNodesDataChanged(object sender, NotifyCollectionChangedEventArgs e)
+    private void OnNodesDataChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         // Spawn new Items
         if (e.NewItems is not null)
@@ -52,7 +79,7 @@ public class GOViewer : MonoBehaviour
         // Remove old items
         if (e.OldItems is not null)
         {
-            foreach(PTNode nodeData in e.OldItems)
+            foreach (PTNode nodeData in e.OldItems)
             {
                 DestroyNode(nodeData.Id);
             }
@@ -63,11 +90,11 @@ public class GOViewer : MonoBehaviour
     /// Spawn nodes in the Viewer.
     /// </summary>
     /// <param name="node"></param>
-    void SpawnNodes(List<PTNode> nodesData)
+    private void SpawnNodes(List<PTNode> nodesData)
     {
-        foreach(PTNode nodeData in nodesData)
+        foreach (PTNode nodeData in nodesData)
         {
-            SpawnNode(nodeData);
+            SpawnNode(nodeData.Id);
         }
     }
 
@@ -75,38 +102,45 @@ public class GOViewer : MonoBehaviour
     /// Spawn a node prefab in the scene.
     /// </summary>
     /// <param name="nodeData">Data of the node.</param>
-    private void SpawnNode(PTNode nodeData)
+    private void SpawnNode(string nodeId)
     {
         // Destroy node if already existing
-        DestroyNode(nodeData.Id);    
+        DestroyNode(nodeId);
 
         // Create new node
-        GameObject nodePrefabGo = Instantiate(nodePrefab, new Vector3(_debugLocationOffset, 0,0), Quaternion.identity);
+        GameObject nodePrefabGo = Instantiate(nodePrefab, _modelAnchor.transform, false);
+
         _debugLocationOffset += 10;
-        _nodesPrefabGo[nodeData.Id] = nodePrefabGo;
+        _nodePrefabGOs[nodeId] = nodePrefabGo;
 
         // Setup node with Node Data
         GONode nodeGo = nodePrefabGo.GetComponent<GONode>();
-        nodeGo.Init(nodeData);
+        nodeGo.Init(nodeId, _viewerData.Id);
     }
 
     /// <summary>
     /// Destroy a Node in the viewer.
     /// </summary>
     /// <param name="node"></param>
-    void DestroyNode(string nodeId)
+    private void DestroyNode(string nodeId)
     {
         GameObject nodePrefabGo;
-        if (_nodesPrefabGo.TryGetValue(nodeId, out nodePrefabGo))
+        if (_nodePrefabGOs.TryGetValue(nodeId, out nodePrefabGo))
         {
             Destroy(nodePrefabGo);
         }
     }
 
+    private void UpdateViewerPresentation()
+    {   
+        transform.SetPositionAndRotation(_viewerData.Position, _viewerData.Rotation);
+
+    }
+
     // Update is called once per frame
     void Update()
     {
-        Shader.SetGlobalMatrix("_WorldToBox", transform.worldToLocalMatrix);
+        //Shader.SetGlobalMatrix("_WorldToBox", transform.worldToLocalMatrix);
     }
 
     private void OnDestroy()
