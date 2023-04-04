@@ -1,23 +1,94 @@
 using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using TMPro;
+using Codice.Client.Common.TreeGrouper;
+using static UnityEngine.UI.Image;
+using System;
+using Packages.co.koenraadt.proteus.Runtime.Repositories;
 
 public class GONode : MonoBehaviour
 {
+    private string _nodeId;
+    private string _attachedViewerId;
+
     private PTNode _nodeData;
+    private PTViewer _attachedViewerData;
+
+    private TextMeshPro _displayNameTMP;
+    private GameObject _nodeGameObject;
 
     // Start is called before the first frame update
     void Start()
     {
+        // Get node data
+        _nodeData = Repository.Instance.Models.GetNodeById(_nodeId);
+        
+        // Get viewer data of node
+        _attachedViewerData = Repository.Instance.Viewers.GetViewerById(_attachedViewerId);
+
+        // initialize the event listeners
+        linkEventListeners();
+
+        // TODO: Reimplement correctly
+        // Get the text object
+        GameObject _displayNameObj = transform.Find("DisplayNameText").gameObject;
+        _displayNameTMP = _displayNameObj.GetComponent<TextMeshPro>();
+
+        // Get the node object
+        _nodeGameObject = transform.Find("Node").gameObject;
+
+        // Set presentation
+        UpdateNodePresentation();
     }
 
-    public void Init(PTNode nodeData)
+    // Initialize the node
+    public void Init(string nodeId, string attachedViewerId)
     {
-        _nodeData = nodeData;
-        Debug.Log($"Node {_nodeData.Id} init itself.");
+        _nodeId = nodeId;
+        _attachedViewerId = attachedViewerId;
+    }
+
+    // Link to events.
+    private void linkEventListeners()
+    {
+        _nodeData.PropertyChanged += OnNodeDataChanged;
+
+    }
+
+
+    private void OnNodeDataChanged(object obj, PropertyChangedEventArgs e)
+    {
+        UpdateNodePresentation();
+    }
+
+    // Updates the node's visual representation.
+    private void UpdateNodePresentation()
+    {
+        if (_nodeData?.DisplayName != null && _displayNameTMP != null)
+        {
+            _displayNameTMP.SetText(_nodeData.DisplayName);
+        }
+
+        if (_nodeData?.ImageTexture != null && _nodeGameObject != null)
+        {
+            float ratio = _nodeData.ImageTexture.width / _nodeData.ImageTexture.height;
+
+            _nodeGameObject.GetComponent<Renderer>().material.SetTexture("_MainTex", _nodeData.ImageTexture);
+            if (ratio >= 1)
+            {
+                _nodeGameObject.transform.localScale = new Vector3(5 * ratio, 5, 1);
+            }
+            else
+            {
+                _nodeGameObject.transform.localScale = new Vector3(5, 5 * ratio, 1);
+            }
+
+        }
     }
 
     // Update is called once per frame
@@ -27,5 +98,6 @@ public class GONode : MonoBehaviour
 
     private void OnDestroy()
     {
+        _nodeData.PropertyChanged -= OnNodeDataChanged;
     }
 }

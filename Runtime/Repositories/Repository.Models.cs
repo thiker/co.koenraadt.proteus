@@ -1,59 +1,74 @@
-﻿using CommunityToolkit.Mvvm.Collections;
-using Packages.co.koenraadt.proteus.Runtime.ViewModels;
-using System;
-using System.Collections.Generic;
+﻿using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Packages.co.koenraadt.proteus.Runtime.Other;
 
-namespace Packages.co.koenraadt.proteus.Runtime.Repository
+namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 {
-    public partial class Repository
+    public class ModelsRepository
     {
-        private static Repository _instance = null;
+        private static ModelsRepository _instance = null;
 
         private ObservableCollection<PTNode> _ptNodes;
         private ObservableCollection<PTEdge> _ptEdges;
 
-        public static Repository Instance
+        public static ModelsRepository Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = new Repository();
+                    _instance = new ModelsRepository();
                     _instance.Init();
                 }
                 return _instance;
             }
         }
 
-        public void Init()
+        private void Init()
         {
             // Initialise collections
             _ptNodes = new();
             _ptEdges = new();
+
             // TODO: Initialize the repo and load everything
         }
 
         /// <summary>
-        /// Adds a PTNode to the repository.
+        /// Adds a PTNode to the ModelsRepository or updates it.
         /// </summary>
         /// <param name="node">The PTNode to add.</param>
-        public void AddNode(PTNode node)
-        {
-            _ptNodes.Add(node);
+        public void UpdateNode(PTNode newNode)
+        {         
+            PTNode oldNode = GetNodeById(newNode.Id);
 
+            // If not already existing add the node
+            if (oldNode is null)
+            {
+                _ptNodes.Add(newNode);
+            } else
+            {
+                Helpers.CombineValues(oldNode, newNode);
+            }
         }
 
         /// <summary>
-        /// Adds a PTEdge to the repository.
+        /// Adds a PTEdge to the ModelsRepository.
         /// </summary>
         /// <param name="edge">The PTEdge to add.</param>
-        public void AddEdge(PTEdge edge)
+        public void UpdateEdge(PTEdge newEdge)
         {
-            _ptEdges.Add(edge);
+            PTEdge oldEdge = GetEdgeById(newEdge.Id);
+
+            // If not already existing add the edge
+            if (oldEdge is null)
+            {
+                _ptEdges.Add(newEdge);
+            }
+            else
+            {
+                Helpers.CombineValues(oldEdge, newEdge);
+            }
         }
 
         /// <summary>
@@ -79,9 +94,9 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repository
         /// </summary>
         /// <param name="id">the node's identifier.</param>
         /// <returns>The PTNode with the respective Id</returns>
-        public PTNode GetNodeById(string id) 
+        public PTNode GetNodeById(string id)
         {
-            PTNode foundNode = _ptNodes.FirstOrDefault(x => x.Id == id );
+            PTNode foundNode = _ptNodes.FirstOrDefault(x => x.Id == id);
             return foundNode;
         }
 
@@ -90,7 +105,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repository
         /// </summary>
         /// <param name="id">the edge's identifier.</param>
         /// <returns>The PTEdge with the respective Id</returns>
-        public PTEdge GetEdgeById(string id) 
+        public PTEdge GetEdgeById(string id)
         {
             PTEdge foundEdge = _ptEdges.FirstOrDefault(x => x.Id == id);
             return foundEdge;
@@ -100,7 +115,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repository
         /// Removes a node by its id
         /// </summary>
         /// <param name="id">the node's identifier</param>
-        public void DeleteNodeById(string id) 
+        public void DeleteNodeById(string id)
         {
             PTNode nodeToDelete = GetNodeById(id);
             if (nodeToDelete is not null)
@@ -117,7 +132,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repository
         public void DeleteEdgeById(string id)
         {
             PTEdge edgeToDelete = GetEdgeById(id);
-            if (edgeToDelete is not null) {
+            if (edgeToDelete is not null)
+            {
                 int ix = _ptEdges.IndexOf(edgeToDelete);
                 _ptEdges.RemoveAt(ix);
             }
