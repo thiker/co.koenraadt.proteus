@@ -9,7 +9,8 @@ using UnityEngine;
 namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
 {
     public class PTNode : ObservableObject
-    {
+    {   
+    
         private string _id;
         private string _name;
         private string _displayName;

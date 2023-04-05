@@ -77,7 +77,14 @@ public class GOProteus : MonoBehaviour
         DestroyViewer(viewerData.Id);
 
         // Create new node
-        GameObject viewerPrefabGO = Instantiate(ViewerPrefab, viewerData.Position , Quaternion.identity, transform);
+        GameObject viewerPrefabGO;
+        if (viewerData.Position is not null)
+        {
+            viewerPrefabGO= Instantiate(ViewerPrefab, (Vector3)viewerData.Position, Quaternion.identity, transform);
+        } else {
+            throw new System.Exception("PROTEUS: Error, tried instantiating viewer but position is null");
+        }
+
         _viewerPrefabGOs[viewerData.Id] = viewerPrefabGO;
 
         // Setup node with Node Data
@@ -102,5 +109,10 @@ public class GOProteus : MonoBehaviour
     void Update()
     {
 
+    }
+
+    private void OnDestroy()
+    {
+        _viewersData.CollectionChanged -= OnViewersDataChanged;
     }
 }

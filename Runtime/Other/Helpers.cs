@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using UnityEngine;
 namespace Packages.co.koenraadt.proteus.Runtime.Other
 {
     public class  Helpers
@@ -17,6 +17,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
             foreach (var prop in properties)
             {
                 var value = prop.GetValue(source, null);
+            
                 if (value != null)
                     prop.SetValue(target, value, null);
             }

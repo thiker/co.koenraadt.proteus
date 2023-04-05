@@ -1,8 +1,6 @@
 using Packages.co.koenraadt.proteus.Runtime.Controllers;
 using Packages.co.koenraadt.proteus.Runtime.Repositories;
 using Packages.co.koenraadt.proteus.Runtime.ViewModels;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GODebugger : MonoBehaviour
@@ -63,9 +61,12 @@ public class GODebugger : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.V))
             {
-                Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = "test-viewer" });
+                Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = "test-viewer", Position= new Vector3(0,0,0), Rotation= new Quaternion(0,0,0,0)});
                 Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = "test-viewer2", Position = new Vector3(20, 0, 0), Rotation = new Quaternion(0,0,0,0)});
             }
+             if (Input.GetKeyDown(KeyCode.B)) {
+                Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = "test-viewer", Position=new Vector3(0,0,Random.Range(0,10)), Rotation=new Quaternion(Random.Range(0, 2*Mathf.PI),Random.Range(0, 2*Mathf.PI),Random.Range(0, 2*Mathf.PI),0)});
+             }
         }
     }
 }

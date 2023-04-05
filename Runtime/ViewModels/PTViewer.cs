@@ -6,8 +6,9 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
     public class PTViewer : ObservableObject
     {
         private string _id;
-        private Vector3 _position;
-        private Quaternion _rotation;
+        private Vector3? _position;
+        private Quaternion? _rotation;
+        private Matrix4x4? _viewWindowWorldToLocal;
 
         /// <value>
         /// The identifier of the viewer.
@@ -21,7 +22,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         /// <value>
         /// The position of the viewer.
         /// <value>
-        public Vector3 Position 
+        public Vector3? Position 
         {
             get => _position;
             set => SetProperty(ref _position, value);
@@ -30,10 +31,19 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         /// <value>
         /// The rotation of the viewer.
         /// <value>
-        public Quaternion Rotation 
+        public Quaternion? Rotation 
         {
             get => _rotation;
             set => SetProperty(ref _rotation, value);
+        }
+
+        /// <value>
+        /// The world to local matrix of the viewer's view window.
+        /// </value>
+        public Matrix4x4? ViewWindowWorldToLocal
+        {
+            get => _viewWindowWorldToLocal;
+            set => SetProperty(ref _viewWindowWorldToLocal, value);
         }
     }
 }

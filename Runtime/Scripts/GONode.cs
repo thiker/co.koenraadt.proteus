@@ -21,18 +21,19 @@ public class GONode : MonoBehaviour
 
     private TextMeshPro _displayNameTMP;
     private GameObject _nodeGameObject;
+    private MaterialPropertyBlock _matPropBlock;
 
     // Start is called before the first frame update
     void Start()
     {
+        // initialize variables
+        _matPropBlock = new MaterialPropertyBlock();
+
         // Get node data
         _nodeData = Repository.Instance.Models.GetNodeById(_nodeId);
         
         // Get viewer data of node
         _attachedViewerData = Repository.Instance.Viewers.GetViewerById(_attachedViewerId);
-
-        // initialize the event listeners
-        linkEventListeners();
 
         // TODO: Reimplement correctly
         // Get the text object
@@ -41,6 +42,9 @@ public class GONode : MonoBehaviour
 
         // Get the node object
         _nodeGameObject = transform.Find("Node").gameObject;
+
+        // initialize the event listeners
+        linkEventListeners();
 
         // Set presentation
         UpdateNodePresentation();
@@ -94,6 +98,13 @@ public class GONode : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+         //Get a renderer component either of the own gameobject or of a child
+        Renderer renderer = _nodeGameObject.GetComponentInChildren<Renderer>();
+        //set the matrix
+        if (_attachedViewerData.ViewWindowWorldToLocal is not null)
+        _matPropBlock.SetMatrix("_WorldToBox", (Matrix4x4)_attachedViewerData.ViewWindowWorldToLocal );
+        //apply propertyBlock to renderer
+        renderer.SetPropertyBlock(_matPropBlock);
     }
 
     private void OnDestroy()

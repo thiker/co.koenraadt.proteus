@@ -11,10 +11,11 @@ using UnityEngine.Animations;
 public class GOViewer : MonoBehaviour
 {
     public string Id { get; internal set; }
-    public GameObject nodePrefab;
-    public GameObject edgePrefab;
-    private PTViewer _viewerData;
+    public GameObject NodePrefab;
+    public GameObject EdgePrefab;
     private GameObject _modelAnchor;
+    private GameObject _viewWindow;
+    private PTViewer _viewerData;
     private ObservableCollection<PTNode> _nodesData;
     private Dictionary<string, GameObject> _nodePrefabGOs;
 
@@ -29,9 +30,10 @@ public class GOViewer : MonoBehaviour
         _nodesData = new();
         _nodePrefabGOs = new();
 
-        // Get the viewer inner container
+        // Get the game objects
         _modelAnchor = transform.Find("ModelAnchor").gameObject;
-        
+        _viewWindow = transform.Find("ViewWindow").gameObject;
+
         // Get the nodes
         _nodesData = Repository.Instance.Models.GetNodes();
 
@@ -108,9 +110,9 @@ public class GOViewer : MonoBehaviour
         DestroyNode(nodeId);
 
         // Create new node
-        GameObject nodePrefabGo = Instantiate(nodePrefab, _modelAnchor.transform, false);
-
-        _debugLocationOffset += 10;
+        GameObject nodePrefabGo = Instantiate(NodePrefab, _modelAnchor.transform, false);
+        nodePrefabGo.transform.localPosition = new Vector3(_debugLocationOffset, 0, 0);
+        _debugLocationOffset += 5.5f;
         _nodePrefabGOs[nodeId] = nodePrefabGo;
 
         // Setup node with Node Data
@@ -132,19 +134,25 @@ public class GOViewer : MonoBehaviour
     }
 
     private void UpdateViewerPresentation()
-    {   
-        transform.SetPositionAndRotation(_viewerData.Position, _viewerData.Rotation);
-
+    {
+        if (_viewerData.Position is not null && _viewerData.Rotation is not null)
+        {
+            transform.SetPositionAndRotation((Vector3)_viewerData.Position, (Quaternion)_viewerData.Rotation);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Shader.SetGlobalMatrix("_WorldToBox", transform.worldToLocalMatrix);
+        if (_viewWindow != null)
+        {
+            Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = _viewerData.Id, ViewWindowWorldToLocal = _viewWindow.transform.worldToLocalMatrix });
+        }
     }
 
     private void OnDestroy()
     {
-        //TODO: Destoy all nodes and edges e.t.c.
+        _viewerData.PropertyChanged -= OnViewerDataChanged;
+        _nodesData.CollectionChanged -= OnNodesDataChanged;
     }
 }
