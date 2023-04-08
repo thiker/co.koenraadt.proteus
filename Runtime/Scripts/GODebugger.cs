@@ -61,11 +61,15 @@ public class GODebugger : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.V))
             {
-                Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = "test-viewer", Position= new Vector3(0,0,0), Rotation= new Quaternion(0,0,0,0)});
-                Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = "test-viewer2", Position = new Vector3(20, 0, 0), Rotation = new Quaternion(0,0,0,0)});
+                Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = "test-viewer", Position= new Vector3(0,1,0), Rotation= new Quaternion(0,0,0,0)});
+                Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = "test-viewer2", Position = new Vector3(3, 1, 0), Rotation = new Quaternion(0,0,0,0)});
             }
              if (Input.GetKeyDown(KeyCode.B)) {
                 Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = "test-viewer", Position=new Vector3(0,0,Random.Range(0,10)), Rotation=new Quaternion(Random.Range(0, 2*Mathf.PI),Random.Range(0, 2*Mathf.PI),Random.Range(0, 2*Mathf.PI),0)});
+             }
+             if (Input.GetKeyDown(KeyCode.S)) {
+                Debug.Log("selecting node");
+                Repository.Instance.Proteus.SelectNode("test-node-id");
              }
         }
     }

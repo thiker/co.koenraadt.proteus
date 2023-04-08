@@ -3,12 +3,14 @@ using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
 
 public class GOProteus : MonoBehaviour
 {
     public GameObject ViewerPrefab;
+    private PTGlobals _globalsData;
     private ObservableCollection<PTViewer> _viewersData;
     private Dictionary<string, GameObject> _viewerPrefabGOs;
 
@@ -19,8 +21,9 @@ public class GOProteus : MonoBehaviour
         _viewersData = new();
         _viewerPrefabGOs = new();
 
-        // Get the viewers data
+        // Get the data
         _viewersData = Repository.Instance.Viewers.GetViewers();
+        _globalsData = Repository.Instance.Proteus.GetGlobals();
 
         linkEventListeners();
     }
@@ -28,6 +31,7 @@ public class GOProteus : MonoBehaviour
     private void linkEventListeners()
     {
         _viewersData.CollectionChanged += OnViewersDataChanged;
+        _globalsData.PropertyChanged += OnGlobalsDataChanged;
     }
 
 
@@ -51,6 +55,15 @@ public class GOProteus : MonoBehaviour
             foreach (PTViewer viewerData in e.OldItems)
             {
                 DestroyViewer(viewerData.Id);
+            }
+        }
+    }
+    private void OnGlobalsDataChanged(object obj, PropertyChangedEventArgs e)
+    {
+        switch(e.PropertyName) {
+            case "SelectedNodes": { 
+                // Update digital twin viz
+                break;
             }
         }
     }
@@ -80,8 +93,10 @@ public class GOProteus : MonoBehaviour
         GameObject viewerPrefabGO;
         if (viewerData.Position is not null)
         {
-            viewerPrefabGO= Instantiate(ViewerPrefab, (Vector3)viewerData.Position, Quaternion.identity, transform);
-        } else {
+            viewerPrefabGO = Instantiate(ViewerPrefab, (Vector3)viewerData.Position, Quaternion.identity, transform);
+        }
+        else
+        {
             throw new System.Exception("PROTEUS: Error, tried instantiating viewer but position is null");
         }
 
@@ -114,5 +129,6 @@ public class GOProteus : MonoBehaviour
     private void OnDestroy()
     {
         _viewersData.CollectionChanged -= OnViewersDataChanged;
+        _globalsData.PropertyChanged -= OnGlobalsDataChanged;
     }
 }

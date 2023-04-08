@@ -38,7 +38,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 
         public void SelectNode(string nodeId) 
         {
-            _globalsInstance.SelectedNodes = new[]{nodeId};
+            GetGlobals().SelectedNodes = new[]{nodeId};
         }
     }
 }
