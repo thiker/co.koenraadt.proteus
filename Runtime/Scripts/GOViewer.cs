@@ -21,6 +21,15 @@ public class GOViewer : MonoBehaviour
 
     private float _debugLocationOffset = 0.0f;
 
+    /// <summary>
+    /// Inializes a Viewer Instance
+    /// </summary>
+    public void Init(string viewerId)
+    {
+        _viewerData = Repository.Instance.Viewers.GetViewerById(viewerId);
+    }
+    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,12 +53,18 @@ public class GOViewer : MonoBehaviour
         SpawnNodes(_nodesData.Cast<PTNode>().ToList());
     }
 
-    /// <summary>
-    /// Inializes a Viewer Instance
-    /// </summary>
-    public void Init(string viewerId)
+    void Update()
     {
-        _viewerData = Repository.Instance.Viewers.GetViewerById(viewerId);
+        if (_viewWindow != null)
+        {
+            Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = _viewerData.Id, ViewWindowWorldToLocal = _viewWindow.transform.worldToLocalMatrix });
+        }
+    }
+
+    void OnDestroy()
+    {
+        _viewerData.PropertyChanged -= OnViewerDataChanged;
+        _nodesData.CollectionChanged -= OnNodesDataChanged;
     }
 
     private void linkEventListeners()
@@ -139,20 +154,5 @@ public class GOViewer : MonoBehaviour
         {
             transform.SetPositionAndRotation((Vector3)_viewerData.Position, (Quaternion)_viewerData.Rotation);
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (_viewWindow != null)
-        {
-            Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = _viewerData.Id, ViewWindowWorldToLocal = _viewWindow.transform.worldToLocalMatrix });
-        }
-    }
-
-    private void OnDestroy()
-    {
-        _viewerData.PropertyChanged -= OnViewerDataChanged;
-        _nodesData.CollectionChanged -= OnNodesDataChanged;
     }
 }

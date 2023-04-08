@@ -57,6 +57,28 @@ public class GONode : MonoBehaviour
         UpdateNodePresentation();
     }
 
+        // Update is called once per frame
+    void Update()
+    {
+        //Get a renderer component either of the own gameobject or of a child
+        Renderer renderer = _nodeGameObject.GetComponentInChildren<Renderer>();
+        //set the matrix
+        if (_attachedViewerData?.ViewWindowWorldToLocal is not null)
+            _matPropBlock.SetMatrix("_WorldToBox", (Matrix4x4)_attachedViewerData.ViewWindowWorldToLocal);
+        //apply propertyBlock to renderer
+        renderer.SetPropertyBlock(_matPropBlock);
+    }
+
+
+
+    void OnDestroy()
+    {
+        if (_nodeData != null)
+        {
+            _nodeData.PropertyChanged -= OnNodeDataChanged;
+        }
+    }
+
     // Link to events.
     private void linkEventListeners()
     {
@@ -94,28 +116,6 @@ public class GONode : MonoBehaviour
                 _nodeGameObject.transform.localScale = new Vector3(5, 5 * ratio, 1);
             }
 
-        }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        //Get a renderer component either of the own gameobject or of a child
-        Renderer renderer = _nodeGameObject.GetComponentInChildren<Renderer>();
-        //set the matrix
-        if (_attachedViewerData?.ViewWindowWorldToLocal is not null)
-            _matPropBlock.SetMatrix("_WorldToBox", (Matrix4x4)_attachedViewerData.ViewWindowWorldToLocal);
-        //apply propertyBlock to renderer
-        renderer.SetPropertyBlock(_matPropBlock);
-    }
-
-
-
-    private void OnDestroy()
-    {
-        if (_nodeData != null)
-        {
-            _nodeData.PropertyChanged -= OnNodeDataChanged;
         }
     }
 }

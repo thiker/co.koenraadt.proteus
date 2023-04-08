@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
 
-public class GOProteus : MonoBehaviour
+public class GOVizController : MonoBehaviour
 {
     public GameObject ViewerPrefab;
     private PTGlobals _globalsData;
@@ -26,6 +26,18 @@ public class GOProteus : MonoBehaviour
         _globalsData = Repository.Instance.Proteus.GetGlobals();
 
         linkEventListeners();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    void OnDestroy()
+    {
+        _viewersData.CollectionChanged -= OnViewersDataChanged;
+        _globalsData.PropertyChanged -= OnGlobalsDataChanged;
     }
 
     private void linkEventListeners()
@@ -60,11 +72,13 @@ public class GOProteus : MonoBehaviour
     }
     private void OnGlobalsDataChanged(object obj, PropertyChangedEventArgs e)
     {
-        switch(e.PropertyName) {
-            case "SelectedNodes": { 
-                // Update digital twin viz
-                break;
-            }
+        switch (e.PropertyName)
+        {
+            case "SelectedNodes":
+                {
+                    // Update digital twin viz
+                    break;
+                }
         }
     }
 
@@ -118,17 +132,5 @@ public class GOProteus : MonoBehaviour
         {
             Destroy(viewerPrefabGO);
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    private void OnDestroy()
-    {
-        _viewersData.CollectionChanged -= OnViewersDataChanged;
-        _globalsData.PropertyChanged -= OnGlobalsDataChanged;
     }
 }
