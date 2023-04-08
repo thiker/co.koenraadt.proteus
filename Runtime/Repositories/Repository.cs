@@ -1,11 +1,10 @@
-
+using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 {
 
     public class Repository
     {
         private static Repository _instance = null;
-
         public static Repository Instance
         {
             get
@@ -15,6 +14,12 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                     _instance = new Repository();
                 }
                 return _instance;
+            }
+        }
+
+        public ProteusRepository Proteus {
+            get {
+                return ProteusRepository.Instance;
             }
         }
 

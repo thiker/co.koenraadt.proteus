@@ -23,6 +23,13 @@ public class GONode : MonoBehaviour
     private GameObject _nodeGameObject;
     private MaterialPropertyBlock _matPropBlock;
 
+    // Initialize the node
+    public void Init(string nodeId, string attachedViewerId)
+    {
+        _nodeId = nodeId;
+        _attachedViewerId = attachedViewerId;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,7 +38,7 @@ public class GONode : MonoBehaviour
 
         // Get node data
         _nodeData = Repository.Instance.Models.GetNodeById(_nodeId);
-        
+
         // Get viewer data of node
         _attachedViewerData = Repository.Instance.Viewers.GetViewerById(_attachedViewerId);
 
@@ -50,18 +57,13 @@ public class GONode : MonoBehaviour
         UpdateNodePresentation();
     }
 
-    // Initialize the node
-    public void Init(string nodeId, string attachedViewerId)
-    {
-        _nodeId = nodeId;
-        _attachedViewerId = attachedViewerId;
-    }
-
     // Link to events.
     private void linkEventListeners()
     {
-        _nodeData.PropertyChanged += OnNodeDataChanged;
-
+        if (_nodeData != null)
+        {
+            _nodeData.PropertyChanged += OnNodeDataChanged;
+        }
     }
 
 
@@ -98,17 +100,22 @@ public class GONode : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-         //Get a renderer component either of the own gameobject or of a child
+        //Get a renderer component either of the own gameobject or of a child
         Renderer renderer = _nodeGameObject.GetComponentInChildren<Renderer>();
         //set the matrix
-        if (_attachedViewerData.ViewWindowWorldToLocal is not null)
-        _matPropBlock.SetMatrix("_WorldToBox", (Matrix4x4)_attachedViewerData.ViewWindowWorldToLocal );
+        if (_attachedViewerData?.ViewWindowWorldToLocal is not null)
+            _matPropBlock.SetMatrix("_WorldToBox", (Matrix4x4)_attachedViewerData.ViewWindowWorldToLocal);
         //apply propertyBlock to renderer
         renderer.SetPropertyBlock(_matPropBlock);
     }
 
+
+
     private void OnDestroy()
     {
-        _nodeData.PropertyChanged -= OnNodeDataChanged;
+        if (_nodeData != null)
+        {
+            _nodeData.PropertyChanged -= OnNodeDataChanged;
+        }
     }
 }
