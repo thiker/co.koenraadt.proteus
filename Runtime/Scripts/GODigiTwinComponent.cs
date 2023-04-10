@@ -2,18 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Packages.co.koenraadt.proteus.Runtime.Controllers;
 using Packages.co.koenraadt.proteus.Runtime.Repositories;
 using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using UnityEditor;
 using UnityEngine;
 
-public class GODigitTwinComponent : MonoBehaviour
+public class GODigiTwinComponent : MonoBehaviour
 {
     public string[] LinkedNodes;
     private PTGlobals _globalsData;
     private Renderer _renderer;
     private Material _xrayMaterial;
     private Material _originalMaterial;
+
+    void awake () {
+        DigiTwinController.Instance.LinkDigiTwinComponent(this);
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -36,6 +41,7 @@ public class GODigitTwinComponent : MonoBehaviour
     void OnDestroy()
     {
         _globalsData.PropertyChanged -= OnGlobalsDataChanged;
+        DigiTwinController.Instance.UnlinkDigiTwinComponent(this);
     }
 
     private void OnGlobalsDataChanged(object obj, PropertyChangedEventArgs e)

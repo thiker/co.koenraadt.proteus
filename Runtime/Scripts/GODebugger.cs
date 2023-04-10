@@ -27,6 +27,8 @@ public class GODebugger : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Repository.Instance.Proteus.SelectNode("");
+            DigiTwinController.Instance.ExplodeView();
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
