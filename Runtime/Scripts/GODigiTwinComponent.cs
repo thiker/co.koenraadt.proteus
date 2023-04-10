@@ -10,27 +10,31 @@ using UnityEngine;
 
 public class GODigiTwinComponent : MonoBehaviour
 {
-    public string[] LinkedNodes;
+    public List<string> LinkedNodes;
+    public float ExplodeFactor = 1.5f;
     public bool XrayEnabled = true;
     public bool ExplodeEnabled = true;
     private PTGlobals _globalsData;
     private Renderer _renderer;
     private Material _xrayMaterial;
     private Material _originalMaterial;
+    private Vector3 _explodedViewOffset;
 
-    void awake () {
-        DigiTwinController.Instance.LinkDigiTwinComponent(this);
+    void awake()
+    {
+        _explodedViewOffset = new Vector3(0, 0, 0);
     }
 
     // Start is called before the first frame update
     void Start()
     {
         _globalsData = Repository.Instance.Proteus.GetGlobals();
-        _globalsData.PropertyChanged += OnGlobalsDataChanged;
 
         _renderer = GetComponent<Renderer>();
         _originalMaterial = _renderer.material;
         _xrayMaterial = (Material)AssetDatabase.LoadAssetAtPath("Packages/co.koenraadt.proteus/Runtime/Materials/Mat_Xray.mat", typeof(Material));
+
+        DigiTwinController.Instance.LinkDigiTwinComponent(this);
     }
 
 
@@ -42,42 +46,54 @@ public class GODigiTwinComponent : MonoBehaviour
 
     void OnDestroy()
     {
-        _globalsData.PropertyChanged -= OnGlobalsDataChanged;
         DigiTwinController.Instance.UnlinkDigiTwinComponent(this);
     }
 
-    private void OnGlobalsDataChanged(object obj, PropertyChangedEventArgs e)
+    public bool hasLinkedNodeInSelection()
     {
-        switch (e.PropertyName)
-        {
-            case "SelectedNodes":
-                {
-                    UpdateXrayView();
-                    break;
-                }
-        }
+        Debug.Log(_globalsData);
+        bool isInSelection = LinkedNodes.Intersect(_globalsData.SelectedNodes).Count() > 0;
+        return isInSelection;
     }
 
-    private void UpdateXrayView()
+    public void UpdateXrayView()
     {
+        bool isInSelection = hasLinkedNodeInSelection();
+
         // If no active selection disable xray
-        if (_globalsData.SelectedNodes.Length == 0) {
+        if (!_globalsData.XrayViewEnabled || _globalsData.SelectedNodes.Length == 0)
+        {
             _renderer.material = _originalMaterial;
             return;
         }
 
-        bool isInSelection = LinkedNodes.Intersect(_globalsData.SelectedNodes).Count() == 0;
-
         // Save original material
-        if (_renderer.material != _xrayMaterial) {
+        if (_renderer.material != _xrayMaterial)
+        {
             _originalMaterial = _renderer.material;
         }
 
-        // Make transparent of not linked to a node in the selection
-        if (isInSelection) {
-            _renderer.material = _xrayMaterial;
-        } else {
+        // Make transparent if not linked to a node in the selection
+        if (isInSelection)
+        {
             _renderer.material = _originalMaterial;
+        }
+        else
+        {
+            _renderer.material = _xrayMaterial;
+        }
+    }
+
+    public void UpdateExplodedView(Vector3 origin, bool isExploded)
+    {
+        if (ExplodeEnabled && isExploded)
+        {
+            Vector3 direction = (transform.position - origin).normalized;
+            _explodedViewOffset += direction * ExplodeFactor;
+            transform.position += _explodedViewOffset;
+        } else {
+            transform.position -= _explodedViewOffset;
+            _explodedViewOffset = new Vector3(0,0,0);
         }
     }
 }

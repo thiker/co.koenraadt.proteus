@@ -6,6 +6,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
     public class PTGlobals : ObservableObject
     {
         private string[] _selectedNodes;
+        private bool _xrayViewEnabled = true;
+        private bool _explodedViewEnabled = true;
 
         /// <value>
         /// The identifier of the edge.
@@ -14,6 +16,18 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         {
             get => _selectedNodes;
             set => SetProperty(ref _selectedNodes, value);
+        }
+
+        public bool XrayViewEnabled 
+        {
+            get => _xrayViewEnabled;
+            set => SetProperty(ref _xrayViewEnabled, value);
+        }
+
+        public bool ExplodedViewEnabled 
+        {
+            get => _explodedViewEnabled;
+            set => SetProperty(ref _explodedViewEnabled, value);
         }
 
         public PTGlobals()
