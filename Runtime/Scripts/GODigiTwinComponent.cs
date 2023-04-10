@@ -12,8 +12,8 @@ public class GODigiTwinComponent : MonoBehaviour
 {
     public List<string> LinkedNodes;
     public float ExplodeFactor = 1.5f;
-    public bool XrayEnabled = true;
-    public bool ExplodeEnabled = true;
+    public bool DoXrayView = true;
+    public bool DoExplodedView = true;
     private PTGlobals _globalsData;
     private Renderer _renderer;
     private Material _xrayMaterial;
@@ -86,7 +86,7 @@ public class GODigiTwinComponent : MonoBehaviour
 
     public void UpdateExplodedView(Vector3 origin, bool isExploded)
     {
-        if (ExplodeEnabled && isExploded)
+        if (DoExplodedView && isExploded && _globalsData.ExplodedViewEnabled)
         {
             Vector3 direction = (transform.position - origin).normalized;
             _explodedViewOffset += direction * ExplodeFactor;
