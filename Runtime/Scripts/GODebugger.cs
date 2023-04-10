@@ -72,7 +72,7 @@ public class GODebugger : MonoBehaviour
              }
              if (Input.GetKeyDown(KeyCode.S)) {
                 Debug.Log("selecting node");
-                Repository.Instance.Proteus.SelectNode("GUID d1a3203d-efea-43cf-bbb6-5c2beb90eb01");
+                Repository.Instance.Proteus.SelectNode("GUID aed81bee-acb1-4133-80d2-ce7b9c699f98");
              }
         }
     }

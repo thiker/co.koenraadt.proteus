@@ -11,6 +11,8 @@ using UnityEngine;
 public class GODigiTwinComponent : MonoBehaviour
 {
     public string[] LinkedNodes;
+    public bool XrayEnabled = true;
+    public bool ExplodeEnabled = true;
     private PTGlobals _globalsData;
     private Renderer _renderer;
     private Material _xrayMaterial;
