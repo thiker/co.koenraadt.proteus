@@ -22,6 +22,7 @@ public class GODigiTwinComponent : MonoBehaviour
 
     void awake()
     {
+        gameObject.layer = LayerMask.NameToLayer("ProteusViz");
         _explodedViewOffset = new Vector3(0, 0, 0);
     }
 
@@ -61,7 +62,7 @@ public class GODigiTwinComponent : MonoBehaviour
         bool isInSelection = hasLinkedNodeInSelection();
 
         // If no active selection disable xray
-        if (!_globalsData.XrayViewEnabled || _globalsData.SelectedNodes.Length == 0)
+        if (!_globalsData.XrayViewEnabled || isInSelection || _globalsData.SelectedNodes.Length == 0)
         {
             _renderer.material = _originalMaterial;
             return;
@@ -78,7 +79,7 @@ public class GODigiTwinComponent : MonoBehaviour
         {
             _renderer.material = _originalMaterial;
         }
-        else
+        else if (_globalsData.XrayViewEnabled)
         {
             _renderer.material = _xrayMaterial;
         }

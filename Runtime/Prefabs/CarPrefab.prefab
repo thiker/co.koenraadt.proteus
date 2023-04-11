@@ -111,8 +111,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LinkedNodes: []
-  XrayEnabled: 1
-  ExplodeEnabled: 1
+  ExplodeFactor: 1.5
+  DoXrayView: 1
+  DoExplodedView: 1
 --- !u!1 &2785745275758617904
 GameObject:
   m_ObjectHideFlags: 0
@@ -224,8 +225,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LinkedNodes: []
-  XrayEnabled: 1
-  ExplodeEnabled: 1
+  ExplodeFactor: 1.5
+  DoXrayView: 1
+  DoExplodedView: 1
 --- !u!1 &3348894874229680266
 GameObject:
   m_ObjectHideFlags: 0
@@ -337,8 +339,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LinkedNodes: []
-  XrayEnabled: 1
-  ExplodeEnabled: 1
+  ExplodeFactor: 1.5
+  DoXrayView: 1
+  DoExplodedView: 1
 --- !u!1 &4005961225887270660
 GameObject:
   m_ObjectHideFlags: 0
@@ -450,9 +453,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba248410917f343c790be5c84f52105d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LinkedNodes: []
-  XrayEnabled: 1
-  ExplodeEnabled: 1
+  LinkedNodes:
+  - GUID e017b76d-39ac-4e9e-8458-7d1f9e5a598b
+  ExplodeFactor: 1.5
+  DoXrayView: 1
+  DoExplodedView: 1
 --- !u!1 &4179436795540923509
 GameObject:
   m_ObjectHideFlags: 0
@@ -564,8 +569,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LinkedNodes: []
-  XrayEnabled: 1
-  ExplodeEnabled: 1
+  ExplodeFactor: 1.5
+  DoXrayView: 1
+  DoExplodedView: 1
 --- !u!1 &4961627515390534791
 GameObject:
   m_ObjectHideFlags: 0
@@ -678,8 +684,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LinkedNodes:
   - GUID aed81bee-acb1-4133-80d2-ce7b9c699f98
-  XrayEnabled: 1
-  ExplodeEnabled: 1
+  ExplodeFactor: 1.5
+  DoXrayView: 1
+  DoExplodedView: 1
 --- !u!1 &5674837446700657443
 GameObject:
   m_ObjectHideFlags: 0
@@ -791,8 +798,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LinkedNodes: []
-  XrayEnabled: 1
-  ExplodeEnabled: 1
+  ExplodeFactor: 1.5
+  DoXrayView: 1
+  DoExplodedView: 1
 --- !u!1 &5839367279383143965
 GameObject:
   m_ObjectHideFlags: 0
@@ -948,8 +956,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LinkedNodes: []
-  XrayEnabled: 1
-  ExplodeEnabled: 1
+  ExplodeFactor: 1.5
+  DoXrayView: 1
+  DoExplodedView: 1
 --- !u!1 &6823867452148517498
 GameObject:
   m_ObjectHideFlags: 0
@@ -1061,9 +1070,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba248410917f343c790be5c84f52105d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LinkedNodes: []
-  XrayEnabled: 1
-  ExplodeEnabled: 1
+  LinkedNodes:
+  - GUID e017b76d-39ac-4e9e-8458-7d1f9e5a598b
+  ExplodeFactor: 1.5
+  DoXrayView: 1
+  DoExplodedView: 1
 --- !u!1 &8073122213266331869
 GameObject:
   m_ObjectHideFlags: 0
@@ -1175,8 +1186,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LinkedNodes: []
-  XrayEnabled: 1
-  ExplodeEnabled: 1
+  ExplodeFactor: 1.5
+  DoXrayView: 1
+  DoExplodedView: 1
 --- !u!1 &8121296623938280704
 GameObject:
   m_ObjectHideFlags: 0
@@ -1288,9 +1300,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba248410917f343c790be5c84f52105d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LinkedNodes: []
-  XrayEnabled: 1
-  ExplodeEnabled: 1
+  LinkedNodes:
+  - GUID e017b76d-39ac-4e9e-8458-7d1f9e5a598b
+  ExplodeFactor: 1.5
+  DoXrayView: 1
+  DoExplodedView: 1
 --- !u!1 &8352919153123216933
 GameObject:
   m_ObjectHideFlags: 0
@@ -1402,8 +1416,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LinkedNodes: []
-  XrayEnabled: 1
-  ExplodeEnabled: 1
+  ExplodeFactor: 1.5
+  DoXrayView: 1
+  DoExplodedView: 1
 --- !u!1 &9000973129877991472
 GameObject:
   m_ObjectHideFlags: 0
@@ -1515,6 +1530,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba248410917f343c790be5c84f52105d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LinkedNodes: []
-  XrayEnabled: 1
-  ExplodeEnabled: 1
+  LinkedNodes:
+  - GUID e017b76d-39ac-4e9e-8458-7d1f9e5a598b
+  ExplodeFactor: 1.5
+  DoXrayView: 1
+  DoExplodedView: 1

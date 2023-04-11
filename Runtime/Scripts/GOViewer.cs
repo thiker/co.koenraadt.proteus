@@ -127,7 +127,7 @@ public class GOViewer : MonoBehaviour
         // Create new node
         GameObject nodePrefabGo = Instantiate(NodePrefab, _modelAnchor.transform, false);
         nodePrefabGo.transform.localPosition = new Vector3(_debugLocationOffset, 0, 0);
-        _debugLocationOffset += 5.5f;
+        _debugLocationOffset += 8.0f;
         _nodePrefabGOs[nodeId] = nodePrefabGo;
 
         // Setup node with Node Data

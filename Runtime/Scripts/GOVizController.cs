@@ -1,3 +1,4 @@
+using Packages.co.koenraadt.proteus.Runtime.Interfaces;
 using Packages.co.koenraadt.proteus.Runtime.Repositories;
 using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using System.Collections.Generic;
@@ -31,7 +32,34 @@ public class GOVizController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetMouseButtonDown(0))
+        {
+            LayerMask layerMask = LayerMask.GetMask("ProteusViz");
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit[] hits = Physics.RaycastAll(ray.origin, ray.direction, Mathf.Infinity, layerMask);
 
+            Repository.Instance.Proteus.SelectNode(null);
+            
+            foreach (RaycastHit hit in hits)
+            {
+                // Call first found parent object with interaction interface
+                GameObject obj = hit.collider.gameObject;
+                do
+                {
+                    UnityEngine.Component[] results = obj.GetComponents<UnityEngine.Component>();
+                    foreach (UnityEngine.Component comp in results)
+                    {
+                        if (comp is IProteusInteraction interactComp)
+                        {
+                            interactComp.OnTriggerDown();
+                            obj = null;
+                        }
+                    }
+                    obj = obj?.transform?.parent.gameObject;
+                }
+                while (obj != null);
+            }
+        }
     }
 
     void OnDestroy()

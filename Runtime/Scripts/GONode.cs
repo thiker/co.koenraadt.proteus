@@ -10,8 +10,9 @@ using Codice.Client.Common.TreeGrouper;
 using static UnityEngine.UI.Image;
 using System;
 using Packages.co.koenraadt.proteus.Runtime.Repositories;
+using Packages.co.koenraadt.proteus.Runtime.Interfaces;
 
-public class GONode : MonoBehaviour
+public class GONode : MonoBehaviour, IProteusInteraction
 {
     private string _nodeId;
     private string _attachedViewerId;
@@ -79,7 +80,11 @@ public class GONode : MonoBehaviour
         }
     }
 
-    // Link to events.
+    public void OnTriggerDown() 
+    {
+        Repository.Instance.Proteus.SelectNode(_nodeData.Id);
+    }
+
     private void linkEventListeners()
     {
         if (_nodeData != null)

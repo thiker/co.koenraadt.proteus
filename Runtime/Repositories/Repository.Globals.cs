@@ -38,7 +38,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 
         public void SelectNode(string nodeId) 
         {
-            if (nodeId == "") {
+            if (nodeId == "" || nodeId == null) {
                 GetGlobals().SelectedNodes = new string[]{};
                 return;
             }
