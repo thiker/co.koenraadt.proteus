@@ -1,3 +1,4 @@
+using Packages.co.koenraadt.proteus.Runtime.Interfaces;
 using Packages.co.koenraadt.proteus.Runtime.Repositories;
 using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Animations;
 
-public class GOViewer : MonoBehaviour
+public class GOViewer : MonoBehaviour, IProteusInteraction
 {
     public string Id { get; internal set; }
     public GameObject NodePrefab;
@@ -65,6 +66,10 @@ public class GOViewer : MonoBehaviour
     {
         _viewerData.PropertyChanged -= OnViewerDataChanged;
         _nodesData.CollectionChanged -= OnNodesDataChanged;
+    }
+
+    public void OnTriggerDown() {
+        Repository.Instance.Proteus.SelectViewer(_viewerData.Id);
     }
 
     private void linkEventListeners()
@@ -150,6 +155,13 @@ public class GOViewer : MonoBehaviour
 
     private void UpdateViewerPresentation()
     {
+        if (_viewerData.Id == Repository.Instance.Proteus.GetGlobals().SelectedViewer)
+        {
+            Debug.Log("selected viewer update");
+        } else {
+            Debug.Log("unselecte viewer");
+        }
+        
         if (_viewerData.Position is not null && _viewerData.Rotation is not null)
         {
             transform.SetPositionAndRotation((Vector3)_viewerData.Position, (Quaternion)_viewerData.Rotation);

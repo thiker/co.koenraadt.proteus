@@ -25,24 +25,33 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         /// <summary>
         /// Get the global state of proteus.
         /// </summary>
-        public PTGlobals GetGlobals() {
-            if (_globalsInstance == null) {
+        public PTGlobals GetGlobals()
+        {
+            if (_globalsInstance == null)
+            {
                 _globalsInstance = new();
-            }   
+            }
             return _globalsInstance;
         }
 
-        public void UpdateGlobals(PTGlobals update) {
+        public void UpdateGlobals(PTGlobals update)
+        {
             Helpers.CombineValues(_globalsInstance, update);
         }
 
-        public void SelectNode(string nodeId) 
+        public void SelectNode(string nodeId)
         {
-            if (nodeId == "" || nodeId == null) {
-                GetGlobals().SelectedNodes = new string[]{};
+            if (nodeId == "" || nodeId == null)
+            {
+                GetGlobals().SelectedNodes = new string[] { };
                 return;
             }
-            GetGlobals().SelectedNodes = new[]{nodeId};
+            GetGlobals().SelectedNodes = new[] { nodeId };
+        }
+
+        public void SelectViewer(string viewerId)
+        {
+            GetGlobals().SelectedViewer = viewerId;
         }
     }
 }
