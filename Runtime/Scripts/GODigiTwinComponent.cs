@@ -52,7 +52,6 @@ public class GODigiTwinComponent : MonoBehaviour
 
     public bool hasLinkedNodeInSelection()
     {
-        Debug.Log(_globalsData);
         bool isInSelection = LinkedNodes.Intersect(_globalsData.SelectedNodes).Count() > 0;
         return isInSelection;
     }

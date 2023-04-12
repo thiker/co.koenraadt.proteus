@@ -17,6 +17,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     private GameObject _modelAnchor;
     private GameObject _viewWindow;
     private PTViewer _viewerData;
+    private PTGlobals _globalsData;
     private ObservableCollection<PTNode> _nodesData;
     private Dictionary<string, GameObject> _nodePrefabGOs;
 
@@ -29,7 +30,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     {
         _viewerData = Repository.Instance.Viewers.GetViewerById(viewerId);
     }
-    
+
 
     // Start is called before the first frame update
     void Start()
@@ -46,6 +47,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
 
         // Get the nodes
         _nodesData = Repository.Instance.Models.GetNodes();
+        _globalsData = Repository.Instance.Proteus.GetGlobals();
 
         // Link event listeners
         linkEventListeners();
@@ -65,23 +67,33 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     void OnDestroy()
     {
         _viewerData.PropertyChanged -= OnViewerDataChanged;
+        _globalsData.PropertyChanged -= OnGlobalsDataChanged;
         _nodesData.CollectionChanged -= OnNodesDataChanged;
     }
 
-    public void OnTriggerDown() {
+    public void OnTriggerDown()
+    {
         Repository.Instance.Proteus.SelectViewer(_viewerData.Id);
     }
 
     private void linkEventListeners()
     {
         _viewerData.PropertyChanged += OnViewerDataChanged;
+        _globalsData.PropertyChanged += OnGlobalsDataChanged;
         _nodesData.CollectionChanged += OnNodesDataChanged;
     }
-
 
     private void OnViewerDataChanged(object obj, PropertyChangedEventArgs e)
     {
         UpdateViewerPresentation();
+    }
+
+    private void OnGlobalsDataChanged(object obj, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == "SelectedViewer")
+        {
+            UpdateViewerPresentation();
+        }
     }
 
 
@@ -158,10 +170,12 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         if (_viewerData.Id == Repository.Instance.Proteus.GetGlobals().SelectedViewer)
         {
             Debug.Log("selected viewer update");
-        } else {
-            Debug.Log("unselecte viewer");
         }
-        
+        else
+        {
+            Debug.Log("unselected viewer");
+        }
+
         if (_viewerData.Position is not null && _viewerData.Rotation is not null)
         {
             transform.SetPositionAndRotation((Vector3)_viewerData.Position, (Quaternion)_viewerData.Rotation);

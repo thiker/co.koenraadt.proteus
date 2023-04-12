@@ -39,38 +39,27 @@ public class GOVizController : MonoBehaviour
             RaycastHit[] hits = Physics.RaycastAll(ray.origin, ray.direction, Mathf.Infinity, layerMask);
 
             Repository.Instance.Proteus.SelectNode(null);
-            Repository.Instance.Proteus.SelectViewer(null);
 
             foreach (RaycastHit hit in hits)
             {
                 // Call first found parent object with interaction interface
                 GameObject obj = hit.collider.gameObject;
-                Debug.Log(obj.name);
-                // TODO: Refactor to viewwindow comp?
-                if (obj.name == "ViewWindow")
+
+                do
                 {
-                    GOViewer viewer = obj.GetComponentInParent<GOViewer>();
-                    if (viewer is IProteusInteraction interaction) {
-                        interaction.OnTriggerDown();
-                    }
-                }
-                else
-                {
-                    do
+                    Debug.Log($"hit  {obj.name}");
+                    UnityEngine.Component[] results = obj.GetComponents<UnityEngine.Component>();
+                    foreach (UnityEngine.Component comp in results)
                     {
-                        UnityEngine.Component[] results = obj.GetComponents<UnityEngine.Component>();
-                        foreach (UnityEngine.Component comp in results)
+                        if (comp is IProteusInteraction interactComp)
                         {
-                            if (comp is IProteusInteraction interactComp)
-                            {
-                                interactComp.OnTriggerDown();
-                                obj = null;
-                            }
+                            interactComp.OnTriggerDown();
+                            obj = null;
                         }
-                        obj = obj?.transform?.parent.gameObject;
                     }
-                    while (obj != null);
+                    obj = obj?.transform?.parent?.gameObject;
                 }
+                while (obj != null);
             }
         }
     }
