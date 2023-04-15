@@ -21,17 +21,17 @@ public class GOViewWindow : MonoBehaviour, IProteusInteraction
         }
     }
 
-    public void OnTriggerDown(RaycastHit hit)
+    public void OnPointerDown(RaycastHit hit)
     {  
         _isDragging = true;
     }
 
-    public void OnTriggerUp(RaycastHit hit) 
+    public void OnPointerUp(RaycastHit hit) 
     {
         _isDragging = false;
     }
 
-    public void OnTriggerMove( RaycastHit hit) {
+    public void OnPointerMove( RaycastHit hit) {
         if (_isDragging) {
             Debug.Log("dragging");
         }

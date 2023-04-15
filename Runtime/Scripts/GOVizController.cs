@@ -33,39 +33,49 @@ public class GOVizController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        RaycastHit[] hits = null;
+
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
 
-        if (Input.GetMouseButtonDown(0))
+        bool pointerDown = Input.GetMouseButtonDown(0);
+        bool pointerAltDown = Input.GetMouseButtonDown(1);
+        bool pointerUp = Input.GetMouseButtonUp(0);
+        bool pointerAltUp = Input.GetMouseButton(1);
+        bool pointerMove = Mathf.Abs(mouseX) > 0 || Mathf.Abs(mouseY) > 0;
+
+        if (pointerDown || pointerAltDown || pointerUp || pointerAltUp || pointerMove)
         {
-            RaycastHit[] hits = Helpers.RayCastProteusViz();
+            hits = Helpers.RayCastProteusViz();
 
             foreach (RaycastHit hit in hits)
             {
                 IProteusInteraction interactionComp = Helpers.FindInteractableComponentInParent(hit.collider.gameObject);
-                interactionComp?.OnTriggerDown(hit);
-            }
-        }
 
-        if (Input.GetMouseButtonUp(0))
-        {
-            RaycastHit[] hits = Helpers.RayCastProteusViz();
+                if (pointerDown)
+                {
+                    interactionComp?.OnPointerDown(hit);
+                }
 
-            foreach (RaycastHit hit in hits)
-            {
-                IProteusInteraction interactionComp = Helpers.FindInteractableComponentInParent(hit.collider.gameObject);
-                interactionComp?.OnTriggerUp(hit);
-            }
-        }
+                if (pointerAltDown)
+                {
+                    interactionComp?.OnPointerAltDown(hit);
+                }
 
-        if (Mathf.Abs(mouseX) > 0 || Mathf.Abs(mouseY) > 0)
-        {
-            RaycastHit[] hits = Helpers.RayCastProteusViz();
+                if (pointerUp)
+                {
+                    interactionComp?.OnPointerUp(hit);
+                }
 
-            foreach (RaycastHit hit in hits)
-            {
-                IProteusInteraction interactionComp = Helpers.FindInteractableComponentInParent(hit.collider.gameObject);
-                interactionComp.OnTriggerMove(hit);
+                if (pointerAltUp)
+                {
+                    interactionComp?.OnPointerAltUp(hit);
+                }
+
+                if (pointerMove)
+                {
+                    interactionComp.OnPointerMove(hit);
+                }
             }
         }
     }

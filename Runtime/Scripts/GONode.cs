@@ -80,7 +80,7 @@ public class GONode : MonoBehaviour, IProteusInteraction
         }
     }
 
-    public void OnTriggerDown(RaycastHit hit)
+    public void OnPointerDown(RaycastHit hit)
     {
         Repository.Instance.Proteus.SelectNode(_nodeData.Id);
     }

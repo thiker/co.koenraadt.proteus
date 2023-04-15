@@ -4,12 +4,11 @@ namespace Packages.co.koenraadt.proteus.Runtime.Interfaces
 {
     public interface IProteusInteraction
     {
-        public void OnTriggerDown(RaycastHit hit) { }
-
-
-        public void OnTriggerUp(RaycastHit hit) { }
-
-        public void OnTriggerMove(RaycastHit hit) { }
+        public void OnPointerDown(RaycastHit hit) { }
+        public void OnPointerAltDown(RaycastHit hit) { }
+        public void OnPointerUp(RaycastHit hit) { }
+        public void OnPointerAltUp(RaycastHit hit) { }
+        public void OnPointerMove(RaycastHit hit) { }
 
     }
 }
