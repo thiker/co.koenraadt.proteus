@@ -71,7 +71,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         _nodesData.CollectionChanged -= OnNodesDataChanged;
     }
 
-    public void OnTriggerDown()
+    public void OnTriggerDown(RaycastHit hit)
     {
         Repository.Instance.Proteus.SelectViewer(_viewerData.Id);
     }

@@ -1,11 +1,15 @@
+using UnityEngine;
+
 namespace Packages.co.koenraadt.proteus.Runtime.Interfaces
 {
     public interface IProteusInteraction
     {
-        public void OnTriggerDown() {}
+        public void OnTriggerDown(RaycastHit hit) { }
 
 
-        public void OnTriggerRelease() {}
+        public void OnTriggerUp(RaycastHit hit) { }
+
+        public void OnTriggerMove(RaycastHit hit) { }
 
     }
 }

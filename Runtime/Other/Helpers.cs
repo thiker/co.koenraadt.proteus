@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Packages.co.koenraadt.proteus.Runtime.Interfaces;
 using UnityEngine;
 namespace Packages.co.koenraadt.proteus.Runtime.Other
 {
-    public class  Helpers
+    public class Helpers
     {
         public static void CombineValues<T>(T target, T source)
         {
@@ -17,10 +18,44 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
             foreach (var prop in properties)
             {
                 var value = prop.GetValue(source, null);
-            
+
                 if (value != null)
                     prop.SetValue(target, value, null);
             }
+        }
+
+        public static RaycastHit[] RayCastProteusViz()
+        {
+            LayerMask layerMask = LayerMask.GetMask("ProteusViz");
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit[] hits = Physics.RaycastAll(ray.origin, ray.direction, Mathf.Infinity, layerMask);
+
+            return hits;
+        }
+
+        public static IProteusInteraction FindInteractableComponentInParent(GameObject source)
+        {
+            if (source == null) {
+                return null;
+            }
+
+            GameObject obj = source;
+
+            do
+            {
+                Component[] results = obj.GetComponents<Component>();
+                foreach (Component comp in results)
+                {
+                    if (comp is IProteusInteraction interactComp)
+                    {
+                        return interactComp;
+                    }
+                }
+                obj = obj?.transform?.parent?.gameObject;
+            }
+            while (obj != null);
+
+            return null;
         }
     }
 }

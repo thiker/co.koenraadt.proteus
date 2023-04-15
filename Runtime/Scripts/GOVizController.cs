@@ -1,4 +1,5 @@
 using Packages.co.koenraadt.proteus.Runtime.Interfaces;
+using Packages.co.koenraadt.proteus.Runtime.Other;
 using Packages.co.koenraadt.proteus.Runtime.Repositories;
 using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using System.Collections.Generic;
@@ -32,37 +33,44 @@ public class GOVizController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
+
         if (Input.GetMouseButtonDown(0))
         {
-            LayerMask layerMask = LayerMask.GetMask("ProteusViz");
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit[] hits = Physics.RaycastAll(ray.origin, ray.direction, Mathf.Infinity, layerMask);
-
-            Repository.Instance.Proteus.SelectNode(null);
+            RaycastHit[] hits = Helpers.RayCastProteusViz();
 
             foreach (RaycastHit hit in hits)
             {
-                // Call first found parent object with interaction interface
-                GameObject obj = hit.collider.gameObject;
+                IProteusInteraction interactionComp = Helpers.FindInteractableComponentInParent(hit.collider.gameObject);
+                interactionComp?.OnTriggerDown(hit);
+            }
+        }
 
-                do
-                {
-                    Debug.Log($"hit  {obj.name}");
-                    UnityEngine.Component[] results = obj.GetComponents<UnityEngine.Component>();
-                    foreach (UnityEngine.Component comp in results)
-                    {
-                        if (comp is IProteusInteraction interactComp)
-                        {
-                            interactComp.OnTriggerDown();
-                            obj = null;
-                        }
-                    }
-                    obj = obj?.transform?.parent?.gameObject;
-                }
-                while (obj != null);
+        if (Input.GetMouseButtonUp(0))
+        {
+            RaycastHit[] hits = Helpers.RayCastProteusViz();
+
+            foreach (RaycastHit hit in hits)
+            {
+                IProteusInteraction interactionComp = Helpers.FindInteractableComponentInParent(hit.collider.gameObject);
+                interactionComp?.OnTriggerUp(hit);
+            }
+        }
+
+        if (Mathf.Abs(mouseX) > 0 || Mathf.Abs(mouseY) > 0)
+        {
+            RaycastHit[] hits = Helpers.RayCastProteusViz();
+
+            foreach (RaycastHit hit in hits)
+            {
+                IProteusInteraction interactionComp = Helpers.FindInteractableComponentInParent(hit.collider.gameObject);
+                interactionComp.OnTriggerMove(hit);
             }
         }
     }
+
+
 
     void OnDestroy()
     {
