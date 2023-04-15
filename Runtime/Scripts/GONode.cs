@@ -58,7 +58,7 @@ public class GONode : MonoBehaviour, IProteusInteraction
         UpdateNodePresentation();
     }
 
-        // Update is called once per frame
+    // Update is called once per frame
     void Update()
     {
         //Get a renderer component either of the own gameobject or of a child
@@ -80,7 +80,7 @@ public class GONode : MonoBehaviour, IProteusInteraction
         }
     }
 
-    public void OnTriggerDown() 
+    public void OnTriggerDown(RaycastHit hit)
     {
         Repository.Instance.Proteus.SelectNode(_nodeData.Id);
     }
