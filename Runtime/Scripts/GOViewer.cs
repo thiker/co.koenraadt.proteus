@@ -7,7 +7,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Animations;
 
 public class GOViewer : MonoBehaviour, IProteusInteraction
 {
@@ -16,7 +15,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     public GameObject EdgePrefab;
     private GameObject _modelAnchor;
     private GameObject _viewWindow;
-    private PTViewer _viewerData;
+    PTViewer _viewerData;
     private PTGlobals _globalsData;
     private ObservableCollection<PTNode> _nodesData;
     private Dictionary<string, GameObject> _nodePrefabGOs;
@@ -31,7 +30,6 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         _viewerData = Repository.Instance.Viewers.GetViewerById(viewerId);
     }
 
-
     // Start is called before the first frame update
     void Start()
     {
@@ -44,6 +42,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         // Get the game objects
         _modelAnchor = transform.Find("ModelAnchor").gameObject;
         _viewWindow = transform.Find("ViewWindow").gameObject;
+        _viewWindow.GetComponent<GOViewWindow>().Init(_viewerData.Id);
 
         // Get the nodes
         _nodesData = Repository.Instance.Models.GetNodes();
@@ -60,7 +59,16 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     {
         if (_viewWindow != null)
         {
+            //  Update the window window world to local matrix
             Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = _viewerData.Id, ViewWindowWorldToLocal = _viewWindow.transform.worldToLocalMatrix });
+        }
+
+        if ((bool)_viewerData.IsBillboarding)
+        {
+            // Calculates the billboarding rotation
+            Vector3 relativePos = Camera.current.transform.position - transform.position; // the relative position
+            Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
+            Repository.Instance.Viewers.SetViewerRotation(_viewerData.Id, rotation);
         }
     }
 
@@ -174,6 +182,12 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         else
         {
             Debug.Log("unselected viewer");
+        }
+
+        if (_viewerData.ModelAnchorOffset is not null)
+        {
+            Debug.Log($"model anchor offset x:{_viewerData.ModelAnchorOffset?.x} y: {_viewerData.ModelAnchorOffset?.y}");
+            _modelAnchor.transform.SetLocalPositionAndRotation((Vector3)_viewerData.ModelAnchorOffset, _modelAnchor.transform.localRotation);
         }
 
         if (_viewerData.Position is not null && _viewerData.Rotation is not null)

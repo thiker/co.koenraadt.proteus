@@ -7,8 +7,11 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
     {
         private string _id;
         private Vector3? _position;
+        private Vector3? _modelAnchorOffset = new Vector3(0,0,0);
         private Quaternion? _rotation;
         private Matrix4x4? _viewWindowWorldToLocal;
+
+        private bool? _isBillboarding = true;
 
         /// <value>
         /// The identifier of the viewer.
@@ -29,6 +32,16 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         }
 
         /// <value>
+        /// The local position of the view window
+        /// <value>
+        public Vector3? ModelAnchorOffset 
+        {
+            get => _modelAnchorOffset;
+            set => SetProperty(ref _modelAnchorOffset, value);
+        }
+
+
+        /// <value>
         /// The rotation of the viewer.
         /// <value>
         public Quaternion? Rotation 
@@ -44,6 +57,16 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         {
             get => _viewWindowWorldToLocal;
             set => SetProperty(ref _viewWindowWorldToLocal, value);
+        }
+
+
+        /// <value>
+        /// Wether billboarding should be enabled for the viewer.
+        /// </value>
+        public bool? IsBillboarding 
+        {
+            get => _isBillboarding;
+            set => SetProperty(ref _isBillboarding, value);
         }
     }
 }

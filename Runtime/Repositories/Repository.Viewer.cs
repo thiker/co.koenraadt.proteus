@@ -90,6 +90,38 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             }
         }
 
+        /// <summary>
+        /// Updates the rotation of the viewer.
+        /// </summary>
+        /// <param name="id">the id of the viewer to update. </param>
+        /// <param name="rotation">the rotation of the viewer to update. </param>
+        public void SetViewerRotation(string id, Quaternion rotation)
+        {
+            PTViewer viewer = GetViewerById(id);
+
+            if (viewer != null)
+            {
+                viewer.Rotation = rotation;
+            }
+        }
+
+        /// <summary>
+        /// Updates the local position of the view window.
+        /// </summary>
+        /// <param name="id">the id of the viewer to update. </param>
+        /// <param name="position">the local position of the view window </param>
+        public void AddModelAnchorOffset(string id, Vector3 offset)
+        {
+            PTViewer viewer = GetViewerById(id);
+   
+            if (viewer != null)
+            {
+                viewer.ModelAnchorOffset += offset;
+            }
+
+
+        }
+
 
 
     }
