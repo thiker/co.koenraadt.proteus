@@ -184,9 +184,11 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
             Debug.Log("unselected viewer");
         }
 
+
         if (_viewerData.ModelAnchorOffset is not null)
         {
             Debug.Log($"model anchor offset x:{_viewerData.ModelAnchorOffset?.x} y: {_viewerData.ModelAnchorOffset?.y}");
+            //FIXME: Not updating in unity, only works when setting new Vector3(..) manually
             _modelAnchor.transform.SetLocalPositionAndRotation((Vector3)_viewerData.ModelAnchorOffset, _modelAnchor.transform.localRotation);
         }
 
