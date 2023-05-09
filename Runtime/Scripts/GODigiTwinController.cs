@@ -7,7 +7,7 @@ public class GODigiTwinController : MonoBehaviour
 {
     DigiTwinController _controller;
     // Start is called before the first frame update
-    void Awake()
+    void Start()
     {
         _controller = DigiTwinController.Instance;
     }
@@ -15,6 +15,6 @@ public class GODigiTwinController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _controller.Update();
+        _controller?.Update();
     }
 }
