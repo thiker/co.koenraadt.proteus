@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
@@ -6,10 +7,12 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
     public class PTViewer : ObservableObject
     {
         private string _id;
+        private string _rootNodeId;
         private Vector3? _position;
         private Vector3? _modelAnchorOffset = new Vector3(0,0,0);
         private Quaternion? _rotation;
         private Matrix4x4? _viewWindowWorldToLocal;
+        private Dictionary<string, Vector3>? _layoutPositions = new();
 
         private bool? _isBillboarding = true;
 
@@ -20,6 +23,15 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         {
             get => _id;
             set => SetProperty(ref _id, value);
+        }
+
+        /// <value>
+        /// The Id of the node that is the root for the viewer.
+        /// </value>
+        public string RootNodeId
+        {
+            get => _rootNodeId;
+            set => SetProperty(ref _rootNodeId, value);
         }
 
         /// <value>
@@ -67,6 +79,15 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         {
             get => _isBillboarding;
             set => SetProperty(ref _isBillboarding, value);
+        }
+
+        /// <value>
+        /// Layout containing the positions of the nodes in the viewer.
+        /// </value>
+        public Dictionary<string, Vector3>? LayoutPositions
+        {
+            get => _layoutPositions;
+            set => SetProperty(ref _layoutPositions, value);
         }
     }
 }

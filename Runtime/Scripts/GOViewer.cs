@@ -11,13 +11,18 @@ using UnityEngine;
 public class GOViewer : MonoBehaviour, IProteusInteraction
 {
     public string Id { get; internal set; }
+
     public GameObject NodePrefab;
     public GameObject EdgePrefab;
     private GameObject _modelAnchor;
     private GameObject _viewWindow;
+
     PTViewer _viewerData;
+
     private PTGlobals _globalsData;
+
     private ObservableCollection<PTNode> _nodesData;
+
     private Dictionary<string, GameObject> _nodePrefabGOs;
 
     private float _debugLocationOffset = 0.0f;
@@ -66,9 +71,13 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         if ((bool)_viewerData.IsBillboarding)
         {
             // Calculates the billboarding rotation
-            Vector3 relativePos = Camera.current.transform.position - transform.position; // the relative position
-            Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
-            Repository.Instance.Viewers.SetViewerRotation(_viewerData.Id, rotation);
+            if (Camera.current?.transform?.position != null && transform != null)
+            {
+                Vector3 relativePos = Camera.current.transform.position - transform.position; // the relative position
+                Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
+                Repository.Instance.Viewers.SetViewerRotation(_viewerData.Id, rotation);
+            }
+
         }
     }
 
@@ -126,6 +135,8 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
                 DestroyNode(nodeData.Id);
             }
         }
+
+        //TODO: Regenerate viewer layout on nodes change
     }
 
     /// <summary>
@@ -177,17 +188,17 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     {
         if (_viewerData.Id == Repository.Instance.Proteus.GetGlobals().SelectedViewer)
         {
-            Debug.Log("selected viewer update");
+            // is selected viewer
         }
         else
         {
-            Debug.Log("unselected viewer");
+           // is Deselected viewer
         }
 
 
         if (_viewerData.ModelAnchorOffset is not null)
         {
-            Debug.Log($"model anchor offset x:{_viewerData.ModelAnchorOffset?.x} y: {_viewerData.ModelAnchorOffset?.y}");
+            //Debug.Log($"model anchor offset x:{_viewerData.ModelAnchorOffset?.x} y: {_viewerData.ModelAnchorOffset?.y}");
             //FIXME: Not updating in unity, only works when setting new Vector3(..) manually
             _modelAnchor.transform.SetLocalPositionAndRotation((Vector3)_viewerData.ModelAnchorOffset, _modelAnchor.transform.localRotation);
         }

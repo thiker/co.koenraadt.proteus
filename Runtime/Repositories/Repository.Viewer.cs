@@ -42,7 +42,14 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         /// <param name="newViewer">The viewer data to add.</param>
         public void UpdateViewer(PTViewer newViewer)
         {
+            bool changedRoot = false;
             PTViewer oldViewer = GetViewerById(newViewer.Id);
+
+            // Check if root has changed
+            if (newViewer?.RootNodeId != null)
+            {
+                changedRoot = newViewer?.RootNodeId != oldViewer?.RootNodeId;
+            }
 
             // If not already existing add the node
             if (oldViewer is null)
@@ -52,6 +59,11 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             else
             {
                 Helpers.CombineValues(oldViewer, newViewer);
+            }
+
+            if (changedRoot)
+            {
+                GenerateViewerLayout(newViewer.Id);
             }
         }
 
@@ -118,8 +130,17 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             {
                 viewer.ModelAnchorOffset += offset;
             }
+        }
 
+        public void GenerateViewerLayout(string id)
+        {
+            PTViewer viewer = GetViewerById(id);
 
+            if (viewer != null)
+            
+            {
+                Debug.Log($"Generating layout with root: {viewer.RootNodeId}");
+            }
         }
 
 
