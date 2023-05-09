@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Packages.co.koenraadt.proteus.Runtime.Interfaces;
+using Unity.VisualScripting.YamlDotNet.Core.Tokens;
 using UnityEngine;
 namespace Packages.co.koenraadt.proteus.Runtime.Other
 {
@@ -24,10 +26,43 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
             foreach (var prop in properties)
             {
                 var value = prop.GetValue(source, null);
+                var targetValue = prop.GetValue(target, null);
+                bool empty = IsEmpty(value);
 
-                if (value != null)
+
+                if (value != null && !value.Equals(targetValue) && value != targetValue && !empty)
+                {
                     prop.SetValue(target, value, null);
+                }
             }
+        }
+
+
+        //TODO: Refactor the combine values method and isempty since they can be slow!.
+        public static bool IsEmpty<T>(T value)
+        {
+            Type[] interfaces = value?.GetType()?.GetInterfaces();
+
+            if (interfaces?.Length > 0)
+            {
+                foreach (Type interfaceType in interfaces)
+                {
+                    var property = interfaceType.GetProperty("Count");
+
+                    if (property != null) {
+                        int count = (int)property.GetValue(value, null);
+
+                        if (count <= 0)
+                        {
+                            return true;
+                        }
+                    }
+
+                }
+            }
+
+
+            return false;
         }
 
         /// <summary>
@@ -50,7 +85,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
         /// <returns>The first interactable component found</returns>
         public static IProteusInteraction FindInteractableComponentInParent(GameObject source)
         {
-            if (source == null) {
+            if (source == null)
+            {
                 return null;
             }
 
@@ -72,5 +108,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
 
             return null;
         }
+
+
     }
 }

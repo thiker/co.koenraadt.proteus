@@ -111,7 +111,10 @@ public class GONode : MonoBehaviour, IProteusInteraction
 
     private void OnViewerDataChanged(object obj, PropertyChangedEventArgs e)
     {
-        UpdateNodePresentation();
+        if (e.PropertyName == "LayoutPositions")
+        {
+            UpdateNodePresentation();
+        }
     }
 
     // Updates the node's visual representation.
@@ -122,7 +125,7 @@ public class GONode : MonoBehaviour, IProteusInteraction
 
         if ((bool)(_attachedViewerData?.LayoutPositions?.TryGetValue(_nodeData.Id, out nodeViewerPosition)))
         {
-            Debug.Log($"Updating local position {_nodeData.Id} {nodeViewerPosition.x} {nodeViewerPosition.y}");
+           //Debug.Log($"Updating local position {_nodeData.Id} {nodeViewerPosition.x} {nodeViewerPosition.y}");
             transform.SetLocalPositionAndRotation(nodeViewerPosition, transform.localRotation);
         } 
 

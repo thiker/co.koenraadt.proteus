@@ -89,5 +89,6 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
             get => _layoutPositions;
             set => SetProperty(ref _layoutPositions, value);
         }
+
     }
 }

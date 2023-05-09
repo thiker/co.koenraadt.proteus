@@ -62,6 +62,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             }
             else
             {
+                
                 Helpers.CombineValues(oldViewer, newViewer);
             }
 
@@ -176,10 +177,12 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                 foreach (PTEdge edgeData in Repository.Instance.Models.GetEdges())
                 {
                     PTNode sourceNode = Repository.Instance.Models.GetNodeById(edgeData.Source);
-                    PTNode targetNode = Repository.Instance.Models.GetNodeById(edgeData.Source);
+                    PTNode targetNode = Repository.Instance.Models.GetNodeById(edgeData.Target);
+
 
                     if (sourceNode != null && targetNode != null)
                     {
+                        //Debug.Log("Generating edges...");
                         msaglGraph.Edges.Add(new Edge(
                             msaglGraph.FindNodeByUserData(sourceNode.Id),
                             msaglGraph.FindNodeByUserData(targetNode.Id))
@@ -188,10 +191,25 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                                 UserData = edgeData.Id
                             }
                         );
+                    } else
+                    {
+                        //Debug.LogWarning("PROTEUS: Tried generating viewer layout but edge has invalid source or target node.");
+                        return;
                     }
 
                 }
 
+                //Debug.Log("Generating with Edges:");
+                foreach(Edge edge in msaglGraph.Edges)
+                {
+                    Debug.Log($"Edge {edge.Source.UserData} {edge.Target.UserData}");
+                }
+
+               // Debug.Log("Generating with Nodes:");
+                foreach (Node node in msaglGraph.Nodes)
+                {
+                    Debug.Log($"Node {node.UserData}");
+                }
 
                 LayoutHelpers.CalculateLayout(msaglGraph, new SugiyamaLayoutSettings() { LayerSeparation = 0, NodeSeparation = 0 }, null);
 
@@ -200,7 +218,6 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 
                 foreach (Node node in msaglGraph.Nodes)
                 {
-                    Debug.Log($"{node.UserData} {node.BoundingBox.Center.X}  {node.BoundingBox.Center.Y} Updating node position");
                     viewer.LayoutPositions[(string)node.UserData] = new Vector3((float)node.BoundingBox.Center.X, (float)node.BoundingBox.Center.Y, 0.0f);
                 }
 

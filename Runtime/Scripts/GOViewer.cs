@@ -55,7 +55,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         _globalsData = Repository.Instance.Proteus.GetGlobals();
 
         // Link event listeners
-        linkEventListeners();
+        LinkEventListeners();
 
         // Spawn the nodes in the viewer
         SpawnNodes(_nodesData.Cast<PTNode>().ToList());
@@ -95,7 +95,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         Repository.Instance.Proteus.SelectViewer(_viewerData.Id);
     }
 
-    private void linkEventListeners()
+    private void LinkEventListeners()
     {
         _viewerData.PropertyChanged += OnViewerDataChanged;
         _globalsData.PropertyChanged += OnGlobalsDataChanged;
@@ -118,7 +118,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
 
     private void OnEdgesDataChanged(object obj, NotifyCollectionChangedEventArgs e)
     {
-        // Regenerate the víewer's layout
+        // Regenerate the viewer's layout
         Repository.Instance.Viewers.RegenerateViewerLayout(_viewerData.Id);
     }
 
@@ -130,6 +130,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     /// <param name="e"></param>
     private void OnNodesDataChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
+
         // Regenerate the viewer's layout
         Repository.Instance.Viewers.RegenerateViewerLayout(_viewerData.Id);
 
