@@ -1,4 +1,8 @@
-﻿using Packages.co.koenraadt.proteus.Runtime.Other;
+﻿using Microsoft.Msagl.Core.Geometry.Curves;
+using Microsoft.Msagl.Core.Layout;
+using Microsoft.Msagl.Layout.Layered;
+using Microsoft.Msagl.Miscellaneous;
+using Packages.co.koenraadt.proteus.Runtime.Other;
 using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -63,7 +67,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 
             if (changedRoot)
             {
-                GenerateViewerLayout(newViewer.Id);
+                RegenerateViewerLayout(newViewer.Id);
             }
         }
 
@@ -125,21 +129,82 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         public void AddModelAnchorOffset(string id, Vector3 offset)
         {
             PTViewer viewer = GetViewerById(id);
-   
+
             if (viewer != null)
             {
                 viewer.ModelAnchorOffset += offset;
             }
         }
 
-        public void GenerateViewerLayout(string id)
+        public void RegenerateViewerLayouts()
         {
+            foreach (PTViewer viewer in GetViewers())
+            {
+                RegenerateViewerLayout(viewer.Id);
+            }
+        }
+
+
+        /// <summary>
+        /// Regenerates the layout of a viewer.
+        /// </summary>
+        /// <param name="id">The id of the viewer to regenerate the layout for.</param>
+        public void RegenerateViewerLayout(string id)
+        {
+            Debug.Log("PROTEUS: Started Generating Viewer Layout...");
             PTViewer viewer = GetViewerById(id);
 
             if (viewer != null)
-            
             {
-                Debug.Log($"Generating layout with root: {viewer.RootNodeId}");
+                GeometryGraph msaglGraph = new() { Margins = 0 };
+
+                // Generate nodes for layout
+                foreach (PTNode nodeData in Repository.Instance.Models.GetNodes())
+                {
+                    msaglGraph.Nodes.Add(new Node(
+                        CurveFactory.CreateRectangle(
+                            1D,
+                            1D,
+                            new Microsoft.Msagl.Core.Geometry.Point()
+                            ),
+                        nodeData.Id
+                        )
+                    );
+                }
+
+                // Generate edges for layout
+                foreach (PTEdge edgeData in Repository.Instance.Models.GetEdges())
+                {
+                    PTNode sourceNode = Repository.Instance.Models.GetNodeById(edgeData.Source);
+                    PTNode targetNode = Repository.Instance.Models.GetNodeById(edgeData.Source);
+
+                    if (sourceNode != null && targetNode != null)
+                    {
+                        msaglGraph.Edges.Add(new Edge(
+                            msaglGraph.FindNodeByUserData(sourceNode.Id),
+                            msaglGraph.FindNodeByUserData(targetNode.Id))
+                           {
+                                Weight = 1,
+                                UserData = edgeData.Id
+                            }
+                        );
+                    }
+
+                }
+
+
+                LayoutHelpers.CalculateLayout(msaglGraph, new SugiyamaLayoutSettings() { LayerSeparation = 0, NodeSeparation = 0 }, null);
+
+                msaglGraph.UpdateBoundingBox();
+                msaglGraph.Translate(new Microsoft.Msagl.Core.Geometry.Point(-msaglGraph.Left, -msaglGraph.Bottom));
+
+                foreach (Node node in msaglGraph.Nodes)
+                {
+                    Debug.Log($"{node.UserData} {node.BoundingBox.Center.X}  {node.BoundingBox.Center.Y} Updating node position");
+                    viewer.LayoutPositions[(string)node.UserData] = new Vector3((float)node.BoundingBox.Center.X, (float)node.BoundingBox.Center.Y, 0.0f);
+                }
+
+                Debug.Log("PROTEUS: Viewer Layout Finished Generating");
             }
         }
 

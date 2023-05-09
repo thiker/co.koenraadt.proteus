@@ -9,6 +9,12 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
 {
     public class Helpers
     {
+        /// <summary>
+        /// Merges values of source into target
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="target">object to merge into </param>
+        /// <param name="source">object to take values from</param>
         public static void CombineValues<T>(T target, T source)
         {
             Type t = typeof(T);
@@ -24,6 +30,10 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
             }
         }
 
+        /// <summary>
+        /// Raycasts for proteusviz layer
+        /// </summary>
+        /// <returns></returns>
         public static RaycastHit[] RayCastProteusViz()
         {
             LayerMask layerMask = LayerMask.GetMask("ProteusViz");
@@ -33,6 +43,11 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
             return hits;
         }
 
+        /// <summary>
+        /// Find a proteus interactable component in parents of the source game object.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns>The first interactable component found</returns>
         public static IProteusInteraction FindInteractableComponentInParent(GameObject source)
         {
             if (source == null) {

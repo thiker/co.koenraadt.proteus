@@ -22,10 +22,9 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     private PTGlobals _globalsData;
 
     private ObservableCollection<PTNode> _nodesData;
+    private ObservableCollection<PTEdge> _edgesData;
 
     private Dictionary<string, GameObject> _nodePrefabGOs;
-
-    private float _debugLocationOffset = 0.0f;
 
     /// <summary>
     /// Inializes a Viewer Instance
@@ -42,6 +41,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
 
         // Initialize dictionaries
         _nodesData = new();
+        _edgesData = new();
         _nodePrefabGOs = new();
 
         // Get the game objects
@@ -51,6 +51,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
 
         // Get the nodes
         _nodesData = Repository.Instance.Models.GetNodes();
+        _edgesData = Repository.Instance.Models.GetEdges();
         _globalsData = Repository.Instance.Proteus.GetGlobals();
 
         // Link event listeners
@@ -86,6 +87,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         _viewerData.PropertyChanged -= OnViewerDataChanged;
         _globalsData.PropertyChanged -= OnGlobalsDataChanged;
         _nodesData.CollectionChanged -= OnNodesDataChanged;
+        _edgesData.CollectionChanged -= OnEdgesDataChanged;
     }
 
     public void OnPointerDown(RaycastHit hit)
@@ -98,6 +100,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         _viewerData.PropertyChanged += OnViewerDataChanged;
         _globalsData.PropertyChanged += OnGlobalsDataChanged;
         _nodesData.CollectionChanged += OnNodesDataChanged;
+        _edgesData.CollectionChanged += OnEdgesDataChanged;
     }
 
     private void OnViewerDataChanged(object obj, PropertyChangedEventArgs e)
@@ -113,6 +116,12 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         }
     }
 
+    private void OnEdgesDataChanged(object obj, NotifyCollectionChangedEventArgs e)
+    {
+        // Regenerate the víewer's layout
+        Repository.Instance.Viewers.RegenerateViewerLayout(_viewerData.Id);
+    }
+
 
     /// <summary>
     /// Update when the nodes data collection has changed.
@@ -121,6 +130,9 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     /// <param name="e"></param>
     private void OnNodesDataChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
+        // Regenerate the viewer's layout
+        Repository.Instance.Viewers.RegenerateViewerLayout(_viewerData.Id);
+
         // Spawn new Items
         if (e.NewItems is not null)
         {
@@ -135,8 +147,6 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
                 DestroyNode(nodeData.Id);
             }
         }
-
-        //TODO: Regenerate viewer layout on nodes change
     }
 
     /// <summary>
@@ -162,8 +172,6 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
 
         // Create new node
         GameObject nodePrefabGo = Instantiate(NodePrefab, _modelAnchor.transform, false);
-        nodePrefabGo.transform.localPosition = new Vector3(_debugLocationOffset, 0, 0);
-        _debugLocationOffset += 8.0f;
         _nodePrefabGOs[nodeId] = nodePrefabGo;
 
         // Setup node with Node Data
@@ -200,7 +208,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         {
             //Debug.Log($"model anchor offset x:{_viewerData.ModelAnchorOffset?.x} y: {_viewerData.ModelAnchorOffset?.y}");
             //FIXME: Not updating in unity, only works when setting new Vector3(..) manually
-            _modelAnchor.transform.SetLocalPositionAndRotation((Vector3)_viewerData.ModelAnchorOffset, _modelAnchor.transform.localRotation);
+           // _modelAnchor.transform.SetLocalPositionAndRotation((Vector3)_viewerData.ModelAnchorOffset, _modelAnchor.transform.localRotation);
         }
 
         if (_viewerData.Position is not null && _viewerData.Rotation is not null)

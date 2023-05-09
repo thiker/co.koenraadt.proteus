@@ -78,6 +78,11 @@ public class GONode : MonoBehaviour, IProteusInteraction
         {
             _nodeData.PropertyChanged -= OnNodeDataChanged;
         }
+
+        if (_attachedViewerData != null)
+        {
+            _attachedViewerData.PropertyChanged -= OnViewerDataChanged;
+        }
     }
 
     public void OnPointerDown(RaycastHit hit)
@@ -91,6 +96,11 @@ public class GONode : MonoBehaviour, IProteusInteraction
         {
             _nodeData.PropertyChanged += OnNodeDataChanged;
         }
+
+        if (_attachedViewerData != null)
+        {
+            _attachedViewerData.PropertyChanged += OnViewerDataChanged;
+        }
     }
 
 
@@ -99,19 +109,38 @@ public class GONode : MonoBehaviour, IProteusInteraction
         UpdateNodePresentation();
     }
 
+    private void OnViewerDataChanged(object obj, PropertyChangedEventArgs e)
+    {
+        UpdateNodePresentation();
+    }
+
     // Updates the node's visual representation.
     private void UpdateNodePresentation()
     {
+        // Update the position
+        Vector3 nodeViewerPosition = new Vector3(0,0,0);
+
+        if ((bool)(_attachedViewerData?.LayoutPositions?.TryGetValue(_nodeData.Id, out nodeViewerPosition)))
+        {
+            Debug.Log($"Updating local position {_nodeData.Id} {nodeViewerPosition.x} {nodeViewerPosition.y}");
+            transform.SetLocalPositionAndRotation(nodeViewerPosition, transform.localRotation);
+        } 
+
+
+        // Set Display name
         if (_nodeData?.DisplayName != null && _displayNameTMP != null)
         {
             _displayNameTMP.SetText(_nodeData.DisplayName);
         }
 
+        // Set the image texture
         if (_nodeData?.ImageTexture != null && _nodeGameObject != null)
         {
-            float ratio = _nodeData.ImageTexture.width / _nodeData.ImageTexture.height;
+            float ratio = _nodeData.ImageTexture.width / _nodeData.ImageTexture.height; // Ratio between heigth and width of the image
 
             _nodeGameObject.GetComponent<Renderer>().material.SetTexture("_MainTex", _nodeData.ImageTexture);
+
+            //TODO: Check the magic constant 5?
             if (ratio >= 1)
             {
                 _nodeGameObject.transform.localScale = new Vector3(5 * ratio, 5, 1);
