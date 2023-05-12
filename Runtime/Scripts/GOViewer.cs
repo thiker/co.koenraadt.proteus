@@ -214,14 +214,17 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
             transform.SetPositionAndRotation((Vector3)_viewerData.Position, (Quaternion)_viewerData.Rotation);
         }
 
+        //TODO: Refactor to only run on selection change
         PTViewer selectedViewer = Repository.Instance.Proteus.GetSelectedViewer();
 
         if (_viewerData.Id == selectedViewer?.Id)
         {
-            Debug.Log("Is selected");
+            //TODO: On selection
+            //Debug.Log("Is selected");
         } else
         {
-            Debug.Log("is not selected");
+            //TODO: On Deselection
+            //Debug.Log("is not selected");
         }
 
     }

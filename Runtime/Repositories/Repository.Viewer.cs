@@ -1,7 +1,10 @@
-﻿using Microsoft.Msagl.Core.Geometry.Curves;
+﻿using Microsoft.Msagl.Core.Geometry;
+using Microsoft.Msagl.Core.Geometry.Curves;
 using Microsoft.Msagl.Core.Layout;
+using Microsoft.Msagl.Core.Routing;
 using Microsoft.Msagl.Layout.Layered;
 using Microsoft.Msagl.Miscellaneous;
+using Microsoft.Msagl.Routing;
 using Packages.co.koenraadt.proteus.Runtime.Other;
 using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using System;
@@ -11,6 +14,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static Microsoft.Msagl.Layout.OverlapRemovalFixedSegments.OverlapRemovalFixedSegmentsMst;
+
 namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 {
 
@@ -224,11 +229,13 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                     Debug.Log($"Node {node.UserData}");
                 }
 
-                LayoutHelpers.CalculateLayout(msaglGraph, new SugiyamaLayoutSettings() {  LayerSeparation = 0, NodeSeparation = 0 }, null);
+                // EdgeRoutingSettings = new EdgeRoutingSettings{EdgeRoutingMode=EdgeRoutingMode.StraightLine <-- For linear lines
+                LayoutHelpers.CalculateLayout(msaglGraph, new SugiyamaLayoutSettings() {LayerSeparation = 0, NodeSeparation = 0 }, null);
 
                 msaglGraph.UpdateBoundingBox();
                 msaglGraph.Translate(new Microsoft.Msagl.Core.Geometry.Point(-msaglGraph.Left, -msaglGraph.Bottom));
 
+                // Set layout positions for the nodes
                 foreach (Node node in msaglGraph.Nodes)
                 {
                     // If no layout exists initialize it
@@ -239,6 +246,44 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 
                     viewer.LayoutPositions[(string)node.UserData] = new Vector3((float)node.BoundingBox.Center.X, (float)node.BoundingBox.Center.Y, 0.0f);
                 }
+
+                // Set information for the edges
+                foreach(Edge edge in msaglGraph.Edges)
+                {
+                    Debug.Log($"Generating data for edge {edge.UserData} {edge.Curve.GetType()}");
+                    if (edge.Curve is Curve)
+                    {
+                        Point? pt = null;
+                        foreach (var segment in (edge.Curve as Curve).Segments)
+                        {
+                            // When curve contains a line segment.
+                            if (segment is LineSegment)
+                            {
+
+                            }
+
+                            // When curve contains a cubic Bezier segment.
+                            else if (segment is CubicBezierSegment)
+                            {
+ 
+                            }
+
+                            // When curve contains an arc.
+                            else if (segment is Ellipse)
+                            {
+
+                            }
+                            else
+                            {
+                            }
+                        }
+                    } else if (edge.Curve is LineSegment)
+                    {
+                        LineSegment segment = (LineSegment)edge.Curve;
+                        Debug.Log($"Edge curve segment {segment.Start.X} {segment.Start.Y}");
+                    }
+                }
+
 
                 Debug.Log("PROTEUS: Viewer Layout Finished Generating");
             }
