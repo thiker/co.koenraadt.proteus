@@ -46,7 +46,7 @@ public class GOViewWindow : MonoBehaviour, IProteusInteraction
         if (_isDragging)
         {
             Vector3 localHitPosition = transform.InverseTransformPoint(hit.point);
-            Vector3 offset = (localHitPosition - _lastLocalHitPoint) * 1000.0f; 
+            Vector3 offset = (localHitPosition - _lastLocalHitPoint); 
             offset.z = 0;
 
             Repository.Instance.Viewers.AddModelAnchorOffset(_linkedViewerId, offset);

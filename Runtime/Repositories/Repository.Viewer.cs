@@ -130,11 +130,17 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         public void AddModelAnchorOffset(string id, Vector3 offset)
         {
             PTViewer viewer = GetViewerById(id);
-
-            if (viewer != null)
+            Vector3 newOffset;
+            if (viewer?.ModelAnchorOffset != null)
             {
-                viewer.ModelAnchorOffset += offset;
+                newOffset = (Vector3)viewer.ModelAnchorOffset + offset;
+            } else
+            {
+                newOffset = new Vector3(0, 0, 0);
             }
+
+            PTViewer updatedViewer = new PTViewer() { Id = viewer.Id, ModelAnchorOffset = newOffset };
+            UpdateViewer(updatedViewer);
         }
 
         public void RegenerateViewerLayouts()

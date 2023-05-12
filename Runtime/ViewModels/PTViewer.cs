@@ -9,7 +9,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         private string _id;
         private string _rootNodeId;
         private Vector3? _position;
-        private Vector3? _modelAnchorOffset = new Vector3(0,0,0);
+        private Vector3? _modelAnchorOffset = null;
         private Quaternion? _rotation;
         private Matrix4x4? _viewWindowWorldToLocal;
         private Dictionary<string, Vector3>? _layoutPositions = new();

@@ -204,12 +204,10 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
            // is Deselected viewer
         }
 
-
+        // Update the view windows offset
         if (_viewerData.ModelAnchorOffset is not null)
         {
-            //Debug.Log($"model anchor offset x:{_viewerData.ModelAnchorOffset?.x} y: {_viewerData.ModelAnchorOffset?.y}");
-            //FIXME: Not updating in unity, only works when setting new Vector3(..) manually
-           // _modelAnchor.transform.SetLocalPositionAndRotation((Vector3)_viewerData.ModelAnchorOffset, _modelAnchor.transform.localRotation);
+            _modelAnchor.transform.SetLocalPositionAndRotation((Vector3)_viewerData.ModelAnchorOffset, _modelAnchor.transform.localRotation);
         }
 
         if (_viewerData.Position is not null && _viewerData.Rotation is not null)
