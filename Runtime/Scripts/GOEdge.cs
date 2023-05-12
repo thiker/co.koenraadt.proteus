@@ -1,16 +1,9 @@
 using Packages.co.koenraadt.proteus.Runtime.ViewModels;
-using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
-using TMPro;
-using Codice.Client.Common.TreeGrouper;
-using static UnityEngine.UI.Image;
-using System;
 using Packages.co.koenraadt.proteus.Runtime.Repositories;
-using Packages.co.koenraadt.proteus.Runtime.Interfaces;
+using UnityEngine.Splines;
+using System.Collections.Generic;
 
 public class GOEdge : MonoBehaviour
 {
@@ -19,6 +12,9 @@ public class GOEdge : MonoBehaviour
 
     private PTEdge _edgeData;
     private PTViewer _attachedViewerData;
+
+    private GameObject _splineGameObject;
+    private SplineContainer _splineContainerComponent;
 
     // Initialize the node
     public void Init(string edgeId, string attachedViewerId)
@@ -35,6 +31,14 @@ public class GOEdge : MonoBehaviour
 
         // Get viewer data of node
         _attachedViewerData = Repository.Instance.Viewers.GetViewerById(_attachedViewerId);
+
+        // Get the spline game object
+        _splineGameObject = transform.Find("Spline").gameObject;
+        _splineContainerComponent = _splineGameObject.GetComponent<SplineContainer>();
+
+        // Decouple the mesh so its unique for the instance
+        MeshFilter meshFilter = _splineGameObject.GetComponent<MeshFilter>();
+        Mesh duplicatedMesh = meshFilter.mesh;
 
         // initialize the event listeners
         linkEventListeners();
@@ -56,6 +60,18 @@ public class GOEdge : MonoBehaviour
         {
             _edgeData.PropertyChanged -= OnEdgeDataChanged;
         }
+
+        if (_attachedViewerData != null)
+        {
+            _attachedViewerData.PropertyChanged -= OnViewerDataChanged;
+        }
+    }
+    private void OnViewerDataChanged(object obj, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == "LayoutNodes")
+        {
+            UpdateEdgePresentation();
+        }
     }
 
     private void linkEventListeners()
@@ -63,6 +79,11 @@ public class GOEdge : MonoBehaviour
         if (_edgeData != null)
         {
             _edgeData.PropertyChanged += OnEdgeDataChanged;
+        }
+
+        if (_attachedViewerData != null)
+        {
+            _attachedViewerData.PropertyChanged -= OnViewerDataChanged;
         }
     }
 
@@ -72,8 +93,15 @@ public class GOEdge : MonoBehaviour
         UpdateEdgePresentation();
     }
 
-    // Updates the node's visual representation.
+    // Updates the edge's visual representation.
     private void UpdateEdgePresentation()
     {
+        List<Spline> splines = _attachedViewerData.LayoutEdges[_edgeData.Id];
+
+        Debug.Log($"Updating edge presentation of {_edgeData.Id}");
+        foreach (Spline spline in splines)
+        {
+            _splineContainerComponent.AddSpline(spline);
+        }
     }
 }

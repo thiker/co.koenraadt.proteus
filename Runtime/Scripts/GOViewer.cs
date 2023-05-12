@@ -25,6 +25,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     private ObservableCollection<PTEdge> _edgesData;
 
     private Dictionary<string, GameObject> _nodePrefabGOs;
+    private Dictionary<string, GameObject> _edgePrefabGOs;
 
     /// <summary>
     /// Inializes a Viewer Instance
@@ -37,12 +38,11 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log($"PROTEUS: Starting viewer {_viewerData.Id}");
-
         // Initialize dictionaries
         _nodesData = new();
         _edgesData = new();
         _nodePrefabGOs = new();
+        _edgePrefabGOs = new();
 
         // Get the game objects
         _modelAnchor = transform.Find("ModelAnchor").gameObject;
@@ -50,6 +50,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         _viewWindow.GetComponent<GOViewWindow>().Init(_viewerData.Id);
 
         // Get the nodes
+        //TODO: Refactor so that nodes data in viewer is based on nodesLayout instead of global.
         _nodesData = Repository.Instance.Models.GetNodes();
         _edgesData = Repository.Instance.Models.GetEdges();
         _globalsData = Repository.Instance.Proteus.GetGlobals();
@@ -57,8 +58,13 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         // Link event listeners
         LinkEventListeners();
 
-        // Spawn the nodes in the viewer
+        // Spawn objects
         SpawnNodes(_nodesData.Cast<PTNode>().ToList());
+        SpawnEdges();
+
+        UpdateViewerPresentation();
+        UpdateModelAnchorOffsetPresentation();
+
     }
 
     void Update()
@@ -109,6 +115,12 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         {
             UpdateModelAnchorOffsetPresentation();
         }
+
+        if (e.PropertyName == "LayoutEdges")
+        {
+            SpawnEdges();
+        }
+
         UpdateViewerPresentation();
     }
 
@@ -120,6 +132,39 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         }
     }
 
+    /// <summary>
+    /// When the layout of the edges has changed update the presentation.
+    /// </summary>
+    private void SpawnEdges()
+    {
+        List<string> edgeIds = new();
+        List<string> edgesToRemove;
+
+        List<PTEdge> relatedEdges = Repository.Instance.Viewers.GetRelatedEdgesOfViewer(_viewerData.Id);
+
+        Debug.Log($"Found {relatedEdges.Count} related edges");
+
+        foreach (PTEdge edge in relatedEdges)
+        {
+            edgeIds.Add(edge.Id);
+
+            if (!_edgePrefabGOs.ContainsKey(edge.Id))
+            {
+                SpawnEdge(edge);
+            }
+        }
+
+        edgesToRemove = _edgePrefabGOs.Keys.Except(edgeIds).ToList();
+
+        // Remove dangling edges.
+        foreach (string id in edgesToRemove)
+        {
+            DestroyEdge(id);
+        }
+    }
+
+
+    //TODO: Only regenerate view layouts on repo level.
     private void OnEdgesDataChanged(object obj, NotifyCollectionChangedEventArgs e)
     {
         // Regenerate the viewer's layout
@@ -185,15 +230,46 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     }
 
     /// <summary>
+    /// Spawn a edge prefab in the scene.
+    /// </summary>
+    /// <param name="edgeData">Data of the edge.</param>
+    private void SpawnEdge(PTEdge edge)
+    {
+        // Destroy edge if already existing
+        DestroyEdge(edge.Id);
+
+        // Create new edge
+        GameObject edgePrefabGo = Instantiate(EdgePrefab, _modelAnchor.transform, false);
+        _edgePrefabGOs[edge.Id] = edgePrefabGo;
+
+        // Setup edge with edge Data
+        GOEdge edgeGo = edgePrefabGo.GetComponent<GOEdge>();
+        edgeGo.Init(edge.Id, _viewerData.Id);
+    }
+
+    /// <summary>
     /// Destroy a Node in the viewer.
     /// </summary>
-    /// <param name="node"></param>
-    private void DestroyNode(string nodeId)
+    /// <param name="id">id of the node</param>
+    private void DestroyNode(string id)
     {
         GameObject nodePrefabGo;
-        if (_nodePrefabGOs.TryGetValue(nodeId, out nodePrefabGo))
+        if (_nodePrefabGOs.TryGetValue(id, out nodePrefabGo))
         {
             Destroy(nodePrefabGo);
+        }
+    }
+
+    /// <summary>
+    /// Destroy a Edge in the viewer.
+    /// </summary>
+    /// <param name="id">id of the edge</param>
+    private void DestroyEdge(string id)
+    {
+        GameObject edgePrefabGo;
+        if (_edgePrefabGOs.TryGetValue(id, out edgePrefabGo))
+        {
+            Destroy(edgePrefabGo);
         }
     }
 

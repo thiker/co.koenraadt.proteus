@@ -111,7 +111,7 @@ public class GONode : MonoBehaviour, IProteusInteraction
 
     private void OnViewerDataChanged(object obj, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == "LayoutPositions")
+        if (e.PropertyName == "LayoutNodes")
         {
             UpdateNodePresentation();
         }
@@ -122,19 +122,16 @@ public class GONode : MonoBehaviour, IProteusInteraction
     {
         // Update the position
         Vector3 nodeViewerPosition = new Vector3(0,0,0);
-        var layoutPositions = _attachedViewerData?.LayoutPositions;
+        var layoutNodes = _attachedViewerData?.LayoutNodes;
 
-        if (layoutPositions != null)
+        if (layoutNodes != null)
         {
-            if ((bool)(layoutPositions?.TryGetValue(_nodeData.Id, out nodeViewerPosition)))
+            if ((bool)(layoutNodes?.TryGetValue(_nodeData.Id, out nodeViewerPosition)))
             {
                 //Debug.Log($"Updating local position {_nodeData.Id} {nodeViewerPosition.x} {nodeViewerPosition.y}");
                 transform.SetLocalPositionAndRotation(nodeViewerPosition, transform.localRotation);
             }
         }
-
- 
-
 
         // Set Display name
         if (_nodeData?.DisplayName != null && _displayNameTMP != null)
@@ -145,8 +142,10 @@ public class GONode : MonoBehaviour, IProteusInteraction
         // Set the image texture
         if (_nodeData?.ImageTexture != null && _nodeGameObject != null)
         {
+            
+            //TODO: FIx ratio
             float ratio = _nodeData.ImageTexture.width / _nodeData.ImageTexture.height; // Ratio between heigth and width of the image
-
+            ratio = 1;
             _nodeGameObject.GetComponent<Renderer>().material.SetTexture("_MainTex", _nodeData.ImageTexture);
 
             //TODO: Check the magic constant 5?

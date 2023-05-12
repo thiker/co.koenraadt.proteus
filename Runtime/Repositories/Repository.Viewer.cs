@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Splines;
 using static Microsoft.Msagl.Layout.OverlapRemovalFixedSegments.OverlapRemovalFixedSegmentsMst;
 
 namespace Packages.co.koenraadt.proteus.Runtime.Repositories
@@ -170,8 +171,11 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         /// <param name="id">The id of the viewer to regenerate the layout for.</param>
         public void RegenerateViewerLayout(string id)
         {
-            Debug.Log("PROTEUS: Started Generating Viewer Layout...");
             PTViewer viewer = GetViewerById(id);
+            Dictionary<string, Vector3> nodeLayout = new();
+            Dictionary<string, List<Spline>> edgeLayout = new();
+
+            Debug.Log("PROTEUS: Started Generating Viewer Layout...");
 
             if (viewer != null)
             {
@@ -184,7 +188,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                         CurveFactory.CreateRectangle(
                             1D,
                             1D,
-                            new Microsoft.Msagl.Core.Geometry.Point()
+                            new Point()
                             ),
                         nodeData.Id
                         )
@@ -200,7 +204,6 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 
                     if (sourceNode != null && targetNode != null)
                     {
-                        //Debug.Log("Generating edges...");
                         msaglGraph.Edges.Add(new Edge(
                             msaglGraph.FindNodeByUserData(sourceNode.Id),
                             msaglGraph.FindNodeByUserData(targetNode.Id))
@@ -211,46 +214,44 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                         );
                     } else
                     {
-                        //Debug.LogWarning("PROTEUS: Tried generating viewer layout but edge has invalid source or target node.");
+                        Debug.LogWarning("PROTEUS: Tried generating viewer layout but edge has invalid source or target node.");
                         return;
                     }
 
                 }
 
-                //Debug.Log("Generating with Edges:");
-                foreach(Edge edge in msaglGraph.Edges)
-                {
-                    Debug.Log($"Edge {edge.Source.UserData} {edge.Target.UserData}");
-                }
-
-               // Debug.Log("Generating with Nodes:");
-                foreach (Node node in msaglGraph.Nodes)
-                {
-                    Debug.Log($"Node {node.UserData}");
-                }
-
-                // EdgeRoutingSettings = new EdgeRoutingSettings{EdgeRoutingMode=EdgeRoutingMode.StraightLine <-- For linear lines
-                LayoutHelpers.CalculateLayout(msaglGraph, new SugiyamaLayoutSettings() {LayerSeparation = 0, NodeSeparation = 0 }, null);
+                LayoutHelpers.CalculateLayout(msaglGraph, new SugiyamaLayoutSettings() { EdgeRoutingSettings = new EdgeRoutingSettings { EdgeRoutingMode = EdgeRoutingMode.StraightLine}, LayerSeparation = 0, NodeSeparation = 0 }, null);
 
                 msaglGraph.UpdateBoundingBox();
-                msaglGraph.Translate(new Microsoft.Msagl.Core.Geometry.Point(-msaglGraph.Left, -msaglGraph.Bottom));
+                msaglGraph.Translate(new Point(-msaglGraph.Left, -msaglGraph.Bottom));
 
                 // Set layout positions for the nodes
                 foreach (Node node in msaglGraph.Nodes)
                 {
-                    // If no layout exists initialize it
-                    if (viewer.LayoutPositions == null)
-                    {
-                        viewer.LayoutPositions = new();
-                    }
-
-                    viewer.LayoutPositions[(string)node.UserData] = new Vector3((float)node.BoundingBox.Center.X, (float)node.BoundingBox.Center.Y, 0.0f);
+                    nodeLayout[(string)node.UserData] = new Vector3((float)node.BoundingBox.Center.X, (float)node.BoundingBox.Center.Y, 0.0f);
                 }
 
                 // Set information for the edges
                 foreach(Edge edge in msaglGraph.Edges)
                 {
-                    Debug.Log($"Generating data for edge {edge.UserData} {edge.Curve.GetType()}");
+                    List<Spline> splines = new(); 
+                    Spline spline = new();
+                    BezierKnot startKnot = new();
+                    BezierKnot endKnot = new();
+
+                    splines.Add(spline);
+
+                    startKnot.Position = new((float)edge.Curve.Start.X, (float)edge.Curve.Start.Y, 0);
+                    endKnot.Position = new((float)edge.Curve.End.X, (float)edge.Curve.End.Y,0);
+
+                    startKnot.Rotation = new(0, 0, 90, (float)Space.Self);
+
+                    spline.Add(startKnot);
+                    spline.Add(endKnot);
+
+                    edgeLayout[(string)edge.UserData] = splines;
+
+                    continue;
                     if (edge.Curve is Curve)
                     {
                         Point? pt = null;
@@ -280,13 +281,48 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                     } else if (edge.Curve is LineSegment)
                     {
                         LineSegment segment = (LineSegment)edge.Curve;
-                        Debug.Log($"Edge curve segment {segment.Start.X} {segment.Start.Y}");
+                        //Debug.Log($"Edge curve segment {segment.Start.X} {segment.Start.Y}");
                     }
                 }
+
+                // Update layout
+                viewer.LayoutNodes = nodeLayout;
+                viewer.LayoutEdges = edgeLayout; ;
 
 
                 Debug.Log("PROTEUS: Viewer Layout Finished Generating");
             }
+        }
+
+        /// <summary>
+        ///  Get the edges that are related to the viewer.
+        /// </summary>
+        /// <returns></returns>
+        public List<PTEdge> GetRelatedEdgesOfViewer(string viewerId)
+        {
+            List<PTEdge> edges = new();
+            PTViewer viewer = GetViewerById(viewerId);
+
+            if (viewer == null)
+            {
+                Debug.LogWarning("PROTEUS: Tried to get related edges of viewer but viewer is null.");
+                return edges;
+            }
+
+            // Get the related edges based on the layout.
+            if (viewer.LayoutEdges != null)
+            {
+                foreach (string edgeId in viewer.LayoutEdges.Keys)
+                {
+                    PTEdge edge = Repository.Instance.Models.GetEdgeById(edgeId);
+
+                    if (edge != null)
+                    {
+                        edges.Add(edge);
+                    }
+                }
+            }
+            return edges;
         }
 
 

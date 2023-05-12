@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 5099898555606073867}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2747844967762246806}
@@ -60,181 +60,7 @@ MonoBehaviour:
       m_Data: []
     m_ObjectData:
       m_Data: []
-  m_Splines:
-  - m_EditModeType: 1
-    m_Knots:
-    - Position:
-        x: 0
-        y: 0
-        z: 0
-      TangentIn:
-        x: -0
-        y: -0
-        z: -0.3
-      TangentOut:
-        x: 0
-        y: 0
-        z: 0.3
-      Rotation:
-        value:
-          x: 0
-          y: 0
-          z: 0
-          w: 1
-    - Position:
-        x: 0
-        y: 0
-        z: 3
-      TangentIn:
-        x: -0
-        y: -0
-        z: -0.3
-      TangentOut:
-        x: 0
-        y: 0
-        z: 0.3
-      Rotation:
-        value:
-          x: 0
-          y: 0
-          z: 0
-          w: 1
-    m_MetaData:
-    - Mode: 0
-      Tension: 0.5
-      DistanceToInterpolation:
-      - Distance: 0
-        T: 0
-      - Distance: 0.038353357
-        T: 0.03448276
-      - Distance: 0.09065563
-        T: 0.06896552
-      - Distance: 0.15587357
-        T: 0.10344828
-      - Distance: 0.23297387
-        T: 0.13793103
-      - Distance: 0.3209234
-        T: 0.1724138
-      - Distance: 0.4186888
-        T: 0.20689656
-      - Distance: 0.5252367
-        T: 0.2413793
-      - Distance: 0.63953424
-        T: 0.27586207
-      - Distance: 0.7605477
-        T: 0.31034482
-      - Distance: 0.8872443
-        T: 0.3448276
-      - Distance: 1.0185903
-        T: 0.37931034
-      - Distance: 1.1535529
-        T: 0.41379312
-      - Distance: 1.2910986
-        T: 0.44827586
-      - Distance: 1.4301939
-        T: 0.4827586
-      - Distance: 1.5698061
-        T: 0.51724136
-      - Distance: 1.7089016
-        T: 0.55172414
-      - Distance: 1.8464472
-        T: 0.5862069
-      - Distance: 1.9814095
-        T: 0.62068963
-      - Distance: 2.1127558
-        T: 0.6551724
-      - Distance: 2.2394524
-        T: 0.6896552
-      - Distance: 2.3604655
-        T: 0.7241379
-      - Distance: 2.4747634
-        T: 0.7586207
-      - Distance: 2.5813112
-        T: 0.79310346
-      - Distance: 2.6790767
-        T: 0.82758623
-      - Distance: 2.767026
-        T: 0.86206895
-      - Distance: 2.8441262
-        T: 0.8965517
-      - Distance: 2.9093442
-        T: 0.9310345
-      - Distance: 2.9616468
-        T: 0.9655172
-      - Distance: 3
-        T: 1
-    - Mode: 0
-      Tension: 0.5
-      DistanceToInterpolation:
-      - Distance: -1
-        T: -1
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-      - Distance: 0
-        T: 0
-    m_Closed: 0
-    m_IntData:
-      m_Data: []
-    m_FloatData:
-      m_Data: []
-    m_Float4Data:
-      m_Data: []
-    m_ObjectData:
-      m_Data: []
+  m_Splines: []
   m_Knots:
     m_KnotsLink: []
 --- !u!23 &4950243861755030907
@@ -300,10 +126,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Container: {fileID: 182454542944469744}
-  m_RebuildOnSplineChange: 0
+  m_RebuildOnSplineChange: 1
   m_RebuildFrequency: 30
   m_UpdateColliders: 1
-  m_Sides: 3
+  m_Sides: 32
   m_SegmentsPerUnit: 4
   m_Capped: 1
   m_Radius: 0.25
@@ -317,6 +143,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2747844967762246806}
+  - component: {fileID: 1364133639913297601}
   m_Layer: 0
   m_Name: EdgePrefab
   m_TagString: Untagged
@@ -340,3 +167,15 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1364133639913297601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6348200501797332455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79c8259767b2de849a95fbb5d60b4197, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

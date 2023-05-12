@@ -1,7 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Msagl.Core.Geometry.Curves;
+using Packages.co.koenraadt.proteus.Runtime.Repositories;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Splines;
 
+#nullable enable
 namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
 {
     public class PTViewer : ObservableObject
@@ -12,7 +17,10 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         private Vector3? _modelAnchorOffset = null;
         private Quaternion? _rotation;
         private Matrix4x4? _viewWindowWorldToLocal;
-        private Dictionary<string, Vector3>? _layoutPositions;
+
+
+        private Dictionary<string, Vector3>? _layoutNodes;
+        private Dictionary<string, List<Spline>>? _layoutEdges;
 
         private bool? _isBillboarding = true;
 
@@ -84,11 +92,20 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         /// <value>
         /// Layout containing the positions of the nodes in the viewer.
         /// </value>
-        public Dictionary<string, Vector3>? LayoutPositions
+        public Dictionary<string, Vector3>? LayoutNodes
         {
-            get => _layoutPositions;
-            set => SetProperty(ref _layoutPositions, value);
+            get => _layoutNodes;
+            set => SetProperty(ref _layoutNodes, value);
         }
 
+        /// <summary>
+        /// Layout containing the curves of the edges in the viewer.
+        /// </summary>
+        public Dictionary<string, List<Spline>>? LayoutEdges
+        {
+            get => _layoutEdges;
+            set => SetProperty(ref _layoutEdges, value);
+        }
     }
 }
+#nullable disable
