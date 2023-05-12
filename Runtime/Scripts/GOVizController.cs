@@ -33,7 +33,7 @@ public class GOVizController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        RaycastHit[] hits = null;
+        RaycastHit[] hits;
 
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
@@ -47,6 +47,13 @@ public class GOVizController : MonoBehaviour
         if (pointerDown || pointerAltDown || pointerUp || pointerAltUp || pointerMove)
         {
             hits = Helpers.RayCastProteusViz();
+
+            // When no hits are registered on a pointer down event clear the selections.
+            if (hits.Length <= 0 && pointerDown)
+            {
+                Repository.Instance.Proteus.ClearViewerSelection();
+                Repository.Instance.Proteus.ClearNodeSelection();
+            }
 
             foreach (RaycastHit hit in hits)
             {

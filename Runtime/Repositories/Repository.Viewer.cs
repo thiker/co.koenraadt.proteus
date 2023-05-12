@@ -79,8 +79,15 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         /// <returns>The PTViewer with the respective Id</returns>
         public PTViewer GetViewerById(string id)
         {
-            PTViewer foundViewer = _ptViewers.FirstOrDefault(x => x.Id == id);
-            return foundViewer;
+            if (id != null && id != "")
+            {
+                PTViewer foundViewer = _ptViewers.FirstOrDefault(x => x.Id == id);
+                return foundViewer;
+            } else
+            {
+                return null;
+            }
+
         }
 
         /// <summary>

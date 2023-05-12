@@ -19,6 +19,12 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
         /// <param name="source">object to take values from</param>
         public static void CombineValues<T>(T target, T source)
         {
+            if (source == null || target == null)
+            {
+                Debug.LogWarning("PROTEUS: Trying to combine values but source or target is null");
+                return;
+            }
+
             Type t = typeof(T);
 
             var properties = t.GetProperties().Where(prop => prop.CanRead && prop.CanWrite);
@@ -27,8 +33,6 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
             {
                 var value = prop.GetValue(source, null);
                 var targetValue = prop.GetValue(target, null);
-                //bool empty = IsEmpty(value);
-
 
                 if (value != null && !value.Equals(targetValue) && value != targetValue)
                 {

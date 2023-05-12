@@ -6,7 +6,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
     public class PTGlobals : ObservableObject
     {
         private string[] _selectedNodes;
-        private string _selectedViewer;
+        private string[] _selectedViewers;
         private bool _xrayViewEnabled = true;
         private bool _explodedViewEnabled = true;
 
@@ -19,10 +19,10 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
             set => SetProperty(ref _selectedNodes, value);
         }
 
-        public string SelectedViewer 
+        public string[] SelectedViewers
         {
-            get => _selectedViewer;
-            set => SetProperty(ref _selectedViewer, value);
+            get => _selectedViewers;
+            set => SetProperty(ref _selectedViewers, value);
         }
 
         public bool XrayViewEnabled 

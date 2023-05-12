@@ -72,7 +72,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         if ((bool)_viewerData.IsBillboarding)
         {
             // Calculates the billboarding rotation
-            if (Camera.current?.transform?.position != null && transform != null)
+            if (Camera.current != null && transform != null)
             {
                 Vector3 relativePos = Camera.current.transform.position - transform.position; // the relative position
                 Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
@@ -105,12 +105,16 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
 
     private void OnViewerDataChanged(object obj, PropertyChangedEventArgs e)
     {
+        if (e.PropertyName == "ModelAnchorOffset")
+        {
+            UpdateModelAnchorOffsetPresentation();
+        }
         UpdateViewerPresentation();
     }
 
     private void OnGlobalsDataChanged(object obj, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == "SelectedViewer")
+        if (e.PropertyName == "SelectedViewers")
         {
             UpdateViewerPresentation();
         }
@@ -193,26 +197,32 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         }
     }
 
-    private void UpdateViewerPresentation()
+    private void UpdateModelAnchorOffsetPresentation()
     {
-        if (_viewerData.Id == Repository.Instance.Proteus.GetGlobals().SelectedViewer)
-        {
-            // is selected viewer
-        }
-        else
-        {
-           // is Deselected viewer
-        }
-
         // Update the view windows offset
         if (_viewerData.ModelAnchorOffset is not null)
         {
             _modelAnchor.transform.SetLocalPositionAndRotation((Vector3)_viewerData.ModelAnchorOffset, _modelAnchor.transform.localRotation);
         }
+    }
 
+    private void UpdateViewerPresentation()
+    {
+        // Update rotation and position
         if (_viewerData.Position is not null && _viewerData.Rotation is not null)
         {
             transform.SetPositionAndRotation((Vector3)_viewerData.Position, (Quaternion)_viewerData.Rotation);
         }
+
+        PTViewer selectedViewer = Repository.Instance.Proteus.GetSelectedViewer();
+
+        if (_viewerData.Id == selectedViewer?.Id)
+        {
+            Debug.Log("Is selected");
+        } else
+        {
+            Debug.Log("is not selected");
+        }
+
     }
 }

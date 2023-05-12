@@ -50,7 +50,7 @@ public class GODigiTwinComponent : MonoBehaviour
         DigiTwinController.Instance.UnlinkDigiTwinComponent(this);
     }
 
-    public bool hasLinkedNodeInSelection()
+    public bool HasLinkedNodeInSelection()
     {
         bool isInSelection = LinkedNodes.Intersect(_globalsData.SelectedNodes).Count() > 0;
         return isInSelection;
@@ -58,7 +58,7 @@ public class GODigiTwinComponent : MonoBehaviour
 
     public void UpdateXrayView()
     {
-        bool isInSelection = hasLinkedNodeInSelection();
+        bool isInSelection = HasLinkedNodeInSelection();
 
         // If no active selection disable xray
         if (!_globalsData.XrayViewEnabled || isInSelection || _globalsData.SelectedNodes.Length == 0)

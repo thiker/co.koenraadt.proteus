@@ -31,6 +31,8 @@ public class GOViewWindow : MonoBehaviour, IProteusInteraction
 
     public void OnPointerDown(RaycastHit hit)
     {
+        Repository.Instance.Proteus.SelectViewer(_linkedViewerId); // select the viewer
+
         _isDragging = true;
         _lastLocalHitPoint = transform.InverseTransformPoint(hit.point);
     }

@@ -86,7 +86,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             // Get active comp
             foreach (GODigiTwinComponent comp in _digiTwinComponents)
             {
-                if (comp.hasLinkedNodeInSelection() && comp.DoExplodedView)
+                if (comp.HasLinkedNodeInSelection() && comp.DoExplodedView)
                 {
                     activeComp = comp;
                     break;
