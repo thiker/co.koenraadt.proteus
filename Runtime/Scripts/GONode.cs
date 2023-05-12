@@ -122,12 +122,18 @@ public class GONode : MonoBehaviour, IProteusInteraction
     {
         // Update the position
         Vector3 nodeViewerPosition = new Vector3(0,0,0);
+        var layoutPositions = _attachedViewerData?.LayoutPositions;
 
-        if ((bool)(_attachedViewerData?.LayoutPositions?.TryGetValue(_nodeData.Id, out nodeViewerPosition)))
+        if (layoutPositions != null)
         {
-           //Debug.Log($"Updating local position {_nodeData.Id} {nodeViewerPosition.x} {nodeViewerPosition.y}");
-            transform.SetLocalPositionAndRotation(nodeViewerPosition, transform.localRotation);
-        } 
+            if ((bool)(layoutPositions?.TryGetValue(_nodeData.Id, out nodeViewerPosition)))
+            {
+                //Debug.Log($"Updating local position {_nodeData.Id} {nodeViewerPosition.x} {nodeViewerPosition.y}");
+                transform.SetLocalPositionAndRotation(nodeViewerPosition, transform.localRotation);
+            }
+        }
+
+ 
 
 
         // Set Display name

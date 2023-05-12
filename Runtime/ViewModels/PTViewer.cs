@@ -12,7 +12,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         private Vector3? _modelAnchorOffset = null;
         private Quaternion? _rotation;
         private Matrix4x4? _viewWindowWorldToLocal;
-        private Dictionary<string, Vector3>? _layoutPositions = new();
+        private Dictionary<string, Vector3>? _layoutPositions;
 
         private bool? _isBillboarding = true;
 

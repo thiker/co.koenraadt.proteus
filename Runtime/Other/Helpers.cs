@@ -27,10 +27,10 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
             {
                 var value = prop.GetValue(source, null);
                 var targetValue = prop.GetValue(target, null);
-                bool empty = IsEmpty(value);
+                //bool empty = IsEmpty(value);
 
 
-                if (value != null && !value.Equals(targetValue) && value != targetValue && !empty)
+                if (value != null && !value.Equals(targetValue) && value != targetValue)
                 {
                     prop.SetValue(target, value, null);
                 }

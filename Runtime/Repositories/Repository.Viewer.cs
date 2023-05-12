@@ -217,13 +217,19 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                     Debug.Log($"Node {node.UserData}");
                 }
 
-                LayoutHelpers.CalculateLayout(msaglGraph, new SugiyamaLayoutSettings() { LayerSeparation = 0, NodeSeparation = 0 }, null);
+                LayoutHelpers.CalculateLayout(msaglGraph, new SugiyamaLayoutSettings() {  LayerSeparation = 0, NodeSeparation = 0 }, null);
 
                 msaglGraph.UpdateBoundingBox();
                 msaglGraph.Translate(new Microsoft.Msagl.Core.Geometry.Point(-msaglGraph.Left, -msaglGraph.Bottom));
 
                 foreach (Node node in msaglGraph.Nodes)
                 {
+                    // If no layout exists initialize it
+                    if (viewer.LayoutPositions == null)
+                    {
+                        viewer.LayoutPositions = new();
+                    }
+
                     viewer.LayoutPositions[(string)node.UserData] = new Vector3((float)node.BoundingBox.Center.X, (float)node.BoundingBox.Center.Y, 0.0f);
                 }
 
