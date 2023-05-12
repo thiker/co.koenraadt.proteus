@@ -7,7 +7,9 @@
     "documentationUrl": "https://example.com/",
     "changelogUrl": "https://example.com/changelog.html",
     "licensesUrl": "https://example.com/licensing.html",
-    "dependencies": {},
+    "dependencies": {
+        "com.unity.splines": "2.2.1"
+    },
     "keywords": [
         "visualization",
         "sysml",

@@ -1,8 +1,6 @@
 ﻿using Packages.co.koenraadt.proteus.Runtime.ViewModels;
-using System.Collections.ObjectModel;
 using System.Linq;
 using Packages.co.koenraadt.proteus.Runtime.Other;
-using UnityEngine.Networking.Types;
 
 namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 {
