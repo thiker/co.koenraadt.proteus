@@ -101,11 +101,27 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
                 return;
             }
 
+            // Edge Updates
+            if (t.StartsWith("proteus/data/update/3dml/edges"))
+            {
+                PTEdge edgeUpdate = JsonConvert.DeserializeObject<PTEdge>(message.ConvertPayloadToString());
+                Repository.Instance.Models.UpdateEdge(edgeUpdate);
+                return;
+            }
+
             // Node Deletion
             if (t.StartsWith("proteus/data/delete/3dml/nodes"))
             {
                 string id = message.ConvertPayloadToString();
                 Repository.Instance.Models.DeleteNodeById(id);
+                return;
+            }
+
+            // Edge Deletion
+            if (t.StartsWith("proteus/data/delete/3dml/edges"))
+            {
+                string id = message.ConvertPayloadToString();
+                Repository.Instance.Models.DeleteEdgeById(id);
                 return;
             }
 
@@ -142,6 +158,10 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/update/3dml/nodes/#").Build());
             await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/delete/3dml/nodes/#").Build());
             await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/update/3dml/images/#").Build());
+
+            // Edges data
+            await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/update/3dml/edges/#").Build());
+            await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/delete/3dml/edges/#").Build());
         }
 
         /// <summary>

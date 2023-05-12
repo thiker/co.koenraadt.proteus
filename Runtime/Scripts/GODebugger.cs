@@ -1,8 +1,6 @@
 using Packages.co.koenraadt.proteus.Runtime.Controllers;
 using Packages.co.koenraadt.proteus.Runtime.Repositories;
 using Packages.co.koenraadt.proteus.Runtime.ViewModels;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GODebugger : MonoBehaviour
@@ -25,17 +23,6 @@ public class GODebugger : MonoBehaviour
             return;
         }
 
-        // Object Clicked
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
-            {
-                Debug.Log($"<color=lightblue>PROTEUS</color> Hit: {hit.colliderInstanceID} of Type: {hit.collider.GetType()}");
-            }
-        }
-
         if (Input.GetKeyDown(debugKey))
         {
             isHoldingDebugKey = true;
@@ -49,11 +36,11 @@ public class GODebugger : MonoBehaviour
         if (isHoldingDebugKey)
         {
             // Test Command
-            if (Input.GetKeyDown(KeyCode.S))
+            if (Input.GetKeyDown(KeyCode.T))
             {
                 Repository.Instance.Models.UpdateNode(new PTNode() { Id = "debug-node-test", Name = "DebugNodeTest" });
             }
-            if (Input.GetKeyDown(KeyCode.D))
+            if (Input.GetKeyDown(KeyCode.Y))
             {
                 Repository.Instance.Models.DeleteNodeById("debug-node-test");
             }
@@ -63,9 +50,16 @@ public class GODebugger : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.V))
             {
-                Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = "test-viewer" });
-                Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = "test-viewer2", Position = new Vector3(20, 0, 0), Rotation = new Quaternion(0,0,0,0)});
+                Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = "test-viewer", RootNodeId= "GUID 67a20f8a-a0ca-4c00-9a1a-18819f96d56e", Position = new Vector3(0,2,0), Rotation= new Quaternion(0,0,0,0)});
+                
             }
+             if (Input.GetKeyDown(KeyCode.B)) {
+                Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = "test-viewer", Position=new Vector3(0,0,Random.Range(0,10)), Rotation=new Quaternion(Random.Range(0, 2*Mathf.PI),Random.Range(0, 2*Mathf.PI),Random.Range(0, 2*Mathf.PI),0)});
+             }
+             if (Input.GetKeyDown(KeyCode.S)) {
+                Debug.Log("selecting node");
+                Repository.Instance.Proteus.SelectNode("GUID aed81bee-acb1-4133-80d2-ce7b9c699f98");
+             }
         }
     }
 }

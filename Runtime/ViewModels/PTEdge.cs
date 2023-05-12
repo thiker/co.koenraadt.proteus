@@ -10,6 +10,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
     public class PTEdge : ObservableObject
     {
         private string _id;
+        private string _source;
+        private string _target;
 
         /// <value>
         /// The identifier of the edge.
@@ -18,6 +20,24 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         {
             get => _id;
             set => SetProperty(ref _id, value);
+        }
+
+        /// <summary>
+        /// The id of the source node of the edge.
+        /// </summary>
+        public string Source
+        {
+            get => _source;
+            set => SetProperty(ref _source, value);
+        }
+
+        /// <summary>
+        /// The id of the target node of the edge.
+        /// </summary>
+        public string Target
+        {
+            get => _target;
+            set => SetProperty(ref _target, value);
         }
 
         public PTEdge ()
