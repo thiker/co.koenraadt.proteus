@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8469011837895339775}
   - component: {fileID: 8919461785208167652}
   m_Layer: 0
-  m_Name: ViewWindowBorder Top
+  m_Name: ViewWindowBorderTop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

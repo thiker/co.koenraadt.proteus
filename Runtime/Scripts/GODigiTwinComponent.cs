@@ -20,7 +20,7 @@ public class GODigiTwinComponent : MonoBehaviour
     private Material _originalMaterial;
     private Vector3 _explodedViewOffset;
 
-    void awake()
+    void Awake()
     {
         gameObject.layer = LayerMask.NameToLayer("ProteusViz");
         _explodedViewOffset = new Vector3(0, 0, 0);

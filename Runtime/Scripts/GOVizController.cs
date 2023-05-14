@@ -40,11 +40,13 @@ public class GOVizController : MonoBehaviour
 
         bool pointerDown = Input.GetMouseButtonDown(0);
         bool pointerAltDown = Input.GetMouseButtonDown(1);
+        bool pointerTertiaryDown = Input.GetMouseButtonDown(2);
         bool pointerUp = Input.GetMouseButtonUp(0);
-        bool pointerAltUp = Input.GetMouseButton(1);
+        bool pointerAltUp = Input.GetMouseButtonUp(1);
+        bool pointerTertiaryUp = Input.GetMouseButtonUp(2);
         bool pointerMove = Mathf.Abs(mouseX) > 0 || Mathf.Abs(mouseY) > 0;
 
-        if (pointerDown || pointerAltDown || pointerUp || pointerAltUp || pointerMove)
+        if (pointerDown || pointerAltDown || pointerTertiaryDown || pointerUp || pointerAltUp || pointerTertiaryUp || pointerMove )
         {
             hits = Helpers.RayCastProteusViz();
 
@@ -69,6 +71,11 @@ public class GOVizController : MonoBehaviour
                     interactionComp?.OnPointerAltDown(hit);
                 }
 
+                if (pointerTertiaryDown)
+                {
+                    interactionComp?.OnPointerTertiaryDown(hit);
+                }
+
                 if (pointerUp)
                 {
                     interactionComp?.OnPointerUp(hit);
@@ -79,9 +86,14 @@ public class GOVizController : MonoBehaviour
                     interactionComp?.OnPointerAltUp(hit);
                 }
 
+                if (pointerTertiaryUp)
+                {
+                    interactionComp?.OnPointerTertiaryUp(hit);
+                }
+
                 if (pointerMove)
                 {
-                    interactionComp.OnPointerMove(hit);
+                    interactionComp?.OnPointerMove(hit);
                 }
             }
         }

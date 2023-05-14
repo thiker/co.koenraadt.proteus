@@ -8,22 +8,26 @@ using UnityEngine;
 public class GOViewWindow : MonoBehaviour, IProteusInteraction
 {
     private bool _isDragging;
-    private string _linkedViewerId;
+    private string _attachedViewerId;
     private Vector3 _lastLocalHitPoint; // the point where the user started the pointer event
+    private PTViewer _attachedViewerData;
 
-    public void Init(string linkedViewerId) {
-        _linkedViewerId = linkedViewerId;
+    public void Init(string attachedViewerId) {
+        _attachedViewerId = attachedViewerId;
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        // Get viewer data of node
+        _attachedViewerData = Repository.Instance.Viewers.GetViewerById(_attachedViewerId);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonUp(0))
+        // Release on global mosue up aswell
+        if (Input.GetMouseButtonUp(2))
         {
             _isDragging = false;
         }
@@ -31,27 +35,29 @@ public class GOViewWindow : MonoBehaviour, IProteusInteraction
 
     public void OnPointerDown(RaycastHit hit)
     {
-        Repository.Instance.Proteus.SelectViewer(_linkedViewerId); // select the viewer
+        Repository.Instance.Proteus.SelectViewer(_attachedViewerId); // select the viewer
+    }
 
+    public void OnPointerTertiaryDown(RaycastHit hit)
+    {
         _isDragging = true;
         _lastLocalHitPoint = transform.InverseTransformPoint(hit.point);
     }
 
-    public void OnPointerUp(RaycastHit hit)
+    public void OnPointerTertiaryUp(RaycastHit hit)
     {
         _isDragging = false;
     }
 
     public void OnPointerMove(RaycastHit hit)
     {
-
-        if (_isDragging)
+        if (_isDragging && Repository.Instance.Proteus.IsViewerSelected(_attachedViewerData?.Id))
         {
             Vector3 localHitPosition = transform.InverseTransformPoint(hit.point);
             Vector3 offset = (localHitPosition - _lastLocalHitPoint); 
             offset.z = 0;
 
-            Repository.Instance.Viewers.AddModelAnchorOffset(_linkedViewerId, offset);
+            Repository.Instance.Viewers.AddModelAnchorOffset(_attachedViewerId, offset);
 
             _lastLocalHitPoint = localHitPosition;
         }

@@ -17,10 +17,8 @@ public class GONode : MonoBehaviour, IProteusInteraction
 {
     private string _nodeId;
     private string _attachedViewerId;
-
     private PTNode _nodeData;
     private PTViewer _attachedViewerData;
-
     private TextMeshPro _displayNameTMP;
     private GameObject _nodeGameObject;
     private MaterialPropertyBlock _matPropBlock;
@@ -88,7 +86,10 @@ public class GONode : MonoBehaviour, IProteusInteraction
 
     public void OnPointerDown(RaycastHit hit)
     {
-        Repository.Instance.Proteus.SelectNode(_nodeData.Id);
+        if (Repository.Instance.Proteus.IsViewerSelected(_attachedViewerData.Id))
+        {
+            Repository.Instance.Proteus.SelectNode(_nodeData.Id);
+        }
     }
 
     private void linkEventListeners()
@@ -152,8 +153,6 @@ public class GONode : MonoBehaviour, IProteusInteraction
                 viewerScale = (Vector3)_attachedViewerData.Scale;
                 zoomScale = (Vector3)_attachedViewerData.ZoomScale;
             }
-
-            Debug.Log($"Updating node presentation {viewerScale} {zoomScale} {_nodeData.Id}");
 
             if (zoomScale.x <= (viewerScale.x / _nodeData.UnitWidth)  * triggerPercentageOfNodeInView)
             {

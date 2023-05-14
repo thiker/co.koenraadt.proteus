@@ -9,12 +9,11 @@ public class GOEdge : MonoBehaviour
 {
     private string _edgeId;
     private string _attachedViewerId;
-
     private PTEdge _edgeData;
     private PTViewer _attachedViewerData;
-
     private GameObject _splineGameObject;
     private SplineContainer _splineContainerComponent;
+    private MaterialPropertyBlock _matPropBlock;
 
     // Initialize the node
     public void Init(string edgeId, string attachedViewerId)
@@ -26,6 +25,8 @@ public class GOEdge : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _matPropBlock = new MaterialPropertyBlock();
+
         // Get Edge data
         _edgeData = Repository.Instance.Models.GetEdgeById(_edgeId);
 
@@ -50,6 +51,13 @@ public class GOEdge : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Get a renderer component either of the own gameobject or of a child
+        Renderer renderer = _splineGameObject.GetComponentInChildren<Renderer>();
+        //set the matrix
+        if (_attachedViewerData?.ViewWindowWorldToLocal is not null)
+            _matPropBlock.SetMatrix("_WorldToBox", (Matrix4x4)_attachedViewerData.ViewWindowWorldToLocal);
+        //apply propertyBlock to renderer
+        renderer.SetPropertyBlock(_matPropBlock);
     }
 
 

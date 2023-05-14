@@ -174,6 +174,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             PTViewer viewer = GetViewerById(id);
             Dictionary<string, Vector3> nodeLayout = new();
             Dictionary<string, List<Spline>> edgeLayout = new();
+            float zoomLevel;
 
             Debug.Log("PROTEUS: Started Generating Viewer Layout...");
 
@@ -227,7 +228,14 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                 msaglGraph.Translate(new Point(-msaglGraph.Left, -msaglGraph.Bottom));
 
                 // Set zoom level
-                float zoomLevel = (float)Math.Max(1.0 / msaglGraph.Width, 1.0 / msaglGraph.Height);
+                if (msaglGraph.Width == 0 || msaglGraph.Height == 0)
+                {
+                    zoomLevel = 0.0f;
+                } else
+                {
+                    zoomLevel = (float)Math.Max(1.0 / msaglGraph.Width, 1.0 / msaglGraph.Height);
+                }
+
 
                 viewer.ZoomScale = new Vector3(zoomLevel, zoomLevel, 0.1f);
                 viewer.MaxZoomScale = Vector3.positiveInfinity;

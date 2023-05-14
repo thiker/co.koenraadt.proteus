@@ -16,16 +16,15 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     public GameObject EdgePrefab;
     private GameObject _modelAnchor;
     private GameObject _viewWindow;
-
+    private List<GameObject> _viewWindowBorders;
     PTViewer _viewerData;
-
     private PTGlobals _globalsData;
-
     private ObservableCollection<PTNode> _nodesData;
     private ObservableCollection<PTEdge> _edgesData;
-
     private Dictionary<string, GameObject> _nodePrefabGOs;
     private Dictionary<string, GameObject> _edgePrefabGOs;
+
+
 
     /// <summary>
     /// Inializes a Viewer Instance
@@ -43,11 +42,15 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         _edgesData = new();
         _nodePrefabGOs = new();
         _edgePrefabGOs = new();
+        _viewWindowBorders = new();
 
         // Get the game objects
         _modelAnchor = transform.Find("ModelAnchor").gameObject;
         _viewWindow = transform.Find("ViewWindow").gameObject;
         _viewWindow.GetComponent<GOViewWindow>().Init(_viewerData.Id);
+
+        _viewWindowBorders.Add(transform.Find("ViewWindowBorderBottom").gameObject);
+        _viewWindowBorders.Add(transform.Find("ViewWindowBorderTop").gameObject);
 
         // Get the nodes
         //TODO: Refactor so that nodes data in viewer is based on nodesLayout instead of global.
@@ -313,16 +316,21 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         }
 
         //TODO: Refactor to only run on selection change
-        PTViewer selectedViewer = Repository.Instance.Proteus.GetSelectedViewer();
+        bool isSelectedViewer = Repository.Instance.Proteus.IsViewerSelected(_viewerData.Id);
 
-        if (_viewerData.Id == selectedViewer?.Id)
+        if (isSelectedViewer)
         {
-            //TODO: On selection
-            //Debug.Log("Is selected");
+            foreach(GameObject border in _viewWindowBorders)
+            {
+                border.GetComponent<Renderer>().material.color = Color.blue;
+            }
         } else
         {
             //TODO: On Deselection
-            //Debug.Log("is not selected");
+            foreach (GameObject border in _viewWindowBorders)
+            {
+                border.GetComponent<Renderer>().material.color = Color.white;
+            }
         }
 
     }

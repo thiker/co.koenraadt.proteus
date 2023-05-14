@@ -72,6 +72,16 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             PTViewer selectedViewerData = Repository.Instance.Viewers.GetViewerById(selectedViewerId);
             return selectedViewerData;
         }
+         
+        public bool IsViewerSelected(string viewerId)
+        {
+            if (viewerId == null || viewerId == "")
+            {
+                return false;
+            }
+
+            return GetSelectedViewer()?.Id == viewerId;
+        }
 
         /// <summary>
         /// Updates the selected viewer. Clears the selection when viewerId is null.
