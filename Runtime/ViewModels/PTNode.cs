@@ -22,6 +22,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
 
         private float _unitWidth = 10f;
         private float _unitHeight = 10f;
+        private float _unitDepth = 1.0f;
 
         /// <value>
         /// The identifier of the node.
@@ -84,6 +85,15 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         {
             get => _unitHeight;
             set => SetProperty(ref _unitHeight, value);
+        }
+
+        /// <summary>
+        /// The depth of the node in the viewer.
+        /// </summary>
+        public float UnitDepth
+        {
+            get => _unitDepth;
+            set => SetProperty(ref _unitDepth, value);
         }
 
         /// <summary>

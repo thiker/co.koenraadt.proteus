@@ -11,6 +11,7 @@ using static UnityEngine.UI.Image;
 using System;
 using Packages.co.koenraadt.proteus.Runtime.Repositories;
 using Packages.co.koenraadt.proteus.Runtime.Interfaces;
+using Microsoft.Msagl.Layout.LargeGraphLayout;
 
 public class GONode : MonoBehaviour, IProteusInteraction
 {
@@ -111,7 +112,7 @@ public class GONode : MonoBehaviour, IProteusInteraction
 
     private void OnViewerDataChanged(object obj, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == "LayoutNodes")
+        if (e.PropertyName == "LayoutNodes" || e.PropertyName == "ZoomScale" || e.PropertyName == "Scale")
         {
             UpdateNodePresentation();
         }
@@ -121,7 +122,7 @@ public class GONode : MonoBehaviour, IProteusInteraction
     private void UpdateNodePresentation()
     {
         // Update the position
-        Vector3 nodeViewerPosition = new Vector3(0,0,0);
+        Vector3 nodeViewerPosition = new Vector3(0, 0, 0);
         var layoutNodes = _attachedViewerData?.LayoutNodes;
 
         if (layoutNodes != null)
@@ -140,24 +141,45 @@ public class GONode : MonoBehaviour, IProteusInteraction
         }
 
         // Set the image texture
-        if (_nodeData?.ImageTexture != null && _nodeGameObject != null)
-        {
-            
-            //TODO: FIx ratio
-            float ratio = _nodeData.ImageTexture.width / _nodeData.ImageTexture.height; // Ratio between heigth and width of the image
-            ratio = 1;
-            _nodeGameObject.GetComponent<Renderer>().material.SetTexture("_MainTex", _nodeData.ImageTexture);
+        if (_nodeGameObject != null) {
+            Vector3 viewerScale = new Vector3(0, 0, 0);
+            Vector3 zoomScale = new Vector3(0, 0, 0);
+            Transform displayNameTransform;
+            float triggerPercentageOfNodeInView = 0.3f;
 
-            //TODO: Check the magic constant 5?
-            if (ratio >= 1)
+            if (_attachedViewerData?.Scale != null && _attachedViewerData?.ZoomScale != null)
             {
-                _nodeGameObject.transform.localScale = new Vector3(_nodeData.UnitWidth * ratio, _nodeData.UnitHeight, 1);
+                viewerScale = (Vector3)_attachedViewerData.Scale;
+                zoomScale = (Vector3)_attachedViewerData.ZoomScale;
+            }
+
+            Debug.Log($"Updating node presentation {viewerScale} {zoomScale} {_nodeData.Id}");
+
+            if (zoomScale.x <= (viewerScale.x / _nodeData.UnitWidth)  * triggerPercentageOfNodeInView)
+            {
+                // Remove diagram texture
+                _nodeGameObject.GetComponent<Renderer>().material.SetTexture("_MainTex", null);
+                
+                // Place label in center
+                _displayNameTMP.verticalAlignment = TMPro.VerticalAlignmentOptions.Middle;
+                _displayNameTMP.gameObject.transform.SetLocalPositionAndRotation(new Vector3(0, 0,  _nodeData.UnitDepth), _displayNameTMP.gameObject.transform.localRotation);
             }
             else
             {
-                _nodeGameObject.transform.localScale = new Vector3(_nodeData.UnitWidth, _nodeData.UnitHeight * ratio, 1);
+                // Place label on top
+                _displayNameTMP.gameObject.transform.SetLocalPositionAndRotation(new Vector3(0, _nodeData.UnitHeight, _nodeData.UnitDepth), _displayNameTMP.gameObject.transform.localRotation);
+                _displayNameTMP.verticalAlignment = TMPro.VerticalAlignmentOptions.Bottom;
+
+                if (_nodeData?.ImageTexture != null)
+                {
+                    //TODO: Fix that texture maintains aspect ratio ratio
+                    _nodeGameObject.GetComponent<Renderer>().material.SetTexture("_MainTex", _nodeData.ImageTexture);
+                }
             }
 
+            // Update the local scale
+            _nodeGameObject.transform.localScale = new Vector3(_nodeData.UnitWidth, _nodeData.UnitHeight, 1);
         }
+
     }
 }
