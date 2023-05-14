@@ -186,8 +186,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                 {
                     msaglGraph.Nodes.Add(new Node(
                         CurveFactory.CreateRectangle(
-                            1D,
-                            1D,
+                            nodeData.UnitWidth,
+                            nodeData.UnitHeight,
                             new Point()
                             ),
                         nodeData.Id
@@ -220,10 +220,18 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 
                 }
 
+                // Calculate the new layout
                 LayoutHelpers.CalculateLayout(msaglGraph, new SugiyamaLayoutSettings() { EdgeRoutingSettings = new EdgeRoutingSettings { EdgeRoutingMode = EdgeRoutingMode.StraightLine}, LayerSeparation = 0, NodeSeparation = 0 }, null);
 
                 msaglGraph.UpdateBoundingBox();
                 msaglGraph.Translate(new Point(-msaglGraph.Left, -msaglGraph.Bottom));
+
+                // Set zoom level
+                float zoomLevel = (float)Math.Max(1.0 / msaglGraph.Width, 1.0 / msaglGraph.Height);
+
+                viewer.ZoomScale = new Vector3(zoomLevel, zoomLevel, 0.1f);
+                viewer.MaxZoomScale = Vector3.positiveInfinity;
+                viewer.MinZoomScale = new Vector3(0,0,0);
 
                 // Set layout positions for the nodes
                 foreach (Node node in msaglGraph.Nodes)
@@ -252,6 +260,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                     edgeLayout[(string)edge.UserData] = splines;
 
                     continue;
+
+                    //TODO: Add support for different types of curves
                     if (edge.Curve is Curve)
                     {
                         Point? pt = null;
@@ -287,7 +297,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 
                 // Update layout
                 viewer.LayoutNodes = nodeLayout;
-                viewer.LayoutEdges = edgeLayout; ;
+                viewer.LayoutEdges = edgeLayout;
 
 
                 Debug.Log("PROTEUS: Viewer Layout Finished Generating");
@@ -325,7 +335,47 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             return edges;
         }
 
+        /// <summary>
+        /// Adds the zoom delta to the specified viewer
+        /// </summary>
+        /// <param name="viewerId">Id of the viewer to zoom</param>
+        /// <param name="delta">zoom delta</param>
+        public void ZoomViewer(string viewerId, float delta = 0.0f)
+        {
+            PTViewer viewer = GetViewerById(viewerId);
 
+            if (viewer != null && viewer?.ZoomScale != null )
+            {
+                Vector3 oldZoomScale = (Vector3)viewer.ZoomScale;
+                Vector3 maxZoomScale = (Vector3)viewer?.MaxZoomScale;
+                Vector3 minZoomScale = (Vector3)viewer?.MinZoomScale;
+
+
+                float x = oldZoomScale.x + delta;
+                float y = oldZoomScale.y + delta;
+                float z = oldZoomScale.z + delta;
+
+                // Limit to upper bound
+                if (viewer?.MaxZoomScale != null)
+                {
+                    x = Math.Min(x, maxZoomScale.x);
+                    y = Math.Min(y, maxZoomScale.y);
+                    z = Math.Min(z, maxZoomScale.z);
+                }
+
+                // Limit to lower bound
+                if (viewer?.MinZoomScale != null)
+                {
+                    x = Math.Max(x, minZoomScale.x);
+                    y = Math.Max(y, minZoomScale.y);
+                    z = Math.Max(z, minZoomScale.z);
+                }
+
+                viewer.ZoomScale = new Vector3 (x, y, z);
+            }
+
+
+        }
 
     }
 

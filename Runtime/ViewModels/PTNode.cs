@@ -20,8 +20,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
 
         private string[] _edges;
 
-        private float _unitWidth = 0.001f;
-        private float _unitHeight = 0.001f;
+        private float _unitWidth = 10f;
+        private float _unitHeight = 10f;
 
         /// <value>
         /// The identifier of the node.

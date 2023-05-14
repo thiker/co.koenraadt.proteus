@@ -14,13 +14,16 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         private string _id;
         private string _rootNodeId;
         private Vector3? _position;
+        private Vector3? _scale;
         private Vector3? _modelAnchorOffset = null;
+        private Vector3? _zoomScale;
+        private Vector3? _maxZoomScale;
+        private Vector3? _minZoomScale;
         private Quaternion? _rotation;
         private Matrix4x4? _viewWindowWorldToLocal;
-
-
         private Dictionary<string, Vector3>? _layoutNodes;
         private Dictionary<string, List<Spline>>? _layoutEdges;
+
 
         private bool? _isBillboarding = true;
 
@@ -52,12 +55,49 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         }
 
         /// <value>
+        /// The position of the viewer.
+        /// <value>
+        public Vector3? Scale
+        {
+            get => _scale;
+            set => SetProperty(ref _scale, value);
+        }
+
+
+        /// <value>
         /// The local position of the view window
         /// <value>
         public Vector3? ModelAnchorOffset 
         {
             get => _modelAnchorOffset;
             set => SetProperty(ref _modelAnchorOffset, value);
+        }
+
+        /// <summary>
+        /// The zoom level of the viewer.
+        /// </summary>
+        public Vector3? ZoomScale
+        {
+            get => _zoomScale;
+            set => SetProperty(ref _zoomScale, value);
+        }
+
+        /// <summary>
+        /// The maximum zoom level of the viewer.
+        /// </summary>
+        public Vector3? MaxZoomScale
+        {
+            get => _maxZoomScale;
+            set => SetProperty(ref _maxZoomScale, value);
+        }
+
+        /// <summary>
+        /// The minimum zoom level of the viewer.
+        /// </summary>
+        public Vector3? MinZoomScale
+        {
+            get => _minZoomScale;
+            set => SetProperty(ref _minZoomScale, value);
         }
 
 
@@ -106,6 +146,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
             get => _layoutEdges;
             set => SetProperty(ref _layoutEdges, value);
         }
+
+
     }
 }
 #nullable disable

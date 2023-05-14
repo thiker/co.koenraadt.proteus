@@ -78,9 +78,9 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         if ((bool)_viewerData.IsBillboarding)
         {
             // Calculates the billboarding rotation
-            if (Camera.current != null && transform != null)
+            if (Camera.main != null && transform != null)
             {
-                Vector3 relativePos = Camera.current.transform.position - transform.position; // the relative position
+                Vector3 relativePos = Camera.main.transform.position - transform.position; // the relative position
                 Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
                 Repository.Instance.Viewers.SetViewerRotation(_viewerData.Id, rotation);
             }
@@ -111,7 +111,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
 
     private void OnViewerDataChanged(object obj, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == "ModelAnchorOffset")
+        if (e.PropertyName == "ModelAnchorOffset" || e.PropertyName == "Zoom" || e.PropertyName == "MaxZoom" || e.PropertyName == "MinZoom")
         {
             UpdateModelAnchorOffsetPresentation();
         }
@@ -276,16 +276,38 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     private void UpdateModelAnchorOffsetPresentation()
     {
         // Update the view windows offset
-        if (_viewerData.ModelAnchorOffset is not null)
+        if (_viewerData.ModelAnchorOffset != null)
         {
             _modelAnchor.transform.SetLocalPositionAndRotation((Vector3)_viewerData.ModelAnchorOffset, _modelAnchor.transform.localRotation);
         }
+
     }
 
     private void UpdateViewerPresentation()
     {
+        // Update the local scale
+        if (_viewerData.Scale != null)
+        {
+            transform.localScale = (Vector3)_viewerData.Scale;
+        }
+
+        // Update the zoom level
+        if (_viewerData.ZoomScale != null && _viewerData.Scale != null)
+        {
+            Vector3 zoom = (Vector3)_viewerData.ZoomScale;
+            Vector3 viewerScale = (Vector3)_viewerData.Scale;
+
+            float zoomX = (1.0f / viewerScale.x) * zoom.x;
+            float zoomY = (1.0f / viewerScale.y) * zoom.y;
+            float zoomZ = (1.0f / viewerScale.z) * zoom.z;
+
+            _modelAnchor.transform.localScale = new Vector3(zoomX, zoomY, zoomZ);
+        }
+
+
+
         // Update rotation and position
-        if (_viewerData.Position is not null && _viewerData.Rotation is not null)
+        if (_viewerData.Position != null && _viewerData.Rotation != null)
         {
             transform.SetPositionAndRotation((Vector3)_viewerData.Position, (Quaternion)_viewerData.Rotation);
         }

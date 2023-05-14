@@ -151,11 +151,11 @@ public class GONode : MonoBehaviour, IProteusInteraction
             //TODO: Check the magic constant 5?
             if (ratio >= 1)
             {
-                _nodeGameObject.transform.localScale = new Vector3(5 * ratio, 5, 1);
+                _nodeGameObject.transform.localScale = new Vector3(_nodeData.UnitWidth * ratio, _nodeData.UnitHeight, 1);
             }
             else
             {
-                _nodeGameObject.transform.localScale = new Vector3(5, 5 * ratio, 1);
+                _nodeGameObject.transform.localScale = new Vector3(_nodeData.UnitWidth, _nodeData.UnitHeight * ratio, 1);
             }
 
         }
