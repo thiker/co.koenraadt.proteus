@@ -50,7 +50,7 @@ public class GODebugger : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.V))
             {
-                Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = "test-viewer", RootNodeId = "GUID 67a20f8a-a0ca-4c00-9a1a-18819f96d56e", Scale = new Vector3(1, 1, 1), Position = new Vector3(0, 2, 0), Rotation = new Quaternion(0, 0, 0, 0) });
+                Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = "test-viewer", RootNodeId = "GUID 67a20f8a-a0ca-4c00-9a1a-18819f96d56e", Scale = new Vector3(3, 3, 3), Position = new Vector3(-4, 7, 3), Rotation = new Quaternion(0, 0, 0, 0) });
             }
             if (Input.GetKeyDown(KeyCode.KeypadPlus))
             {

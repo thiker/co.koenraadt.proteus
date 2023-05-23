@@ -1,11 +1,12 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.Generic;
 
 namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
 {
     public class PTGlobals : ObservableObject
     {
-        private string[] _selectedNodes;
+        private List<string> _selectedNodes;
         private string[] _selectedViewers;
         private bool _xrayViewEnabled = true;
         private bool _explodedViewEnabled = true;
@@ -13,7 +14,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         /// <value>
         /// The identifier of the edge.
         /// </value>
-        public string[] SelectedNodes
+        public List<string> SelectedNodes
         {
             get => _selectedNodes;
             set => SetProperty(ref _selectedNodes, value);

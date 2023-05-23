@@ -19,6 +19,7 @@ public class GONode : MonoBehaviour, IProteusInteraction
     private string _attachedViewerId;
     private PTNode _nodeData;
     private PTViewer _attachedViewerData;
+    private PTGlobals _globalsData;
     private TextMeshPro _displayNameTMP;
     private GameObject _nodeGameObject;
     private MaterialPropertyBlock _matPropBlock;
@@ -36,11 +37,10 @@ public class GONode : MonoBehaviour, IProteusInteraction
         // initialize variables
         _matPropBlock = new MaterialPropertyBlock();
 
-        // Get node data
+        // Get data
         _nodeData = Repository.Instance.Models.GetNodeById(_nodeId);
-
-        // Get viewer data of node
         _attachedViewerData = Repository.Instance.Viewers.GetViewerById(_attachedViewerId);
+        _globalsData = Repository.Instance.Proteus.GetGlobals();
 
         // TODO: Reimplement correctly
         // Get the text object
@@ -82,6 +82,11 @@ public class GONode : MonoBehaviour, IProteusInteraction
         {
             _attachedViewerData.PropertyChanged -= OnViewerDataChanged;
         }
+
+        if (_globalsData != null)
+        {
+            _globalsData.PropertyChanged -= OnGlobalsDataChanged;
+        }
     }
 
     public void OnPointerDown(RaycastHit hit)
@@ -103,8 +108,28 @@ public class GONode : MonoBehaviour, IProteusInteraction
         {
             _attachedViewerData.PropertyChanged += OnViewerDataChanged;
         }
+
+        if (_globalsData != null)
+        {
+            _globalsData.PropertyChanged += OnGlobalsDataChanged;
+        }
     }
 
+    private void OnGlobalsDataChanged(object obj, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == "SelectedNodes")
+        {
+            // Change text color based whether node is selected
+            if (_globalsData.SelectedNodes.Contains(_nodeData.Id) && _displayNameTMP != null)
+            {
+                _displayNameTMP.color = Color.blue;
+            }
+            else
+            {
+                _displayNameTMP.color = Color.black;
+            }
+        }
+    }
 
     private void OnNodeDataChanged(object obj, PropertyChangedEventArgs e)
     {
@@ -142,7 +167,8 @@ public class GONode : MonoBehaviour, IProteusInteraction
         }
 
         // Set the image texture
-        if (_nodeGameObject != null) {
+        if (_nodeGameObject != null)
+        {
             Vector3 viewerScale = new Vector3(0, 0, 0);
             Vector3 zoomScale = new Vector3(0, 0, 0);
             Transform displayNameTransform;
@@ -154,14 +180,14 @@ public class GONode : MonoBehaviour, IProteusInteraction
                 zoomScale = (Vector3)_attachedViewerData.ZoomScale;
             }
 
-            if (zoomScale.x <= (viewerScale.x / _nodeData.UnitWidth)  * triggerPercentageOfNodeInView)
+            if (zoomScale.x <= (viewerScale.x / _nodeData.UnitWidth) * triggerPercentageOfNodeInView)
             {
                 // Remove diagram texture
                 _nodeGameObject.GetComponent<Renderer>().material.SetTexture("_MainTex", null);
-                
+
                 // Place label in center
                 _displayNameTMP.verticalAlignment = TMPro.VerticalAlignmentOptions.Middle;
-                _displayNameTMP.gameObject.transform.SetLocalPositionAndRotation(new Vector3(0, 0,  _nodeData.UnitDepth), _displayNameTMP.gameObject.transform.localRotation);
+                _displayNameTMP.gameObject.transform.SetLocalPositionAndRotation(new Vector3(0, 0, _nodeData.UnitDepth), _displayNameTMP.gameObject.transform.localRotation);
             }
             else
             {

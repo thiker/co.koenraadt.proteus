@@ -101,6 +101,17 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         }
 
         /// <summary>
+        /// Get a PTNode by its name
+        /// </summary>
+        /// <param name="id">the node's name.</param>
+        /// <returns>The PTNode with the respective Name</returns>
+        public PTNode GetNodeByName(string name)
+        {
+            PTNode foundNode = _ptNodes.FirstOrDefault(x => x.Name == name);
+            return foundNode;
+        }
+
+        /// <summary>
         /// Get a PTEdge by its Id.
         /// </summary>
         /// <param name="id">the edge's identifier.</param>

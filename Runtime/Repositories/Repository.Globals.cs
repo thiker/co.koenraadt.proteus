@@ -1,6 +1,10 @@
 ﻿using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using System.Linq;
 using Packages.co.koenraadt.proteus.Runtime.Other;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+
 
 namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 {
@@ -44,12 +48,53 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         /// <param name="nodeId">Id of the node to select</param>
         public void SelectNode(string nodeId)
         {
+
             if (nodeId == "" || nodeId == null)
             {
                 ClearNodeSelection();
                 return;
             }
-            GetGlobals().SelectedNodes = new[] { nodeId };
+            GetGlobals().SelectedNodes = new() { nodeId };
+        }
+
+        /// <summary>
+        /// Selects a node based on its name.
+        /// </summary>
+        /// <param name="nodeName">name of the node.</param>
+        public void SelectNodeByName(string nodeName)
+        {
+            PTNode node = Repository.Instance.Models.GetNodeByName(nodeName);
+            if (node != null)
+            {
+                SelectNode(node.Id);
+            }
+        }
+
+
+        /// <summary>
+        /// Sets the node selection to the provided list
+        /// </summary>
+        /// <param name="nodeIds">list of node ids to select</param>
+        public void SelectNodes(List<string> nodeIds)
+        {
+            GetGlobals().SelectedNodes = nodeIds; 
+        }
+
+        /// <summary>
+        /// Select nodes based on names instead of ids
+        /// </summary>
+        /// <param name="names">names of the nodes</param>
+        public void SelectNodesByNames(string[] names)
+        {
+            List<string> nodeIds = new();
+            foreach (string name in names) {
+                PTNode node = Repository.Instance.Models.GetNodeByName(name);
+                if (node != null)
+                {
+                    nodeIds.Add(node.Id);
+                }
+            }
+            SelectNodes(nodeIds);
         }
 
         /// <summary>
@@ -58,9 +103,27 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         /// <param name="nodeId">The Id of the node to deselect</param>
         public void ClearNodeSelection()
         {
-            GetGlobals().SelectedNodes = new string[] { };
+            GetGlobals().SelectedNodes = new();
         }
 
+
+        /// <summary>
+        /// Get the display names of the selected nodes.
+        /// </summary>
+        public List<string> GetNodeSelectionDisplayNames()
+        {
+            List<string> names = new();
+            foreach (string id in GetGlobals().SelectedNodes)
+            {
+                PTNode node = Repository.Instance.Models.GetNodeById(id);
+                if (node != null)
+                {
+                    names.Add(node.Name);
+                }
+            }
+
+            return names;
+        }
 
         /// <summary>
         /// Gets the currently selected viewer.
@@ -72,7 +135,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             PTViewer selectedViewerData = Repository.Instance.Viewers.GetViewerById(selectedViewerId);
             return selectedViewerData;
         }
-         
+
         public bool IsViewerSelected(string viewerId)
         {
             if (viewerId == null || viewerId == "")
