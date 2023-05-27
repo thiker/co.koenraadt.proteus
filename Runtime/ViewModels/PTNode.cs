@@ -9,12 +9,13 @@ using UnityEngine;
 namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
 {
     public class PTNode : ObservableObject
-    {   
-    
+    {
+
         private string _id;
         private string _name;
         private string _displayName;
         private string _description;
+        private string _metaClass;
 
         private Texture2D _imageTexture;
 
@@ -41,7 +42,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
             get => _name;
             set => SetProperty(ref _name, value);
         }
-        
+
         /// <summary>
         /// The label of the node.
         /// </summary>
@@ -58,6 +59,15 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         {
             get => _description;
             set => SetProperty(ref _description, value);
+        }
+
+        /// <summary>
+        /// The MetaClass of the node.
+        /// </summary>
+        public string MetaClass
+        {
+            get => _metaClass;
+            set => SetProperty(ref _metaClass, value);
         }
 
         /// <summary>
@@ -105,7 +115,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
             set => SetProperty(ref _edges, value);
         }
 
-        public PTNode ()
+        public PTNode()
         {
         }
     }

@@ -109,6 +109,14 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
                 return;
             }
 
+            // Model Elements Updates
+            if (t.StartsWith("proteus/data/update/3dml/model-elements"))
+            {
+                PTModelElement modelElementUpdate = JsonConvert.DeserializeObject<PTModelElement>(message.ConvertPayloadToString());
+                Repository.Instance.Models.UpdateModelElement(modelElementUpdate);
+                return;
+            }
+
             // Node Deletion
             if (t.StartsWith("proteus/data/delete/3dml/nodes"))
             {
@@ -122,6 +130,14 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             {
                 string id = message.ConvertPayloadToString();
                 Repository.Instance.Models.DeleteEdgeById(id);
+                return;
+            }
+
+            // Model Element Deletion
+            if (t.StartsWith("proteus/data/delete/3dml/model-elements"))
+            {
+                string id = message.ConvertPayloadToString();
+                Repository.Instance.Models.DeleteModelElementById(id);
                 return;
             }
 
@@ -162,6 +178,10 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             // Edges data
             await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/update/3dml/edges/#").Build());
             await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/delete/3dml/edges/#").Build());
+
+            // Model Elements data
+            await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/update/3dml/model-elements/#").Build());
+            await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/delete/3dml/model-elements/#").Build());
         }
 
         /// <summary>
