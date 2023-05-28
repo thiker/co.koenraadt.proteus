@@ -21,6 +21,7 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
     public bool DoExplodedView = true;
     public bool ReactsToXray = true;
     public bool ReactsToExplodedView = true;
+    private bool _originalRendererEnabled;
     private PTGlobals _globalsData;
     private Renderer _renderer;
     private Material _xrayMaterial;
@@ -39,6 +40,7 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
         _globalsData = Repository.Instance.Proteus.GetGlobals();
 
         _renderer = GetComponent<Renderer>();
+        _originalRendererEnabled = _renderer.enabled;
         _originalMaterial = new Material(_renderer.material.shader);
         _originalMaterial.CopyPropertiesFromMaterial(_renderer.material);
 
@@ -77,6 +79,7 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
         // If no active selection disable xray
         if (!_globalsData.XrayViewEnabled || isInSelection || _globalsData.SelectedNodes.Count == 0)
         {
+            _renderer.enabled = _originalRendererEnabled;
             _renderer.material = _originalMaterial;
             return;
         }
@@ -84,12 +87,18 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
         // Make transparent if not linked to a node in the selection
         if (isInSelection)
         {
+            _renderer.enabled = _originalRendererEnabled;
             _renderer.material = _originalMaterial;
         }
         else if (_globalsData.XrayViewEnabled && ReactsToXray)
         {
             _renderer.material = _xrayMaterial;
             _renderer.material.color = new Color(1f, 1f, 1f, XrayOpacityFactor);
+
+            if (XrayOpacityFactor == 0)
+            {
+                _renderer.enabled = false;
+            }
         }
     }
 

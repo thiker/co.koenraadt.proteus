@@ -56,9 +56,9 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             PTViewer oldViewer = GetViewerById(newViewer.Id);
 
             // Check if root has changed
-            if (newViewer?.RootNodeId != null)
+            if (newViewer?.RootNodeIds != null)
             {
-                changedRoot = newViewer?.RootNodeId != oldViewer?.RootNodeId;
+                changedRoot = !(newViewer?.RootNodeIds).Equals(oldViewer?.RootNodeIds);
             }
 
             // If not already existing add the node
@@ -172,6 +172,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         public void RegenerateViewerLayout(string id)
         {
             PTViewer viewer = GetViewerById(id);
+            List<PTNode> nodesData = new();
+            List<PTEdge> edgesData = new();
             Dictionary<string, Vector3> nodeLayout = new();
             Dictionary<string, List<Spline>> edgeLayout = new();
             float zoomLevel;
@@ -180,11 +182,49 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 
             if (viewer != null)
             {
+
+                // Get the nodes and edges related to the viewer.
+                List<string> relatedNodeIds = new();
+                List<string> relatedEdgeIds = new();
+
+                foreach (string rootNodeId in viewer.RootNodeIds)
+                {
+                    relatedNodeIds.Add(rootNodeId);
+
+                    Debug.Log($"Getting related for root node {rootNodeId}");
+
+                    var related = Repository.Instance.Models.FindRelatedNodesAndEdgesOfRootNode(rootNodeId);
+                    List<string> nodeIds = related.Item1;
+                    List<string> edgeIds = related.Item2;
+
+                    relatedNodeIds = relatedNodeIds.Concat(nodeIds).ToList();
+                    relatedEdgeIds = relatedEdgeIds.Concat(edgeIds).ToList();
+                }
+
+                // Remove duplicates
+                relatedNodeIds = relatedNodeIds.Distinct().ToList();
+                relatedEdgeIds = relatedEdgeIds.Distinct().ToList();
+
+                Debug.Log($"Found {relatedNodeIds.Count} related nodes and {relatedEdgeIds.Count} edges.");
+
+                // Get the data of the related nodes and edges
+                foreach (string nodeId in relatedNodeIds)
+                {
+                    nodesData.Add(Repository.Instance.Models.GetNodeById(nodeId));
+                }
+
+                foreach (string edgeId in relatedEdgeIds)
+                {
+                    edgesData.Add(Repository.Instance.Models.GetEdgeById(edgeId));
+                }
+
+
                 GeometryGraph msaglGraph = new() { Margins = 0 };
 
                 // Generate nodes for layout
-                foreach (PTNode nodeData in Repository.Instance.Models.GetNodes())
+                foreach (PTNode nodeData in nodesData)
                 {
+                    Debug.Log($"Adding node {nodeData.Name}");
                     msaglGraph.Nodes.Add(new Node(
                         CurveFactory.CreateRectangle(
                             nodeData.UnitWidth,
@@ -197,14 +237,18 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                 }
 
                 // Generate edges for layout
-                foreach (PTEdge edgeData in Repository.Instance.Models.GetEdges())
+                foreach (PTEdge edgeData in edgesData)
                 {
                     PTNode sourceNode = Repository.Instance.Models.GetNodeById(edgeData.Source);
                     PTNode targetNode = Repository.Instance.Models.GetNodeById(edgeData.Target);
 
-
                     if (sourceNode != null && targetNode != null)
                     {
+                        msaglGraph.FindNodeByUserData(targetNode.Id);
+                        Debug.Log($"Adding edge source node {sourceNode.Name} {targetNode?.Name}");
+                        Debug.Log($"source {msaglGraph.FindNodeByUserData(sourceNode.Id).UserData} target {msaglGraph.FindNodeByUserData(targetNode.Id).UserData}");
+
+
                         msaglGraph.Edges.Add(new Edge(
                             msaglGraph.FindNodeByUserData(sourceNode.Id),
                             msaglGraph.FindNodeByUserData(targetNode.Id))
@@ -266,41 +310,6 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                     spline.Add(endKnot);
 
                     edgeLayout[(string)edge.UserData] = splines;
-
-                    continue;
-
-                    //TODO: Add support for different types of curves
-                    if (edge.Curve is Curve)
-                    {
-                        Point? pt = null;
-                        foreach (var segment in (edge.Curve as Curve).Segments)
-                        {
-                            // When curve contains a line segment.
-                            if (segment is LineSegment)
-                            {
-
-                            }
-
-                            // When curve contains a cubic Bezier segment.
-                            else if (segment is CubicBezierSegment)
-                            {
- 
-                            }
-
-                            // When curve contains an arc.
-                            else if (segment is Ellipse)
-                            {
-
-                            }
-                            else
-                            {
-                            }
-                        }
-                    } else if (edge.Curve is LineSegment)
-                    {
-                        LineSegment segment = (LineSegment)edge.Curve;
-                        //Debug.Log($"Edge curve segment {segment.Start.X} {segment.Start.Y}");
-                    }
                 }
 
                 // Update layout
@@ -310,6 +319,37 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 
                 Debug.Log("PROTEUS: Viewer Layout Finished Generating");
             }
+        }
+
+        /// <summary>
+        ///  Get the edges that are related to the viewer.
+        /// </summary>
+        /// <returns></returns>
+        public List<PTNode> GetRelatedNodesOfViewer(string viewerId)
+        {
+            List<PTNode> nodes = new();
+            PTViewer viewer = GetViewerById(viewerId);
+
+            if (viewer == null)
+            {
+                Debug.LogWarning("PROTEUS: Tried to get related nodes of viewer but viewer is null.");
+                return nodes;
+            }
+
+            // Get the related edges based on the layout.
+            if (viewer.LayoutNodes != null)
+            {
+                foreach (string nodeId in viewer.LayoutNodes.Keys)
+                {
+                    PTNode node = Repository.Instance.Models.GetNodeById(nodeId);
+
+                    if (node != null)
+                    {
+                        nodes.Add(node);
+                    }
+                }
+            }
+            return nodes;
         }
 
         /// <summary>

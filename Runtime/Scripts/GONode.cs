@@ -91,6 +91,7 @@ public class GONode : MonoBehaviour, IProteusInteraction
 
     public void OnPointerDown(RaycastHit hit)
     {
+        Debug.Log($"PROTEUS: Clicked on node with identifier, {_nodeData.Id} ");
         if (Repository.Instance.Proteus.IsViewerSelected(_attachedViewerData.Id))
         {
             Repository.Instance.Proteus.SelectNode(_nodeData.Id);

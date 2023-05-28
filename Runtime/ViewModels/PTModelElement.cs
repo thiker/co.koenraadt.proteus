@@ -14,7 +14,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         private string _name;
         private string _description;
         private string _displayName;
-        private string[] _relatedDiagrams;
+        private string[] _relatedNodes;
 
         /// <value>
         /// The identifier of the edge.
@@ -65,10 +65,10 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         /// <summary>
         /// The related diagrams of the model element.
         /// </summary>
-        public string[] RelatedDiagrams
+        public string[] RelatedNodes
         {
-            get => _relatedDiagrams;
-            set => SetProperty(ref _relatedDiagrams, value);
+            get => _relatedNodes;
+            set => SetProperty(ref _relatedNodes, value);
         }
 
 

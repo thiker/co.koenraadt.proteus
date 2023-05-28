@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Packages.co.koenraadt.proteus.Runtime.Other;
 using UnityEngine;
+using System.Collections.Generic;
+using System;
 
 namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 {
@@ -160,6 +162,78 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             if (string.IsNullOrEmpty(name)) { return null; }
             PTNode foundNode = _ptNodes.FirstOrDefault(x => x.Name == name);
             return foundNode;
+        }
+
+        public List<PTNode> GetRelatedBehavioralNodesById(string id)
+        {
+            List<PTNode> relatedBehavioralNodes = new();
+            List<PTNode> relatedNodes = new();
+
+            PTNode rootNode = GetNodeById(id);
+
+            if (rootNode != null)
+            {
+                foreach (string el in rootNode.ModelElements) {
+                    PTModelElement element = GetModelElementById(el);
+
+                    if (element != null && element?.RelatedNodes != null)
+                    {
+                        foreach (string relatedNodeId in element.RelatedNodes)
+                        {
+                            PTNode relatedNode = GetNodeById(relatedNodeId);
+
+                            if (relatedNode != null)
+                            {
+                                relatedNodes.Add(relatedNode);
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            // Filter to only include behavioral nodes
+            relatedBehavioralNodes = relatedNodes.Where(x => Helpers.IsBehavioralMetaClass(x.MetaClass)).ToList();
+
+            return relatedBehavioralNodes;
+        }
+
+        /// <summary>
+        /// Gets the related nodes and edges of a root node.
+        /// </summary>
+        /// <param name="rootNodeId">the id of the root node</param>
+        /// <returns>a tuple containing the nodes and edges related to the root node.</returns>
+        public Tuple<List<string>, List<string>> FindRelatedNodesAndEdgesOfRootNode(string rootNodeId)
+        {
+            HashSet<string> seenEdges = new();
+            List<string> relatedNodeIds = new();
+            List<string> relatedEdgeIds = new();
+
+            PTNode rootNode = GetNodeById(rootNodeId);
+
+            if (rootNode == null) { return Tuple.Create(relatedNodeIds, relatedEdgeIds); };
+
+            foreach(string edgeId in rootNode.Edges)
+            {
+                PTEdge edge = GetEdgeById(edgeId);
+                string targetNodeId = edge.Target;
+
+                if (seenEdges.Contains(edge.Id) || targetNodeId == rootNodeId)
+                {
+                    break;
+                }
+
+                seenEdges.Add(edge.Id);
+
+                relatedNodeIds.Add(targetNodeId);
+                relatedEdgeIds.Add(edge.Id);
+
+                var result = FindRelatedNodesAndEdgesOfRootNode(targetNodeId);
+                relatedNodeIds = relatedNodeIds.Concat(result.Item1).ToList();
+                relatedEdgeIds = relatedEdgeIds.Concat(result.Item2).ToList();
+            }
+
+            return Tuple.Create(relatedNodeIds, relatedEdgeIds);
         }
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
     public class PTViewer : ObservableObject
     {
         private string _id;
-        private string _rootNodeId;
+        private string[]? _rootNodeIds;
         private Vector3? _position;
         private Vector3? _scale;
         private Vector3? _modelAnchorOffset = null;
@@ -37,12 +37,12 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         }
 
         /// <value>
-        /// The Id of the node that is the root for the viewer.
+        /// The Ids of the root nodes for the viewer.
         /// </value>
-        public string RootNodeId
+        public string[]? RootNodeIds
         {
-            get => _rootNodeId;
-            set => SetProperty(ref _rootNodeId, value);
+            get => _rootNodeIds;
+            set => SetProperty(ref _rootNodeIds, value);
         }
 
         /// <value>

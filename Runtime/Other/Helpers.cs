@@ -69,6 +69,11 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
             return false;
         }
 
+        public static bool IsBehavioralMetaClass(string x)
+        {
+            return x == "Statechart" || x == "ActivityDiagram" || x == "SequenceDiagram";
+        }
+
         /// <summary>
         /// Raycasts for proteusviz layer
         /// </summary>
@@ -112,7 +117,5 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
 
             return null;
         }
-
-
     }
 }

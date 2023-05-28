@@ -62,7 +62,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         LinkEventListeners();
 
         // Spawn objects
-        SpawnNodes(_nodesData.Cast<PTNode>().ToList());
+        SpawnNodes();
         SpawnEdges();
 
         UpdateViewerPresentation();
@@ -124,6 +124,11 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
             SpawnEdges();
         }
 
+        if (e.PropertyName == "LayoutNodes")
+        {
+            SpawnNodes();
+        }
+
         UpdateViewerPresentation();
     }
 
@@ -182,35 +187,39 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     /// <param name="e"></param>
     private void OnNodesDataChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
-
         // Regenerate the viewer's layout
         Repository.Instance.Viewers.RegenerateViewerLayout(_viewerData.Id);
-
-        // Spawn new Items
-        if (e.NewItems is not null)
-        {
-            SpawnNodes(e.NewItems.Cast<PTNode>().ToList());
-        }
-
-        // Remove old items
-        if (e.OldItems is not null)
-        {
-            foreach (PTNode nodeData in e.OldItems)
-            {
-                DestroyNode(nodeData.Id);
-            }
-        }
     }
 
     /// <summary>
     /// Spawn nodes in the Viewer.
     /// </summary>
     /// <param name="node"></param>
-    private void SpawnNodes(List<PTNode> nodesData)
+    private void SpawnNodes()
     {
-        foreach (PTNode nodeData in nodesData)
+        List<string> nodeIds = new();
+        List<string> nodesToRemove;
+
+        List<PTNode> relatedNodes = Repository.Instance.Viewers.GetRelatedNodesOfViewer(_viewerData.Id);
+
+        Debug.Log($"Found {relatedNodes.Count} related edges");
+
+        foreach (PTNode node in relatedNodes)
         {
-            SpawnNode(nodeData.Id);
+            nodeIds.Add(node.Id);
+
+            if (!_nodePrefabGOs.ContainsKey(node.Id))
+            {
+                SpawnNode(node);
+            }
+        }
+
+        nodesToRemove = _nodePrefabGOs.Keys.Except(nodeIds).ToList();
+
+        // Remove dangling edges.
+        foreach (string id in nodesToRemove)
+        {
+            DestroyNode(id);
         }
     }
 
@@ -218,18 +227,18 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     /// Spawn a node prefab in the scene.
     /// </summary>
     /// <param name="nodeData">Data of the node.</param>
-    private void SpawnNode(string nodeId)
+    private void SpawnNode(PTNode node)
     {
         // Destroy node if already existing
-        DestroyNode(nodeId);
+        DestroyNode(node.Id);
 
         // Create new node
         GameObject nodePrefabGo = Instantiate(NodePrefab, _modelAnchor.transform, false);
-        _nodePrefabGOs[nodeId] = nodePrefabGo;
+        _nodePrefabGOs[node.Id] = nodePrefabGo;
 
         // Setup node with Node Data
         GONode nodeGo = nodePrefabGo.GetComponent<GONode>();
-        nodeGo.Init(nodeId, _viewerData.Id);
+        nodeGo.Init(node.Id, _viewerData.Id);
     }
 
     /// <summary>

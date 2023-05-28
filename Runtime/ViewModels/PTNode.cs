@@ -19,6 +19,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
 
         private Texture2D _imageTexture;
 
+        private string[] _modelElements;
         private string[] _edges;
 
         private float _unitWidth = 10f;
@@ -113,6 +114,15 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         {
             get => _edges;
             set => SetProperty(ref _edges, value);
+        }
+
+        /// <summary>
+        /// The ids of the model elements that are used by the node.
+        /// </summary>
+        public string[] ModelElements
+        {
+            get => _modelElements;
+            set => SetProperty(ref _modelElements, value);
         }
 
         public PTNode()
