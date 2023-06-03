@@ -103,8 +103,17 @@ public class GOVizController : MonoBehaviour
 
     void OnDestroy()
     {
-        _viewersData.CollectionChanged -= OnViewersDataChanged;
-        _globalsData.PropertyChanged -= OnGlobalsDataChanged;
+        if (_viewersData != null)
+        {
+            _viewersData.CollectionChanged -= OnViewersDataChanged;
+        }
+
+        if (_globalsData != null)
+        {
+            _globalsData.PropertyChanged -= OnGlobalsDataChanged;
+        }
+
+
     }
 
     private void linkEventListeners()

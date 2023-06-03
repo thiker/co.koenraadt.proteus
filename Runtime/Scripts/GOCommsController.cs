@@ -14,4 +14,9 @@ public class GOCommsController : MonoBehaviour
     {
         CommsController.Instance.Update();
     }
+
+    private void OnDestroy()
+    {
+        CommsController.Instance.Destroy();
+    }
 }

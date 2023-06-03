@@ -28,6 +28,15 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                 return ModelsRepository.Instance;
             }
         }
+
+        public StatesRepository States
+        {
+            get
+            {
+                return StatesRepository.Instance;
+            }
+        }
+
         public ViewersRepository Viewers
         {
             get

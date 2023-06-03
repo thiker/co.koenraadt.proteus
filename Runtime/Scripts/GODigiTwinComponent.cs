@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using Packages.co.koenraadt.proteus.Runtime.Controllers;
@@ -15,6 +17,7 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
 {
     public string MainDiagramName;
     public List<string> LinkedNodes;
+    public List<string> LinkedStates;
     public float XrayOpacityFactor = .1f;
     public float ExplodeFactor = 1.5f;
     public bool DoXrayView = true;
@@ -22,22 +25,27 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
     public bool ReactsToXray = true;
     public bool ReactsToExplodedView = true;
     private bool _originalRendererEnabled;
+    private ObservableCollection<PTState> _statesCollection;
     private PTGlobals _globalsData;
     private Renderer _renderer;
     private Material _xrayMaterial;
     private Material _originalMaterial;
     private Vector3 _explodedViewOffset;
 
-    void Awake()
+    virtual protected void Awake()
     {
         gameObject.layer = LayerMask.NameToLayer("ProteusViz");
         _explodedViewOffset = new Vector3(0, 0, 0);
     }
 
     // Start is called before the first frame update
-    void Start()
+    virtual protected void Start()
     {
+        Debug.Log("Starting digi twin component..");
         _globalsData = Repository.Instance.Proteus.GetGlobals();
+        _statesCollection = Repository.Instance.States.GetStates();
+
+        _statesCollection.CollectionChanged += OnStatesCollectionChanged;
 
         _renderer = GetComponent<Renderer>();
         _originalRendererEnabled = _renderer.enabled;
@@ -51,13 +59,16 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
 
 
     // Update is called once per frame
-    void Update()
+    virtual protected void Update()
     {
-
     }
 
-    void OnDestroy()
+    virtual protected void OnDestroy()
     {
+        if (_statesCollection != null)
+        {
+            _statesCollection.CollectionChanged -= OnStatesCollectionChanged;
+        }
         DigiTwinController.Instance.UnlinkDigiTwinComponent(this);
     }
 
@@ -114,4 +125,43 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
             transform.position += _explodedViewOffset;
         }
     }
+
+    private void OnStatesCollectionChanged(object obj, NotifyCollectionChangedEventArgs e)
+    {
+        // Unlink removed
+        if (e?.OldItems != null)
+        {
+            foreach (PTState oldState in e.OldItems)
+            {
+                if (LinkedStates.Contains(oldState.Id))
+                {
+                    oldState.PropertyChanged -= OnStateDataChanged;
+                }
+            }
+        }
+
+        // Link new
+        if (e?.NewItems != null)
+        {
+            foreach (PTState newState in e.NewItems)
+            {
+                if (LinkedStates.Contains(newState.Id))
+                {
+                    newState.PropertyChanged -= OnStateDataChanged;
+                    newState.PropertyChanged += OnStateDataChanged;
+                }
+            }
+        }
+    }
+
+    protected void OnStateDataChanged(object obj, PropertyChangedEventArgs e)
+    {
+        OnStateDataChanged((PTState)obj, e);
+    }
+
+    virtual protected void OnStateDataChanged(PTState obj ,PropertyChangedEventArgs e)
+    {
+
+    }
+
 }
