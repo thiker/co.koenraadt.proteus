@@ -40,10 +40,10 @@ public class GOVizController : MonoBehaviour
 
         bool pointerDown = Input.GetMouseButtonDown(0);
         bool pointerAltDown = Input.GetMouseButtonDown(1);
-        bool pointerTertiaryDown = Input.GetMouseButtonDown(2);
+        bool pointerTertiaryDown = Input.GetMouseButtonDown(2) || (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftControl)); // alternative for mobile
         bool pointerUp = Input.GetMouseButtonUp(0);
         bool pointerAltUp = Input.GetMouseButtonUp(1);
-        bool pointerTertiaryUp = Input.GetMouseButtonUp(2);
+        bool pointerTertiaryUp = Input.GetMouseButtonUp(2)  || (Input.GetMouseButtonUp(0) && Input.GetKey(KeyCode.LeftControl)) || (Input.GetMouseButton(0) && Input.GetKeyUp(KeyCode.LeftControl));
         bool pointerMove = Mathf.Abs(mouseX) > 0 || Mathf.Abs(mouseY) > 0;
 
         if (pointerDown || pointerAltDown || pointerTertiaryDown || pointerUp || pointerAltUp || pointerTertiaryUp || pointerMove )
@@ -56,7 +56,7 @@ public class GOVizController : MonoBehaviour
                 Repository.Instance.Proteus.ClearViewerSelection();
                 Repository.Instance.Proteus.ClearNodeSelection();
             }
-
+ 
             foreach (RaycastHit hit in hits)
             {
                 IProteusInteraction interactionComp = Helpers.FindInteractableComponentInParent(hit.collider.gameObject);

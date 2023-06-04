@@ -52,6 +52,12 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         _viewWindowBorders.Add(transform.Find("ViewWindowBorderBottom").gameObject);
         _viewWindowBorders.Add(transform.Find("ViewWindowBorderTop").gameObject);
 
+        // Link viewer components
+        List<IPTViewerComponent> allComponents = transform.GetComponentsInChildren<IPTViewerComponent>().ToList();
+        foreach(var comp in allComponents) {
+            comp.Init(_viewerData.Id);
+        }
+
         // Get the nodes
         //TODO: Refactor so that nodes data in viewer is based on nodesLayout instead of global.
         _nodesData = Repository.Instance.Models.GetNodes();

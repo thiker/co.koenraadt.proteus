@@ -224,7 +224,6 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                 // Generate nodes for layout
                 foreach (PTNode nodeData in nodesData)
                 {
-                    Debug.Log($"Adding node {nodeData.Name}");
                     msaglGraph.Nodes.Add(new Node(
                         CurveFactory.CreateRectangle(
                             nodeData.UnitWidth,
@@ -381,6 +380,14 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                 }
             }
             return edges;
+        }
+
+        public void ScaleViewer(string viewerId, Vector3 scaleDelta)
+        {
+            PTViewer viewer = GetViewerById(viewerId);
+            if (viewer != null && scaleDelta != null) {
+                viewer.Scale = viewer.Scale + scaleDelta;
+            }
         }
 
         /// <summary>

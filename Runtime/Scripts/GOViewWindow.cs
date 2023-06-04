@@ -27,7 +27,7 @@ public class GOViewWindow : MonoBehaviour, IProteusInteraction
     void Update()
     {
         // Release on global mosue up aswell
-        if (Input.GetMouseButtonUp(2))
+        if (Input.GetMouseButtonUp(2) || (Input.GetMouseButtonUp(0) && Input.GetKey(KeyCode.LeftControl)) || (Input.GetMouseButton(0) && Input.GetKeyUp(KeyCode.LeftControl)))
         {
             _isDragging = false;
         }
