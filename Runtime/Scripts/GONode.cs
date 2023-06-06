@@ -1,18 +1,9 @@
 using Packages.co.koenraadt.proteus.Runtime.ViewModels;
-using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 using TMPro;
-using Codice.Client.Common.TreeGrouper;
-using static UnityEngine.UI.Image;
-using System;
 using Packages.co.koenraadt.proteus.Runtime.Repositories;
 using Packages.co.koenraadt.proteus.Runtime.Interfaces;
-using Microsoft.Msagl.Layout.LargeGraphLayout;
-
 public class GONode : MonoBehaviour, IProteusInteraction
 {
     private string _nodeId;

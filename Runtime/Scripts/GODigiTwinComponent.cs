@@ -52,7 +52,7 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
         _originalMaterial = new Material(_renderer.material.shader);
         _originalMaterial.CopyPropertiesFromMaterial(_renderer.material);
 
-        _xrayMaterial = (Material)AssetDatabase.LoadAssetAtPath("Packages/co.koenraadt.proteus/Runtime/Materials/Mat_Xray.mat", typeof(Material));
+        _xrayMaterial = (Material)Resources.Load("Packages/co.koenraadt.proteus/Runtime/Materials/Mat_Xray.mat", typeof(Material));
 
         DigiTwinController.Instance.LinkDigiTwinComponent(this);
     }

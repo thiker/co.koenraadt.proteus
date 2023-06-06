@@ -1,4 +1,5 @@
 ﻿using Packages.co.koenraadt.proteus.Runtime.ViewModels;
+using Packages.co.koenraadt.proteus.Runtime.Controllers;
 using System.Linq;
 using Packages.co.koenraadt.proteus.Runtime.Other;
 using System.Collections.Generic;
@@ -48,7 +49,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         /// <param name="nodeId">Id of the node to select</param>
         public void SelectNode(string nodeId)
         {
-
+            CommsController.Instance.SendMessage("proteus/actions/extern/selection", nodeId);
             if (nodeId == "" || nodeId == null)
             {
                 ClearNodeSelection();
