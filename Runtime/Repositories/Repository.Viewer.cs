@@ -222,6 +222,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                 // Generate nodes for layout
                 foreach (PTNode nodeData in nodesData)
                 {
+                    try {
                     msaglGraph.Nodes.Add(new Node(
                         CurveFactory.CreateRectangle(
                             nodeData.UnitWidth,
@@ -230,7 +231,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                             ),
                         nodeData.Id
                         )
-                    );
+                    ); } catch(Exception e) {}
                 }
 
                 // Generate edges for layout

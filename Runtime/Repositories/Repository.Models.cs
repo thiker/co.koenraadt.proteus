@@ -211,8 +211,6 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 
             PTNode rootNode = GetNodeById(rootNodeId);
 
-            Debug.Log($"Getting related for root node with name{rootNode.Name} and id {rootNode.Id}");
-
             if (rootNode == null) { Debug.LogWarning($"Tried to find related nodes and edges of root node but root node with {rootNodeId} is null."); return Tuple.Create(relatedNodeIds, relatedEdgeIds); };
             if (rootNode.Edges == null) {  Debug.LogWarning($"Tried to find edges of root node {rootNode.Id} {rootNode.Name} but rootNode.Edges is null"); return Tuple.Create(relatedNodeIds, relatedEdgeIds); };
             

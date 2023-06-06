@@ -9,13 +9,16 @@ using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using UnityEngine;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Text.Json.Serialization;
-using Unity.Plastic.Newtonsoft.Json;
+using Newtonsoft.Json;
+ using System.Net;
+ using System.Net.NetworkInformation;
+ using System.Net.Sockets;
 
 namespace Packages.co.koenraadt.proteus.Runtime.Controllers
 {
     public class CommsController
     {
+        private static string BROKER_IP = "192.168.121.46";
         private static CommsController _instance = null;
         private static MqttFactory _mqttFactory = new();
         private static ConcurrentQueue<MqttApplicationMessage> _mqttMessageQueue = new();
@@ -40,11 +43,11 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
         /// <returns></returns>
         public async Task Init()
         {
-            Debug.Log("<color=lightblue>PROTEUS</color> Initializing Server...");
+            Debug.Log("PROTEUS: Initializing Server...");
             await InitServer();
-            Debug.Log("<color=lightblue>PROTEUS</color> Initializing Client...");
+            Debug.Log("PROTEUS: Initializing Client...");
             await InitClient();
-            Debug.Log("<color=lightblue>PROTEUS</color> CommsController Init Completed.");
+            Debug.Log("PROTEUS: CommsController Init Completed.");
         }
 
         public void Destroy()
@@ -64,12 +67,19 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
 
         private async Task InitServer()
         {
-            Debug.Log("<color=lightblue>PROTEUS</color> starting server...");
+            Debug.Log("PROTEUS: creating mqtt server...");
+            IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+            IPAddress ipAddress = ipHostInfo.AddressList[0];
+            Debug.Log($"PROTEUS: Local ip found is {ipAddress.ToString()}");
+
             MqttServerOptions optionsBuilder = new MqttServerOptionsBuilder()
-            .WithDefaultEndpoint().WithDefaultEndpointPort(1883).Build();
+            .WithDefaultEndpointBoundIPAddress(ipAddress).WithDefaultEndpointPort(1883).Build();
             _mqttServer = _mqttFactory.CreateMqttServer(optionsBuilder);
+
+
+            Debug.Log("PROTEUS: starting mqtt server...");
             await _mqttServer.StartAsync();
-            Debug.Log("<color=lightblue>PROTEUS</color> Server Started.");
+            Debug.Log("PROTEUS: Server Started.");
         }
 
         /// <summary>
@@ -78,8 +88,10 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
         /// <returns></returns>
         private async Task ConnectClient()
         {
+            Debug.Log("PROTEUS: Try disconnecting client...");
             await DisconnectClient();
 
+            Debug.Log("PROTEUS: Setup application message received async.");
             // Setup the message handling so that queued messages are not lost.
             _mqttClient.ApplicationMessageReceivedAsync += e =>
             {
@@ -88,8 +100,21 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             };
 
             // Connect the client
-            var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("127.0.0.1").Build();
+            Debug.Log("PROTEUS: Connecting client....");
+            IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+            IPAddress ipAddress = ipHostInfo.AddressList[0];
+            Debug.Log($"PROTEUS: local ip found {ipAddress}");
+
+            string tcpServerIp = ipAddress.ToString();
+            if (BROKER_IP != null) {
+                Debug.Log($"PROTEUS: Overriding client to connnect to external broker ip {BROKER_IP}");
+                tcpServerIp = BROKER_IP;
+            }
+            
+            var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(tcpServerIp).Build();
             await _mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
+            Debug.Log("PROTEUS: Client connected.");
+            CommsController.Instance.SendMessage("proteus/debug/hello-world", "Hello World from Proteus!");
         }
 
         /// <summary>
@@ -189,6 +214,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
                 await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/debug/#").Build());
             }
 
+            Debug.Log("PROTEUS: Subscribe to topics...");
             // States Data
             await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/update/3dml/states/#").Build());
 
@@ -204,6 +230,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             // Model Elements data
             await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/update/3dml/model-elements/#").Build());
             await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/delete/3dml/model-elements/#").Build());
+            Debug.Log("PROTEUS: Subscribed to topics.");
         }
 
         /// <summary>
@@ -216,6 +243,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
         }
 
         public async void SendMessage(string topic, string payload) {
+            Debug.Log($"PROTEUS: Sending MQTT message to {topic}");
             var applicationMessage = new MqttApplicationMessageBuilder()
                 .WithTopic(topic)
                 .WithPayload(payload)
