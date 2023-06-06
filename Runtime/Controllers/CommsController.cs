@@ -9,6 +9,8 @@ using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using UnityEngine;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Text.Json.Serialization;
+using Unity.Plastic.Newtonsoft.Json;
 
 namespace Packages.co.koenraadt.proteus.Runtime.Controllers
 {
@@ -102,7 +104,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             if (t.StartsWith("proteus/data/update/3dml/states/"))
             {
                 string key = message.Topic.Split("/").Last(); //TODO: if implementing whole state object updates, need to check if it is not the id of the state instead of key.
-                Dictionary<string, object> payload = JsonUtility.FromJson<Dictionary<string, object>>(message.ConvertPayloadToString()); ;
+                Dictionary<string, object> payload = JsonConvert.DeserializeObject<Dictionary<string, object>>(message.ConvertPayloadToString()); ;
 
                 payload.TryGetValue("StateId", out object stateId);
                 payload.TryGetValue("value", out object value);
@@ -113,7 +115,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             // Node Updates
             if (t.StartsWith("proteus/data/update/3dml/nodes"))
             {
-                PTNode nodeUpdate = JsonUtility.FromJson<PTNode>(message.ConvertPayloadToString());
+                PTNode nodeUpdate = JsonConvert.DeserializeObject<PTNode>(message.ConvertPayloadToString());
                 Repository.Instance.Models.UpdateNode(nodeUpdate);
                 return;
             }
@@ -121,7 +123,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             // Edge Updates
             if (t.StartsWith("proteus/data/update/3dml/edges"))
             {
-                PTEdge edgeUpdate = JsonUtility.FromJson<PTEdge>(message.ConvertPayloadToString());
+                PTEdge edgeUpdate = JsonConvert.DeserializeObject<PTEdge>(message.ConvertPayloadToString());
                 Repository.Instance.Models.UpdateEdge(edgeUpdate);
                 return;
             }
@@ -129,7 +131,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             // Model Elements Updates
             if (t.StartsWith("proteus/data/update/3dml/model-elements"))
             {
-                PTModelElement modelElementUpdate =JsonUtility.FromJson<PTModelElement>(message.ConvertPayloadToString());
+                PTModelElement modelElementUpdate =JsonConvert.DeserializeObject<PTModelElement>(message.ConvertPayloadToString());
                 Repository.Instance.Models.UpdateModelElement(modelElementUpdate);
                 return;
             }

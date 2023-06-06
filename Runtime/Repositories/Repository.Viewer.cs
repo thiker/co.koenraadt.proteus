@@ -191,8 +191,6 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                 {
                     relatedNodeIds.Add(rootNodeId);
 
-                    Debug.Log($"Getting related for root node {rootNodeId}");
-
                     var related = Repository.Instance.Models.FindRelatedNodesAndEdgesOfRootNode(rootNodeId);
                     List<string> nodeIds = related.Item1;
                     List<string> edgeIds = related.Item2;
