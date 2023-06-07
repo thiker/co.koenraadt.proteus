@@ -18,8 +18,8 @@ public class GOViewerScaleBtnComp : MonoBehaviour, IProteusInteraction, IPTViewe
     }
 
 
-    public void Init(string attachedViewerId) {
-        _attachedViewerId = attachedViewerId;
+    public void Init(string linkedViewerId) {
+        _attachedViewerId = linkedViewerId;
     }
 
     // Update is called once per frame

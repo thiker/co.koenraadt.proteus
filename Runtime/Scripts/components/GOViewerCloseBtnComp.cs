@@ -8,16 +8,16 @@ using Packages.co.koenraadt.proteus.Runtime.Repositories;
 public class GOViewerCloseBtnComp : MonoBehaviour, IProteusInteraction, IPTViewerComponent
 {
     private string _attachedViewerId;
-    protected PTViewer _attachedViewerData;
+    protected PTViewer _linkedViewerData;
 
     void Start()
     {
-        _attachedViewerData = Repository.Instance.Viewers.GetViewerById(_attachedViewerId);
+        _linkedViewerData = Repository.Instance.Viewers.GetViewerById(_attachedViewerId);
     }
 
 
-    public void Init(string attachedViewerId) {
-        _attachedViewerId = attachedViewerId;
+    public void Init(string linkedViewerId) {
+        _attachedViewerId = linkedViewerId;
     }
 
     // Update is called once per frame
@@ -26,8 +26,12 @@ public class GOViewerCloseBtnComp : MonoBehaviour, IProteusInteraction, IPTViewe
         
     }
 
+    public void CloseViewer() {
+        Repository.Instance.Viewers.DeleteViewerById(_attachedViewerId);
+    }
+
     public void OnPointerDown(RaycastHit hit)
     {
-        Repository.Instance.Viewers.DeleteViewerById(_attachedViewerId);
+        CloseViewer();
     }
 }

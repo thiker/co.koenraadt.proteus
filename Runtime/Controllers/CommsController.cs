@@ -18,7 +18,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
 {
     public class CommsController
     {
-        private static string BROKER_IP = "192.168.121.46";
+        public static string BROKER_IP = "192.168.121.46";
         private static CommsController _instance = null;
         private static MqttFactory _mqttFactory = new();
         private static ConcurrentQueue<MqttApplicationMessage> _mqttMessageQueue = new();

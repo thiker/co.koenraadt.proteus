@@ -120,6 +120,15 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             }
         }
 
+        public void SetViewerPosition(string id, Vector3 position) 
+        {
+            PTViewer viewer = GetViewerById(id);
+
+            if (viewer != null && position != null) {
+                viewer.Position = position;
+            }
+        }
+
         /// <summary>
         /// Updates the rotation of the viewer.
         /// </summary>

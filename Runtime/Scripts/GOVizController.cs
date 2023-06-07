@@ -175,10 +175,15 @@ public class GOVizController : MonoBehaviour
     /// </summary>
     /// <param name="nodeData">Data of the node.</param>
     private void SpawnViewer(PTViewer viewerData)
-    {
+    {  
+        Debug.Log($"PROTEUS: Spawning viewer {viewerData.Id}...");
         // Destroy node if already existing
         DestroyViewer(viewerData.Id);
 
+        if (viewerData.Detached) {
+            return;
+        }     
+     
         // Create new node
         GameObject viewerPrefabGO;
         if (viewerData.Position is not null)

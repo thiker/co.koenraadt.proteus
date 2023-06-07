@@ -10,7 +10,11 @@ using UnityEngine;
 
 public class GOViewer : MonoBehaviour, IProteusInteraction
 {
+    public bool Detached = false;
+    public string[] RootNodeIds;
     public string Id { get; internal set; }
+    public string ViewerId = null;
+    private string _linkedViewerId;
 
     public GameObject NodePrefab;
     public GameObject EdgePrefab;
@@ -31,12 +35,18 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     /// </summary>
     public void Init(string viewerId)
     {
-        _viewerData = Repository.Instance.Viewers.GetViewerById(viewerId);
+        _linkedViewerId = viewerId;
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        if (Detached) {
+            _linkedViewerId = ViewerId;
+             Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = _linkedViewerId, Detached=Detached, RootNodeIds = RootNodeIds , Scale = transform.localScale, Position = transform.position, Rotation = transform.rotation});
+        }
+
+        _viewerData = Repository.Instance.Viewers.GetViewerById(_linkedViewerId);
         // Initialize dictionaries
         _nodesData = new();
         _edgesData = new();
@@ -327,7 +337,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         // Update rotation and position
         if (_viewerData.Position != null && _viewerData.Rotation != null)
         {
-            transform.SetPositionAndRotation((Vector3)_viewerData.Position, (Quaternion)_viewerData.Rotation);
+            //transform.SetPositionAndRotation((Vector3)_viewerData.Position, (Quaternion)_viewerData.Rotation);
         }
 
         //TODO: Refactor to only run on selection change

@@ -10,16 +10,16 @@ public class GOViewerZoomBtnComp : MonoBehaviour, IProteusInteraction, IPTViewer
     public float ZoomScalar = 0.001f;
     private bool _isPressed;
     private string _attachedViewerId;
-    protected PTViewer _attachedViewerData;
+    protected PTViewer _linkedViewerData;
 
     void Start()
     {
-        _attachedViewerData = Repository.Instance.Viewers.GetViewerById(_attachedViewerId);
+        _linkedViewerData = Repository.Instance.Viewers.GetViewerById(_attachedViewerId);
     }
 
 
-    public void Init(string attachedViewerId) {
-        _attachedViewerId = attachedViewerId;
+    public void Init(string linkedViewerId) {
+        _attachedViewerId = linkedViewerId;
     }
 
     void Update()
@@ -28,7 +28,7 @@ public class GOViewerZoomBtnComp : MonoBehaviour, IProteusInteraction, IPTViewer
             _isPressed = false;
         } 
         if (_isPressed) {
-            Repository.Instance.Viewers.ZoomViewer(_attachedViewerData.Id, ZoomScalar);
+            Repository.Instance.Viewers.ZoomViewer(_linkedViewerData.Id, ZoomScalar);
         }
     }
 

@@ -12,6 +12,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
     public class PTViewer : ObservableObject
     {
         private string _id;
+        private bool _detached = false;
         private string[]? _rootNodeIds;
         private Vector3? _position;
         private Vector3? _scale;
@@ -34,6 +35,16 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         {
             get => _id;
             set => SetProperty(ref _id, value);
+        }
+
+        /// <value>
+        /// Whether or not the viewer is spawned by Proteus. 
+        /// Set to false if you wish to spawn the viewer manually.
+        /// </value>
+        public bool Detached 
+        {
+            get => _detached;
+            set => SetProperty(ref _detached, value);
         }
 
         /// <value>
