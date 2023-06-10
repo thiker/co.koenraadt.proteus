@@ -4,6 +4,9 @@ using UnityEngine;
 using TMPro;
 using Packages.co.koenraadt.proteus.Runtime.Repositories;
 using Packages.co.koenraadt.proteus.Runtime.Interfaces;
+using Packages.co.koenraadt.proteus.Runtime.Other;
+using System.Collections.Generic;
+
 public class GONode : MonoBehaviour, IProteusInteraction
 {
     private string _nodeId;
@@ -87,6 +90,23 @@ public class GONode : MonoBehaviour, IProteusInteraction
         {
             Repository.Instance.Proteus.SelectNode(_nodeData.Id);
         }
+    }
+
+    public void OnPointerAltClickDown(RaycastHit hit)
+    {
+        List<PTNode> relatedBehavioralNodes = Repository.Instance.Models.GetRelatedBehavioralNodesById(_nodeData.Id);
+        List<string> rootIds = new();
+        foreach (PTNode node in relatedBehavioralNodes)
+        {
+            rootIds.Add(node.Id);
+        }
+
+        // Get position right of current viewer
+        Vector3 startPosition = (Vector3)_attachedViewerData.Position;
+        startPosition = startPosition + new Vector3(0, ((Vector3)(_attachedViewerData.Scale)).y, 0);
+
+        PTViewer behaviorViewer = new() { Id = Helpers.GenerateUniqueId(), RootNodeIds = rootIds.ToArray(), Position = startPosition, Scale = _attachedViewerData.Scale };
+        Repository.Instance.Viewers.CreateViewer(behaviorViewer);
     }
 
     private void linkEventListeners()

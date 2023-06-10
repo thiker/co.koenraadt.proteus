@@ -335,9 +335,9 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
 
 
         // Update rotation and position
-        if (_viewerData.Position != null && _viewerData.Rotation != null)
+        if (_viewerData.Position != null && _viewerData.Rotation != null && !Detached)
         {
-            //transform.SetPositionAndRotation((Vector3)_viewerData.Position, (Quaternion)_viewerData.Rotation);
+            transform.SetPositionAndRotation((Vector3)_viewerData.Position, (Quaternion)_viewerData.Rotation);
         }
 
         //TODO: Refactor to only run on selection change

@@ -46,6 +46,37 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         }
 
 
+        public void CreateViewer(PTViewer viewerData, bool autoPlace = true)
+        {
+            PTViewer viewerUpdate = viewerData;
+
+            if (autoPlace)
+            {
+                PTViewer mostOuterViewer = null;
+                foreach (PTViewer viewer in GetViewers())
+                {
+                    if (mostOuterViewer == null)
+                    {
+                        mostOuterViewer = viewer;
+                        continue;
+                    }
+                    Vector3 mostRightPos = (Vector3)mostOuterViewer.Position;
+                    Vector3 viewerPos = (Vector3)viewer.Position;
+
+                    if (viewerPos.x < mostRightPos.x)
+                    {
+                        mostOuterViewer = viewer;
+                    }
+                }
+                Vector3 newPos = (Vector3)mostOuterViewer.Position;
+                newPos.x = ((Vector3)mostOuterViewer.Position).x - ((Vector3)mostOuterViewer.Scale).x;
+
+                viewerUpdate.Position = newPos;
+            }
+
+            UpdateViewer(viewerUpdate);
+        }
+
         /// <summary>
         /// Adds a PTViewer to the ViewersRepository.
         /// </summary>
@@ -68,7 +99,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             }
             else
             {
-                
+
                 Helpers.CombineValues(oldViewer, newViewer);
             }
 
@@ -89,7 +120,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             {
                 PTViewer foundViewer = _ptViewers.FirstOrDefault(x => x.Id == id);
                 return foundViewer;
-            } else
+            }
+            else
             {
                 return null;
             }
@@ -120,11 +152,12 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             }
         }
 
-        public void SetViewerPosition(string id, Vector3 position) 
+        public void SetViewerPosition(string id, Vector3 position)
         {
             PTViewer viewer = GetViewerById(id);
 
-            if (viewer != null && position != null) {
+            if (viewer != null && position != null)
+            {
                 viewer.Position = position;
             }
         }
@@ -156,7 +189,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             if (viewer?.ModelAnchorOffset != null)
             {
                 newOffset = (Vector3)viewer.ModelAnchorOffset + offset;
-            } else
+            }
+            else
             {
                 newOffset = new Vector3(0, 0, 0);
             }
@@ -231,16 +265,19 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                 // Generate nodes for layout
                 foreach (PTNode nodeData in nodesData)
                 {
-                    try {
-                    msaglGraph.Nodes.Add(new Node(
-                        CurveFactory.CreateRectangle(
-                            nodeData.UnitWidth,
-                            nodeData.UnitHeight,
-                            new Point()
-                            ),
-                        nodeData.Id
-                        )
-                    ); } catch(Exception e) {}
+                    try
+                    {
+                        msaglGraph.Nodes.Add(new Node(
+                            CurveFactory.CreateRectangle(
+                                nodeData.UnitWidth,
+                                nodeData.UnitHeight,
+                                new Point()
+                                ),
+                            nodeData.Id
+                            )
+                        );
+                    }
+                    catch (Exception e) { }
                 }
 
                 // Generate edges for layout
@@ -259,12 +296,13 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                         msaglGraph.Edges.Add(new Edge(
                             msaglGraph.FindNodeByUserData(sourceNode.Id),
                             msaglGraph.FindNodeByUserData(targetNode.Id))
-                           {
-                                Weight = 1,
-                                UserData = edgeData.Id
-                            }
+                        {
+                            Weight = 1,
+                            UserData = edgeData.Id
+                        }
                         );
-                    } else
+                    }
+                    else
                     {
                         Debug.LogWarning("PROTEUS: Tried generating viewer layout but edge has invalid source or target node.");
                         return;
@@ -273,7 +311,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                 }
 
                 // Calculate the new layout
-                LayoutHelpers.CalculateLayout(msaglGraph, new SugiyamaLayoutSettings() { EdgeRoutingSettings = new EdgeRoutingSettings { EdgeRoutingMode = EdgeRoutingMode.StraightLine}, LayerSeparation = 0, NodeSeparation = 0 }, null);
+                LayoutHelpers.CalculateLayout(msaglGraph, new SugiyamaLayoutSettings() { EdgeRoutingSettings = new EdgeRoutingSettings { EdgeRoutingMode = EdgeRoutingMode.StraightLine }, LayerSeparation = 0, NodeSeparation = 0 }, null);
 
                 msaglGraph.UpdateBoundingBox();
                 msaglGraph.Translate(new Point(-msaglGraph.Left, -msaglGraph.Bottom));
@@ -282,7 +320,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                 if (msaglGraph.Width == 0 || msaglGraph.Height == 0)
                 {
                     zoomLevel = 0.0f;
-                } else
+                }
+                else
                 {
                     zoomLevel = (float)Math.Max(1.0 / msaglGraph.Width, 1.0 / msaglGraph.Height);
                 }
@@ -290,7 +329,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 
                 viewer.ZoomScale = new Vector3(zoomLevel, zoomLevel, 0.1f);
                 viewer.MaxZoomScale = Vector3.positiveInfinity;
-                viewer.MinZoomScale = new Vector3(0,0,0);
+                viewer.MinZoomScale = new Vector3(0, 0, 0);
 
                 // Set layout positions for the nodes
                 foreach (Node node in msaglGraph.Nodes)
@@ -299,9 +338,9 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                 }
 
                 // Set information for the edges
-                foreach(Edge edge in msaglGraph.Edges)
+                foreach (Edge edge in msaglGraph.Edges)
                 {
-                    List<Spline> splines = new(); 
+                    List<Spline> splines = new();
                     Spline spline = new();
                     BezierKnot startKnot = new();
                     BezierKnot endKnot = new();
@@ -309,7 +348,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                     splines.Add(spline);
 
                     startKnot.Position = new((float)edge.Curve.Start.X, (float)edge.Curve.Start.Y, 0);
-                    endKnot.Position = new((float)edge.Curve.End.X, (float)edge.Curve.End.Y,0);
+                    endKnot.Position = new((float)edge.Curve.End.X, (float)edge.Curve.End.Y, 0);
 
                     startKnot.Rotation = new(0, 0, 90, (float)Space.Self);
 
@@ -393,7 +432,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         public void ScaleViewer(string viewerId, Vector3 scaleDelta)
         {
             PTViewer viewer = GetViewerById(viewerId);
-            if (viewer != null && scaleDelta != null) {
+            if (viewer != null && scaleDelta != null)
+            {
                 viewer.Scale = viewer.Scale + scaleDelta;
             }
         }
@@ -407,7 +447,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         {
             PTViewer viewer = GetViewerById(viewerId);
 
-            if (viewer != null && viewer?.ZoomScale != null )
+            if (viewer != null && viewer?.ZoomScale != null)
             {
                 Vector3 oldZoomScale = (Vector3)viewer.ZoomScale;
                 Vector3 maxZoomScale = (Vector3)viewer?.MaxZoomScale;
@@ -434,7 +474,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                     z = Math.Max(z, minZoomScale.z);
                 }
 
-                viewer.ZoomScale = new Vector3 (x, y, z);
+                viewer.ZoomScale = new Vector3(x, y, z);
             }
 
 

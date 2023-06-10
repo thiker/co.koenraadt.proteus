@@ -11,5 +11,11 @@ namespace Packages.co.koenraadt.proteus.Runtime.Interfaces
         public void OnPointerAltUp(RaycastHit hit) { }
         public void OnPointerTertiaryUp(RaycastHit hit) { }
         public void OnPointerMove(RaycastHit hit) { }
+
+        public void OnPointerCtrlClickUp(RaycastHit hit) {}
+        public void OnPointerCtrlClickDown(RaycastHit hit) {}
+
+        public void OnPointerAltClickUp(RaycastHit hit) {}
+        public void OnPointerAltClickDown(RaycastHit hit) {}
     }
 }

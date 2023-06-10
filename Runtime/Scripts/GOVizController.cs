@@ -38,15 +38,19 @@ public class GOVizController : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
 
-        bool pointerDown = Input.GetMouseButtonDown(0);
+        bool pointerDown = Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftControl) && ! Input.GetKey(KeyCode.LeftAlt);
         bool pointerAltDown = Input.GetMouseButtonDown(1);
-        bool pointerTertiaryDown = Input.GetMouseButtonDown(2) || (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftControl)); // alternative for mobile
+        bool pointerTertiaryDown = Input.GetMouseButtonDown(2); // alternative for mobile
+        bool pointerCtrlClickDown = Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftControl);
+        bool pointerAltClickDown = Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftAlt);
         bool pointerUp = Input.GetMouseButtonUp(0);
         bool pointerAltUp = Input.GetMouseButtonUp(1);
-        bool pointerTertiaryUp = Input.GetMouseButtonUp(2)  || (Input.GetMouseButtonUp(0) && Input.GetKey(KeyCode.LeftControl)) || (Input.GetMouseButton(0) && Input.GetKeyUp(KeyCode.LeftControl));
+        bool pointerTertiaryUp = Input.GetMouseButtonUp(2);
+        bool pointerCtrlClickUp = (Input.GetMouseButtonUp(0) && Input.GetKey(KeyCode.LeftControl)) || (Input.GetMouseButton(0) && Input.GetKeyUp(KeyCode.LeftControl));
+        bool pointerAltClickUp = (Input.GetMouseButtonUp(0) && Input.GetKey(KeyCode.LeftAlt)) || (Input.GetMouseButton(0) && Input.GetKeyUp(KeyCode.LeftAlt)); 
         bool pointerMove = Mathf.Abs(mouseX) > 0 || Mathf.Abs(mouseY) > 0;
 
-        if (pointerDown || pointerAltDown || pointerTertiaryDown || pointerUp || pointerAltUp || pointerTertiaryUp || pointerMove )
+        if (pointerDown || pointerAltDown || pointerTertiaryDown || pointerCtrlClickDown || pointerAltClickDown || pointerUp || pointerAltUp || pointerTertiaryUp || pointerCtrlClickUp || pointerAltClickUp || pointerMove )
         {
             hits = Helpers.RayCastProteusViz();
 
@@ -76,6 +80,14 @@ public class GOVizController : MonoBehaviour
                     interactionComp?.OnPointerTertiaryDown(hit);
                 }
 
+                if (pointerCtrlClickDown) {
+                    interactionComp?.OnPointerCtrlClickDown(hit);
+                }
+
+                if (pointerAltClickDown) {
+                    interactionComp?.OnPointerAltClickDown(hit);
+                }
+
                 if (pointerUp)
                 {
                     interactionComp?.OnPointerUp(hit);
@@ -89,6 +101,14 @@ public class GOVizController : MonoBehaviour
                 if (pointerTertiaryUp)
                 {
                     interactionComp?.OnPointerTertiaryUp(hit);
+                }
+
+                if (pointerCtrlClickUp) {
+                    interactionComp?.OnPointerCtrlClickUp(hit);
+                }
+
+                if (pointerAltClickUp) {
+                    interactionComp?.OnPointerAltClickUp(hit);
                 }
 
                 if (pointerMove)

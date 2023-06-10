@@ -40,6 +40,9 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
             }
         }
 
+        public static string GenerateUniqueId() {
+            return  $"pt-id-{Guid.NewGuid()}";
+        }
 
         //TODO: Refactor the combine values method and isempty since they can be slow!.
         public static bool IsEmpty<T>(T value)

@@ -18,7 +18,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
 {
     public class CommsController
     {
-        public static string BROKER_IP = "192.168.121.46";
+        public static string BROKER_IP = "";
         private static CommsController _instance = null;
         private static MqttFactory _mqttFactory = new();
         private static ConcurrentQueue<MqttApplicationMessage> _mqttMessageQueue = new();
@@ -106,7 +106,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             Debug.Log($"PROTEUS: local ip found {ipAddress}");
 
             string tcpServerIp = ipAddress.ToString();
-            if (BROKER_IP != null) {
+            if (BROKER_IP != null && BROKER_IP != "" && !BROKER_IP.Equals("")) {
                 Debug.Log($"PROTEUS: Overriding client to connnect to external broker ip {BROKER_IP}");
                 tcpServerIp = BROKER_IP;
             }

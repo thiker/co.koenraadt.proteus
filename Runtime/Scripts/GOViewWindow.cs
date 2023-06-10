@@ -38,13 +38,13 @@ public class GOViewWindow : MonoBehaviour, IProteusInteraction
         Repository.Instance.Proteus.SelectViewer(_attachedViewerId); // select the viewer
     }
 
-    public void OnPointerTertiaryDown(RaycastHit hit)
+    public void OnPointerCtrlClickDown(RaycastHit hit)
     {
         _isDragging = true;
         _lastLocalHitPoint = transform.InverseTransformPoint(hit.point);
     }
 
-    public void OnPointerTertiaryUp(RaycastHit hit)
+    public void OnPointerCtrlClickUp(RaycastHit hit)
     {
         _isDragging = false;
     }
