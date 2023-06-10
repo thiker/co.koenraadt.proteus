@@ -13,7 +13,7 @@ using Newtonsoft.Json;
  using System.Net;
  using System.Net.NetworkInformation;
  using System.Net.Sockets;
-
+using Packages.co.koenraadt.proteus.Runtime.Other;
 namespace Packages.co.koenraadt.proteus.Runtime.Controllers
 {
     public class CommsController
@@ -111,7 +111,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(tcpServerIp).Build();
             await _mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
             Debug.Log($"PROTEUS: Client connected to {tcpServerIp}.");
-            
+
             CommsController.Instance.SendMessage("proteus/debug/hello-world", "Hello World from Proteus!");
         }
 
@@ -133,6 +133,15 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
                 payload.TryGetValue("value", out object value);
 
                 Repository.Instance.States.UpdateStateValue(stateId.ToString(), key, value);
+            }
+
+            // Viewer updates
+            if (t.StartsWith("proteus/data/create/viewer")) 
+            {
+                Debug.Log("Creating viewer from mqtt");
+                PTViewer viewer  = JsonConvert.DeserializeObject<PTViewer>(message.ConvertPayloadToString()); ;
+                viewer.Id = Helpers.GenerateUniqueId();
+                Repository.Instance.Viewers.CreateViewer(viewer);
             }
 
             // Node Updates
@@ -215,6 +224,10 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             Debug.Log("PROTEUS: Subscribe to topics...");
             // States Data
             await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/update/3dml/states/#").Build());
+
+            // Viewer actions
+            await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/create/viewers").Build());
+            await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/create/viewers/#").Build());
 
             // Nodes Data
             await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("proteus/data/update/3dml/nodes/#").Build());

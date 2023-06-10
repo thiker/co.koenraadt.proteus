@@ -50,7 +50,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         {
             PTViewer viewerUpdate = viewerData;
 
-            if (autoPlace)
+            if (autoPlace && GetViewers().Count > 0)
             {
                 PTViewer mostOuterViewer = null;
                 foreach (PTViewer viewer in GetViewers())
@@ -72,6 +72,10 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                 newPos.x = ((Vector3)mostOuterViewer.Position).x - ((Vector3)mostOuterViewer.Scale).x;
 
                 viewerUpdate.Position = newPos;
+                viewerUpdate.Scale = mostOuterViewer.Scale;
+            } else if (autoPlace) {
+                viewerUpdate.Position = Repository.Instance.Proteus.GetGlobals().DefaultViewerPosition;
+                viewerUpdate.Scale = Repository.Instance.Proteus.GetGlobals().DefaultViewerScale;
             }
 
             UpdateViewer(viewerUpdate);

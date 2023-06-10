@@ -1,11 +1,14 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
 {
     public class PTGlobals : ObservableObject
     {
+        private Vector3 _defaultViewerPosition = new Vector3(-4,7,3);
+        private Vector3 _defaultViewerScale = new Vector3(3,3,3);
         private List<string> _selectedNodes;
         private string[] _selectedViewers;
         private bool _xrayViewEnabled = true;
@@ -38,6 +41,17 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
             set => SetProperty(ref _explodedViewEnabled, value);
         }
         
+        public Vector3 DefaultViewerPosition 
+        {
+            get => _defaultViewerPosition;
+            set => SetProperty(ref _defaultViewerPosition, value);
+        }
+        
+        public Vector3 DefaultViewerScale 
+        {
+            get => _defaultViewerScale;
+            set => SetProperty(ref _defaultViewerScale, value);
+        }
 
         public PTGlobals()
         {
