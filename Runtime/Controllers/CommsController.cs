@@ -101,11 +101,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
 
             // Connect the client
             Debug.Log("PROTEUS: Connecting client....");
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
-            Debug.Log($"PROTEUS: local ip found {ipAddress}");
+            string tcpServerIp = "127.0.0.1";
 
-            string tcpServerIp = ipAddress.ToString();
             if (BROKER_IP != null && BROKER_IP != "" && !BROKER_IP.Equals("")) {
                 Debug.Log($"PROTEUS: Overriding client to connnect to external broker ip {BROKER_IP}");
                 tcpServerIp = BROKER_IP;
@@ -113,7 +110,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             
             var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(tcpServerIp).Build();
             await _mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
-            Debug.Log("PROTEUS: Client connected.");
+            Debug.Log($"PROTEUS: Client connected to {tcpServerIp}.");
+            
             CommsController.Instance.SendMessage("proteus/debug/hello-world", "Hello World from Proteus!");
         }
 
