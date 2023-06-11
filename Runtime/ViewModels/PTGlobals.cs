@@ -13,6 +13,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         private string[] _selectedViewers;
         private bool _xrayViewEnabled = true;
         private bool _explodedViewEnabled = true;
+        private float _defaultNodeUnitWidth = 10.0f;
+        private float _defaultNodeUnitHeight = 10.0f;
 
         /// <value>
         /// The identifier of the edge.
@@ -52,6 +54,19 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
             get => _defaultViewerScale;
             set => SetProperty(ref _defaultViewerScale, value);
         }
+
+        public float DefaultNodeUnitHeight 
+        {
+            get => _defaultNodeUnitHeight;
+            set => SetProperty(ref _defaultNodeUnitHeight, value);
+        }
+
+        public float DefaultNodeUnitWidth
+        {
+            get => _defaultNodeUnitWidth;
+            set => SetProperty(ref _defaultNodeUnitWidth, value);
+        }
+
 
         public PTGlobals()
         {

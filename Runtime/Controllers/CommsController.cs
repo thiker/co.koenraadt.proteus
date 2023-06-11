@@ -18,7 +18,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
 {
     public class CommsController
     {
-        public static string BROKER_IP = "";
+        public static string BROKER_IP = "192.168.178.88";
         private static CommsController _instance = null;
         private static MqttFactory _mqttFactory = new();
         private static ConcurrentQueue<MqttApplicationMessage> _mqttMessageQueue = new();
@@ -195,17 +195,23 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             // Node Image update
             if (t.StartsWith("proteus/data/update/3dml/images/"))
             {
+                float aspectRatio;
                 string id = message.Topic.Split("/").Last();
 
                 Debug.Log($"<color=lightblue>PROTEUS</color> Node Update received for node {id}");
-                Texture2D tex = new Texture2D(2, 2);
+                
+                Texture2D tex = new(2, 2);
                 tex.LoadImage(message.Payload);
+                aspectRatio = (float)tex.width / (float)tex.height;
 
                 PTNode nodeUpdate = new()
                 {
                     Id = id,
-                    ImageTexture = tex,
+                    UnitHeight= Repository.Instance.Proteus.GetGlobals().DefaultNodeUnitHeight,
+                    UnitWidth=aspectRatio * Repository.Instance.Proteus.GetGlobals().DefaultNodeUnitHeight
                 };
+
+                Repository.Instance.Models.UpdateNodeTexture(id, tex);
                 Repository.Instance.Models.UpdateNode(nodeUpdate);
             }
         }

@@ -57,6 +57,15 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             }
         }
 
+        public void UpdateNodeTexture(string id, Texture2D tex) 
+        {
+            PTNode node = GetNodeById(id);
+
+            if (node != null) {
+                node.ImageTexture = tex;
+            }
+        }
+
         /// <summary>
         /// Adds a PTEdge to the ModelsRepository.
         /// </summary>

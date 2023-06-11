@@ -192,7 +192,7 @@ public class GONode : MonoBehaviour, IProteusInteraction
                 zoomScale = (Vector3)_attachedViewerData.ZoomScale;
             }
 
-            if (zoomScale.x <= (viewerScale.x / _nodeData.UnitWidth) * triggerPercentageOfNodeInView)
+            if (zoomScale.y <= (viewerScale.y / _nodeData.UnitHeight) * triggerPercentageOfNodeInView)
             {
                 // Remove diagram texture
                 _nodeGameObject.GetComponent<Renderer>().material.SetTexture("_MainTex", null);

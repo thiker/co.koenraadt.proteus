@@ -12,9 +12,12 @@ using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
 {
+    private string _xrayMatAddress = "Packages/co.koenraadt.proteus/Runtime/Materials/Mat_Xray.mat";
     public string MainDiagramName;
     public List<string> LinkedNodes;
     public List<string> LinkedStates;
@@ -31,6 +34,7 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
     private Material _xrayMaterial;
     private Material _originalMaterial;
     private Vector3 _explodedViewOffset;
+    private AsyncOperationHandle<Material> handle;
 
     virtual protected void Awake()
     {
@@ -52,9 +56,28 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
         _originalMaterial = new Material(_renderer.material.shader);
         _originalMaterial.CopyPropertiesFromMaterial(_renderer.material);
 
-        _xrayMaterial = (Material)Resources.Load("Packages/co.koenraadt.proteus/Runtime/Materials/Mat_Xray.mat", typeof(Material));
+        handle = Addressables.LoadAssetAsync<Material>(_xrayMatAddress);
+        handle.Completed += Handle_Completed;
 
+        // _xrayMaterial = (Material)Resources.Load("Packages/co.koenraadt.proteus/Runtime/Materials/Mat_Xray.mat", typeof(Material));
+        // if (_xrayMaterial == null ) {
+        //     Debug.LogError($"PROTEUS: Loaded Xray material is null");
+        // }
+        // Debug.Log($"Got xray material loaded resource: {_xrayMaterial}");
         DigiTwinController.Instance.LinkDigiTwinComponent(this);
+    }
+
+    // Instantiate the loaded prefab on complete
+    private void Handle_Completed(AsyncOperationHandle<Material> operation)
+    {
+        if (operation.Status == AsyncOperationStatus.Succeeded)
+        {
+            _xrayMaterial = operation.Result;
+        }
+        else
+        {
+            Debug.LogError($"Asset for {_xrayMatAddress} failed to load.");
+        }
     }
 
 
