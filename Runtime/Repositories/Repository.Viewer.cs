@@ -69,7 +69,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                     }
                 }
                 Vector3 newPos = (Vector3)mostOuterViewer.Position;
-                newPos.x = ((Vector3)mostOuterViewer.Position).x - ((Vector3)mostOuterViewer.Scale).x;
+                newPos.x = ((Vector3)mostOuterViewer.Position).x - (1.1f * (Vector3)mostOuterViewer.Scale).x;
 
                 viewerUpdate.Position = newPos;
                 viewerUpdate.Scale = mostOuterViewer.Scale;
