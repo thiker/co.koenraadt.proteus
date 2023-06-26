@@ -148,6 +148,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             if (t.StartsWith("proteus/data/update/3dml/nodes"))
             {
                 PTNode nodeUpdate = JsonConvert.DeserializeObject<PTNode>(message.ConvertPayloadToString());
+                Debug.Log($"PROTEUS: Node Update received for node {nodeUpdate.Id}");
                 Repository.Instance.Models.UpdateNode(nodeUpdate);
                 return;
             }
@@ -198,7 +199,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
                 float aspectRatio;
                 string id = message.Topic.Split("/").Last();
 
-                Debug.Log($"<color=lightblue>PROTEUS</color> Node Update received for node {id}");
+                Debug.Log($"PROTEUS: Processing image update for node id {id}");
                 
                 Texture2D tex = new(2, 2);
                 tex.LoadImage(message.Payload);

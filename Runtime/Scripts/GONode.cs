@@ -57,8 +57,9 @@ public class GONode : MonoBehaviour, IProteusInteraction
         //Get a renderer component either of the own gameobject or of a child
         Renderer renderer = _nodeGameObject.GetComponentInChildren<Renderer>();
         //set the matrix
-        if (_attachedViewerData?.ViewWindowWorldToLocal is not null)
+        if (_attachedViewerData?.ViewWindowWorldToLocal is not null) {
             _matPropBlock.SetMatrix("_WorldToBox", (Matrix4x4)_attachedViewerData.ViewWindowWorldToLocal);
+        }
         //apply propertyBlock to renderer
         renderer.SetPropertyBlock(_matPropBlock);
     }
