@@ -18,6 +18,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
 
     public GameObject NodePrefab;
     public GameObject EdgePrefab;
+    private GameObject _viewerContainer;
     private GameObject _modelAnchor;
     private GameObject _viewWindow;
     private List<GameObject> _viewWindowBorders;
@@ -55,12 +56,13 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         _viewWindowBorders = new();
 
         // Get the game objects
-        _modelAnchor = transform.Find("ModelAnchor").gameObject;
-        _viewWindow = transform.Find("ViewWindow").gameObject;
+        _viewerContainer = transform.Find("ViewerContainer").gameObject;
+        _modelAnchor = _viewerContainer.transform.Find("ModelAnchor").gameObject;
+        _viewWindow = _viewerContainer.transform.Find("ViewWindow").gameObject;
         _viewWindow.GetComponent<GOViewWindow>().Init(_viewerData.Id);
 
-        _viewWindowBorders.Add(transform.Find("ViewWindowBorderBottom").gameObject);
-        _viewWindowBorders.Add(transform.Find("ViewWindowBorderTop").gameObject);
+        _viewWindowBorders.Add(_viewerContainer.transform.Find("ViewWindowBorderBottom").gameObject);
+        _viewWindowBorders.Add(_viewerContainer.transform.Find("ViewWindowBorderTop").gameObject);
 
         // Link viewer components
         List<IPTViewerComponent> allComponents = transform.GetComponentsInChildren<IPTViewerComponent>().ToList();
@@ -337,7 +339,12 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         // Update rotation and position
         if (_viewerData.Position != null && _viewerData.Rotation != null && !Detached)
         {
-            transform.SetPositionAndRotation((Vector3)_viewerData.Position, (Quaternion)_viewerData.Rotation);
+            // Set the main position
+            transform.position = (Vector3)_viewerData.Position;
+            
+            // Set the rotation of the container
+            _viewerContainer.transform.rotation = (Quaternion)_viewerData.Rotation;
+
         }
 
         //TODO: Refactor to only run on selection change
