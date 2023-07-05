@@ -1,3 +1,4 @@
+// Clip box shader based on the work from: https://discussions.unity.com/t/render-only-whats-inside-a-box/239114
 Shader "Custom/PTNodeShader"
 {
     Properties

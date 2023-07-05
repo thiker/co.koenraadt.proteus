@@ -16,6 +16,7 @@ public class GONode : MonoBehaviour, IProteusInteraction
     private PTGlobals _globalsData;
     private TextMeshPro _displayNameTMP;
     private GameObject _nodeGameObject;
+    private GameObject _displayNameObj;
     private MaterialPropertyBlock _matPropBlock;
 
     // Initialize the node
@@ -38,7 +39,7 @@ public class GONode : MonoBehaviour, IProteusInteraction
 
         // TODO: Reimplement correctly
         // Get the text object
-        GameObject _displayNameObj = transform.Find("DisplayNameText").gameObject;
+        _displayNameObj = transform.Find("DisplayNameText").gameObject;
         _displayNameTMP = _displayNameObj.GetComponent<TextMeshPro>();
 
         // Get the node object
@@ -54,14 +55,19 @@ public class GONode : MonoBehaviour, IProteusInteraction
     // Update is called once per frame
     void Update()
     {
-        //Get a renderer component either of the own gameobject or of a child
-        Renderer renderer = _nodeGameObject.GetComponentInChildren<Renderer>();
         //set the matrix
-        if (_attachedViewerData?.ViewWindowWorldToLocal is not null) {
+        if (_attachedViewerData?.ViewWindowWorldToLocal != null) {
             _matPropBlock.SetMatrix("_WorldToBox", (Matrix4x4)_attachedViewerData.ViewWindowWorldToLocal);
         }
+
+        //Get a renderer component either of the own gameobject or of a child
+        Renderer renderer = _nodeGameObject?.GetComponentInChildren<Renderer>();
+        Renderer _displayNameRenderer =  _displayNameObj?.GetComponentInChildren<Renderer>();
+        
+
         //apply propertyBlock to renderer
-        renderer.SetPropertyBlock(_matPropBlock);
+        renderer?.SetPropertyBlock(_matPropBlock);
+        _displayNameRenderer?.SetPropertyBlock(_matPropBlock);
     }
 
 
