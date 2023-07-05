@@ -3,6 +3,7 @@ using UnityEngine;
 using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using Packages.co.koenraadt.proteus.Runtime.Interfaces;
 using Packages.co.koenraadt.proteus.Runtime.Repositories;
+using System.ComponentModel;
 
 namespace RuntimeHandle
 {
@@ -52,6 +53,9 @@ namespace RuntimeHandle
 
         void Start()
         {
+            _linkedViewerData = Repository.Instance.Viewers.GetViewerById(_linkedViewerId);
+            _linkedViewerData.PropertyChanged += OnViewerDataChanged;
+
             if (handleCamera == null)
                 handleCamera = Camera.main;
 
@@ -60,7 +64,7 @@ namespace RuntimeHandle
             if (target == null)
                 target = transform;
 
-            CreateHandles();
+            //CreateHandles();
         }
 
         void CreateHandles()
@@ -96,8 +100,8 @@ namespace RuntimeHandle
             
             if (_previousType != type || _previousAxes != axes)
             {
-                Clear();
-                CreateHandles();
+                //Clear();
+                //CreateHandles();
                 _previousType = type;
                 _previousAxes = axes;
             }
@@ -185,6 +189,22 @@ namespace RuntimeHandle
             runtimeTransformHandle.type = p_handleType;
 
             return runtimeTransformHandle;
+        }
+
+        private void OnViewerDataChanged(object obj, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(PTViewer.GizmoVisible)) {
+                if ((bool)_linkedViewerData.GizmoVisible) {
+                    CreateHandles();
+                } else {
+                    Clear();
+                }
+            }
+        }
+
+        void OnDestroy() 
+        {
+            _linkedViewerData.PropertyChanged -= OnViewerDataChanged;
         }
     }
 }

@@ -156,6 +156,12 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             }
         }
 
+
+        /// <summary>
+        /// Updates the position of the viewer.
+        /// </summary>
+        /// <param name="id">the id of the viewer to update. </param>
+        /// <param name="position">the position of the viewer to update. </param>
         public void SetViewerPosition(string id, Vector3 position)
         {
             PTViewer viewer = GetViewerById(id);
@@ -165,6 +171,23 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
                 viewer.Position = position;
             }
         }
+
+
+        /// <summary>
+        /// Updates the ViewWindow's WorldToLocal matrix for the viewer.
+        /// </summary>
+        /// <param name="id">the id of the viewer to update. </param>
+        /// <param name="viewWindowWorldToLocal">the ViewWindowWorldToLocalMatrix of the viewer to update. </param>
+        public void SetViewWindowWorldToLocal(string id, Matrix4x4 viewWindowWorldToLocal)
+        {
+            PTViewer viewer = GetViewerById(id);
+
+            if (viewer != null && viewWindowWorldToLocal != null)
+            {
+                viewer.ViewWindowWorldToLocal = viewWindowWorldToLocal;
+            }
+        }
+
 
         /// <summary>
         /// Updates the rotation of the viewer.
@@ -178,6 +201,19 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             if (viewer != null)
             {
                 viewer.Rotation = rotation;
+            }
+        }
+
+        /// <summary>
+        /// Set the visibility of the gizmo of a viewer.
+        /// </summary>
+        /// <param name="id">the id of the viewer to update.</param>
+        /// <param name="visible">the visibility of the gizmo for the viewer.</param>
+        public void SetGizmoVisible(string id, bool visible) {
+            PTViewer viewer = GetViewerById(id);
+
+            if (viewer != null) {
+                viewer.GizmoVisible = visible;
             }
         }
 

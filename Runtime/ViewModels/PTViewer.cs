@@ -13,6 +13,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
     {
         private string _id;
         private bool _detached = false;
+        private bool? _gizmoVisible = false;
         private string[]? _rootNodeIds;
         private Vector3? _position;
         private Vector3? _scale;
@@ -132,13 +133,24 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
 
 
         /// <value>
-        /// Wether billboarding should be enabled for the viewer.
+        /// Whether billboarding should be enabled for the viewer.
         /// </value>
         public bool? IsBillboarding 
         {
             get => _isBillboarding;
             set => SetProperty(ref _isBillboarding, value);
         }
+
+
+        /// <value>
+        /// Whether billboarding should be enabled for the viewer.
+        /// </value>
+        public bool? GizmoVisible 
+        {
+            get => _gizmoVisible;
+            set => SetProperty(ref _gizmoVisible, value);
+        }
+
 
         /// <value>
         /// Layout containing the positions of the nodes in the viewer.

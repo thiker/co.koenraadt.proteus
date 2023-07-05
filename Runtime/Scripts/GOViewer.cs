@@ -93,7 +93,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         if (_viewWindow != null)
         {
             //  Update the window window world to local matrix
-            Repository.Instance.Viewers.UpdateViewer(new PTViewer() { Id = _viewerData.Id, ViewWindowWorldToLocal = _viewWindow.transform.worldToLocalMatrix });
+            Repository.Instance.Viewers.SetViewWindowWorldToLocal(_viewerData.Id, _viewWindow.transform.worldToLocalMatrix);
         }
 
         if ((bool)_viewerData.IsBillboarding)

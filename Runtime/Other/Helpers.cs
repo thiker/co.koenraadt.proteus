@@ -26,6 +26,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
 
             Type t = typeof(T);
 
+            Debug.Log($"PROTEUS: Combining values for type {t.Name}");
+
             var properties = t.GetProperties().Where(prop => prop.CanRead && prop.CanWrite);
 
             foreach (var prop in properties)
@@ -35,6 +37,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
 
                 if (value != null && !value.Equals(targetValue) && value != targetValue)
                 {
+                    Debug.Log($"Changing Property: {prop.Name} to value {value}");
                     prop.SetValue(target, value, null);
                 }
             }
