@@ -190,8 +190,9 @@ public class GONode : MonoBehaviour, IProteusInteraction
         {
             Vector3 viewerScale = new Vector3(0, 0, 0);
             Vector3 zoomScale = new Vector3(0, 0, 0);
-            Transform displayNameTransform;
-            float triggerPercentageOfNodeInView = 0.3f;
+            
+        
+            float triggerPercentageOfNodeInView = _globalsData.DefaultNodeInViewTriggerPercentage;
 
             if (_attachedViewerData?.Scale != null && _attachedViewerData?.ZoomScale != null)
             {
@@ -199,6 +200,7 @@ public class GONode : MonoBehaviour, IProteusInteraction
                 zoomScale = (Vector3)_attachedViewerData.ZoomScale;
             }
 
+            // Calculate the percentage of the node that is in viewer with respect to the viewer
             if (zoomScale.y <= (viewerScale.y / _nodeData.UnitHeight) * triggerPercentageOfNodeInView)
             {
                 // Remove diagram texture

@@ -8,13 +8,14 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
     public class PTGlobals : ObservableObject
     {
         private Vector3 _defaultViewerPosition = new Vector3(-4,7,3);
-        private Vector3 _defaultViewerScale = new Vector3(3,3,3);
+        private Vector3 _defaultViewerScale = new Vector3(2,2,2);
         private List<string> _selectedNodes;
         private string[] _selectedViewers;
         private bool _xrayViewEnabled = true;
         private bool _explodedViewEnabled = true;
         private float _defaultNodeUnitWidth = 10.0f;
         private float _defaultNodeUnitHeight = 10.0f;
+        private float _defaultNodeInViewTriggerPercentage = .5f;
 
         /// <value>
         /// The identifier of the edge.
@@ -65,6 +66,12 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         {
             get => _defaultNodeUnitWidth;
             set => SetProperty(ref _defaultNodeUnitWidth, value);
+        }
+
+        public float DefaultNodeInViewTriggerPercentage 
+        {
+            get => _defaultNodeInViewTriggerPercentage;
+            set => SetProperty(ref _defaultNodeInViewTriggerPercentage, value);
         }
 
 

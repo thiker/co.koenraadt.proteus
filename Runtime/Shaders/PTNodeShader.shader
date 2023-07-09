@@ -53,6 +53,7 @@ Shader "Custom/PTNodeShader"
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
             o.Alpha = c.a;
+            o.Emission = c.rgb * 0.5;
         }
         ENDCG
     }
