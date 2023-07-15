@@ -4,6 +4,9 @@ using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Functions and helpers used during the development of Proteus for debugging.
+/// </summary>
 public class GODebugger : MonoBehaviour
 {
     bool debugMode = true;

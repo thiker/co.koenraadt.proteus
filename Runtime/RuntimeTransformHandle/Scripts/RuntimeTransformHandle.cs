@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Packages.co.koenraadt.proteus.Runtime.ViewModels;
 using Packages.co.koenraadt.proteus.Runtime.Interfaces;
 using Packages.co.koenraadt.proteus.Runtime.Repositories;
@@ -7,10 +6,11 @@ using System.ComponentModel;
 
 namespace RuntimeHandle
 {
-    /**
-     * Created by Peter @sHTiF Stefcek 21.10.2020
-     * Modified by Thijs Koenraadt to work with Proteus
-     */
+
+    /// <summary>
+    ///  Created by Peter @sHTiF Stefcek 21.10.2020
+    ///  Modified by Thijs Koenraadt to work with Proteus
+    /// </summary>
     public class RuntimeTransformHandle : MonoBehaviour, IPTViewerComponent
     {
         //PROTEUS: ADDED VARIABLES TO HOLD REFERENCE TO VIEWER

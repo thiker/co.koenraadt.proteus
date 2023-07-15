@@ -8,14 +8,17 @@ using Packages.co.koenraadt.proteus.Runtime.Interfaces;
 using UnityEngine;
 namespace Packages.co.koenraadt.proteus.Runtime.Other
 {
+    /// <summary>
+    /// Collection of Helper function used by Proteus.
+    /// </summary>
     public class Helpers
     {
         /// <summary>
-        /// Merges values of source into target
+        /// Merges values of a source into a target object.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="target">object to merge into </param>
-        /// <param name="source">object to take values from</param>
+        /// <typeparam name="T">the type of the objects to merge.</typeparam>
+        /// <param name="target">Object to merge into.</param>
+        /// <param name="source">Object to take values from.</param>
         public static void CombineValues<T>(T target, T source)
         {
             if (source == null || target == null)
@@ -24,10 +27,9 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
                 return;
             }
 
-            Type t = typeof(T);
-
             Debug.Log($"PROTEUS: Combining values for type {t.Name}");
 
+            Type t = typeof(T);
             var properties = t.GetProperties().Where(prop => prop.CanRead && prop.CanWrite);
 
             foreach (var prop in properties)
@@ -43,11 +45,21 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
             }
         }
 
+        /// <summary>
+        /// Generates a new Guid.
+        /// </summary>
+        /// <returns>A string containing the generated Guid.</returns>
         public static string GenerateUniqueId() {
             return  $"pt-id-{Guid.NewGuid()}";
         }
 
-        //TODO: Refactor the combine values method and isempty since they can be slow!.
+        /// <summary>
+        /// Checks for collections if they are empty.
+        /// </summary>
+        /// <typeparam name="T">the type of the object to check.</typeparam>
+        /// <param name="value">the object to check</param>
+        /// <returns>whether the object / collection is empty.</returns>
+        [Obsolete("IsEmpty is slow and was only used during testing since CombineValues was always merging lists even if they had not changed, causing in unnecessary propertyChanged events.")]
         public static bool IsEmpty<T>(T value)
         {
             Type[] interfaces = value?.GetType()?.GetInterfaces();
@@ -74,15 +86,20 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
             return false;
         }
 
+        /// <summary>
+        /// Checks whether the given class is a behavioral class.
+        /// </summary>
+        /// <param name="x">The class to check.</param>
+        /// <returns>Whether the given class is marked as behavioral.</returns>
         public static bool IsBehavioralMetaClass(string x)
         {
             return x == "Statechart" || x == "ActivityDiagram" || x == "SequenceDiagram";
         }
 
         /// <summary>
-        /// Raycasts for proteusviz layer
+        /// Performs a raycast on the proteusviz layer originating from the user's mouse position.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The raycast hit result.</returns>
         public static RaycastHit[] RayCastProteusViz()
         {
             LayerMask layerMask = LayerMask.GetMask("ProteusViz");
@@ -93,18 +110,18 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
         }
 
         /// <summary>
-        /// Find a proteus interactable component in parents of the source game object.
+        /// Find a proteus interactable component in parents of the given source game object.
         /// </summary>
-        /// <param name="source"></param>
+        /// <param name="source">The source object to start the search from</param>
         /// <returns>The first interactable component found</returns>
         public static IProteusInteraction FindInteractableComponentInParent(GameObject source)
         {
-            if (source == null)
+            GameObject obj = source;
+
+            if (obj == null)
             {
                 return null;
             }
-
-            GameObject obj = source;
 
             do
             {
@@ -116,7 +133,16 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
                         return interactComp;
                     }
                 }
-                obj = obj?.transform?.parent?.gameObject;
+
+                if (obj != null)
+                {
+                    if (obj.transform != null) {
+                        if (obj.transform.parent != null)
+                        {
+                            obj = obj.transform.parent.gameObject;
+                        }
+                    }
+                }
             }
             while (obj != null);
 

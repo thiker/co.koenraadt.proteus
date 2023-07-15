@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
 {
+    /// <summary>
+    /// Class used to hold the data of the states in the 3DML formatted model.
+    /// </summary>
     public class PTState : ObservableObject
     {
         private string _id;
@@ -17,6 +20,9 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
             set => SetProperty(ref _id, value);
         }
 
+        /// <summary>
+        /// Dictionary containing the values of the state object. Each value is identified by its key and holds a value.
+        /// </summary>
         public Dictionary<string, object> Values
         {
             get => _values;

@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
 {
+    /// <summary>
+    /// Class that holds the data for a node of the 3DML formatted model.
+    /// </summary>
     public class PTNode : ObservableObject
     {
 

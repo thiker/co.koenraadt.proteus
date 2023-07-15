@@ -20,13 +20,17 @@ using static Microsoft.Msagl.Layout.OverlapRemovalFixedSegments.OverlapRemovalFi
 namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 {
 
+    /// <summary>
+    /// Part of the repository that holds all viewer related data.
+    /// </summary>
     public class ViewersRepository
     {
         private static ViewersRepository _instance = null;
-
         private ObservableCollection<PTViewer> _ptViewers;
 
-
+        /// <summary>
+        /// The singleton instance of the ViewersRepository.
+        /// </summary>
         public static ViewersRepository Instance
         {
             get
@@ -40,12 +44,19 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             }
         }
 
+        /// <summary>
+        /// Initialize the ViewersRepository.
+        /// </summary>
         private void Init()
         {
             _ptViewers = new();
         }
 
-
+        /// <summary>
+        /// Creates a new viewer.
+        /// </summary>
+        /// <param name="viewerData">The data of the viewer to created.</param>
+        /// <param name="autoPlace">Whether the viewer should be automatically placed in the scene.</param>
         public void CreateViewer(PTViewer viewerData, bool autoPlace = true)
         {
             PTViewer viewerUpdate = viewerData;
@@ -118,7 +129,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         /// Get a PTViewer by its Id.
         /// </summary>
         /// <param name="id">the viewer's identifier.</param>
-        /// <returns>The PTViewer with the respective Id</returns>
+        /// <returns>The PTViewer with the respective Id.</returns>
         public PTViewer GetViewerById(string id)
         {
             if (id != null && id != "")
@@ -136,7 +147,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         /// <summary>
         /// Get the collection of viewers.
         /// </summary>
-        /// <returns>Collection of PTViewers</returns>
+        /// <returns>Collection of PTViewers.</returns>
         public ObservableCollection<PTViewer> GetViewers()
         {
             return _ptViewers;
@@ -144,9 +155,9 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         }
 
         /// <summary> 
-        /// Removes a viewer by its id
+        /// Removes a viewer by its id.
         /// </summary>
-        /// <param name="id">the viewer's identifier</param>
+        /// <param name="id">the viewer's identifier.</param>
         public void DeleteViewerById(string id)
         {
             PTViewer viewerToDelete = GetViewerById(id);
@@ -161,8 +172,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         /// <summary>
         /// Updates the position of the viewer.
         /// </summary>
-        /// <param name="id">the id of the viewer to update. </param>
-        /// <param name="position">the position of the viewer to update. </param>
+        /// <param name="id">the id of the viewer to update.</param>
+        /// <param name="position">the position of the viewer to update.</param>
         public void SetViewerPosition(string id, Vector3 position)
         {
             PTViewer viewer = GetViewerById(id);
@@ -222,7 +233,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         /// Updates the local position of the view window.
         /// </summary>
         /// <param name="id">the id of the viewer to update. </param>
-        /// <param name="position">the local position of the view window </param>
+        /// <param name="position">the local position of the view window.</param>
         public void AddModelAnchorOffset(string id, Vector3 offset)
         {
             PTViewer viewer = GetViewerById(id);
@@ -240,6 +251,9 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             UpdateViewer(updatedViewer);
         }
 
+        /// <summary>
+        /// Regenerate the layouts of all viewers.
+        /// </summary>
         public void RegenerateViewerLayouts()
         {
             foreach (PTViewer viewer in GetViewers())
@@ -411,7 +425,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         /// <summary>
         ///  Get the edges that are related to the viewer.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="viewerId">The id of the viewer to get the related nodes of.</param>
+        /// <returns>List of nodes that are related to a viewer</returns>
         public List<PTNode> GetRelatedNodesOfViewer(string viewerId)
         {
             List<PTNode> nodes = new();
@@ -470,6 +485,11 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             return edges;
         }
 
+        /// <summary>
+        /// Sets a new scale of a viewer.
+        /// </summary>
+        /// <param name="viewerId">The id of the viewer to update.</param>
+        /// <param name="scaleDelta">The scale delta that is added to the viewer's current scale.</param>
         public void ScaleViewer(string viewerId, Vector3 scaleDelta)
         {
             PTViewer viewer = GetViewerById(viewerId);
@@ -480,10 +500,10 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         }
 
         /// <summary>
-        /// Adds the zoom delta to the specified viewer
+        /// Adds the zoom delta to the specified viewer.
         /// </summary>
-        /// <param name="viewerId">Id of the viewer to zoom</param>
-        /// <param name="delta">zoom delta</param>
+        /// <param name="viewerId">Id of the viewer to zoom.</param>
+        /// <param name="delta">The zoom delta that will be added to the viewer's scale.</param>
         public void ZoomViewer(string viewerId, float delta = 0.0f)
         {
             PTViewer viewer = GetViewerById(viewerId);

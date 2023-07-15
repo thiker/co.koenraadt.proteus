@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
 {
+    /// <summary>
+    /// Class containing the data of a model element.
+    /// </summary>
     public class PTModelElement : ObservableObject
     {
         private string _id;

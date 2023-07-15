@@ -9,11 +9,15 @@ using UnityEngine.Splines;
 #nullable enable
 namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
 {
+    /// <summary>
+    /// Class containing the properties of a viewer of Proteus.
+    /// </summary>
     public class PTViewer : ObservableObject
     {
         private string _id;
         private bool _detached = false;
         private bool? _gizmoVisible = false;
+        private bool? _isBillboarding = true;
         private string[]? _rootNodeIds;
         private Vector3? _position;
         private Vector3? _scale;
@@ -25,9 +29,6 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         private Matrix4x4? _viewWindowWorldToLocal;
         private Dictionary<string, Vector3>? _layoutNodes;
         private Dictionary<string, List<Spline>>? _layoutEdges;
-
-
-        private bool? _isBillboarding = true;
 
         /// <value>
         /// The identifier of the viewer.

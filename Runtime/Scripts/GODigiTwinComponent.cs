@@ -15,18 +15,57 @@ using UnityEngine.Rendering;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
+/// <summary>
+/// Digital Twin component that used to to connect existing parts of the digital twin to Proteus. This component can be inherited from to implement custom behavior for example when the linked states changes.
+/// </summary>
 public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
 {
-    private string _xrayMatAddress = "Packages/co.koenraadt.proteus/Runtime/Materials/Mat_Xray.mat";
+    /// <summary>
+    /// The name of the main diagrma that the digital twin component is linked to.
+    /// </summary>
     public string MainDiagramName;
+
+    /// <summary>
+    /// The list of nodes that the digital twin component is linked to.
+    /// </summary>
     public List<string> LinkedNodes;
+
+    /// <summary>
+    /// The list of states that the digital twin component is linked to.
+    /// </summary>
     public List<string> LinkedStates;
+
+    /// <summary>
+    /// The opacity factor that the component will change its material when xrayed.
+    /// </summary>
     public float XrayOpacityFactor = .1f;
+
+    /// <summary>
+    /// The factor that the component should move away from the explode origin when exploded.
+    /// </summary>
     public float ExplodeFactor = 1.5f;
+
+    /// <summary>
+    /// Wether the component should trigger xray view.
+    /// </summary>
     public bool DoXrayView = true;
+
+    /// <summary>
+    /// Whether the component should trigger exploded view. 
+    /// </summary>
     public bool DoExplodedView = true;
+
+    /// <summary>
+    /// Whether the component shoud react to xray view.
+    /// </summary>
     public bool ReactsToXray = true;
+
+    /// <summary>
+    /// Whether the component should react to exploded view.
+    /// </summary>
     public bool ReactsToExplodedView = true;
+
+    private string _xrayMatAddress = "Packages/co.koenraadt.proteus/Runtime/Materials/Mat_Xray.mat";
     private bool _originalRendererEnabled;
     private ObservableCollection<PTState> _statesCollection;
     private PTGlobals _globalsData;
@@ -36,13 +75,18 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
     private Vector3 _explodedViewOffset;
     private AsyncOperationHandle<Material> handle;
 
+    /// <summary>
+    /// Sets the layer of the object to proteus viz so it can react to Proteus interaction events.
+    /// </summary>
     virtual protected void Awake()
     {
         gameObject.layer = LayerMask.NameToLayer("ProteusViz");
         _explodedViewOffset = new Vector3(0, 0, 0);
     }
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// Initializes and starts the digital twin component.
+    /// </summary>
     virtual protected void Start()
     {
         Debug.Log("Starting digi twin component..");
@@ -67,7 +111,10 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
         DigiTwinController.Instance.LinkDigiTwinComponent(this);
     }
 
-    // Instantiate the loaded prefab on complete
+    /// <summary>
+    /// Whenever the xray material asset is loaded, store the result as a reference for the digital twin component to use.
+    /// </summary>
+    /// <param name="operation"></param>
     private void Handle_Completed(AsyncOperationHandle<Material> operation)
     {
         if (operation.Status == AsyncOperationStatus.Succeeded)
@@ -81,11 +128,16 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
     }
 
 
-    // Update is called once per frame
+    /// <summary>
+    /// Called on every unity update.
+    /// </summary>
     virtual protected void Update()
     {
     }
 
+    /// <summary>
+    /// Destroys and cleans up the digital twin component.
+    /// </summary>
     virtual protected void OnDestroy()
     {
         if (_statesCollection != null)
@@ -95,6 +147,10 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
         DigiTwinController.Instance.UnlinkDigiTwinComponent(this);
     }
 
+    /// <summary>
+    /// Checks whether the digital twin component has a linked node that is currently selected.
+    /// </summary>
+    /// <returns>Returns true when one of the linked nodes is currently selected.</returns>
     public bool HasLinkedNodeInSelection()
     {
         bool isInSelection = LinkedNodes.Intersect(Repository.Instance.Proteus.GetNodeSelectionDisplayNames()).Count() > 0;
@@ -106,6 +162,9 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
         Repository.Instance.Proteus.SelectNodeByName(MainDiagramName);
     }
 
+    /// <summary>
+    /// Updates the component to react to xray view. Changes the transparency of the object accordingly.
+    /// </summary>
     public void UpdateXrayView()
     {
         bool isInSelection = HasLinkedNodeInSelection();
@@ -136,6 +195,11 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
         }
     }
 
+    /// <summary>
+    /// Updates the component to react to exploded view. Calculates its new location and offset accordingly.
+    /// </summary>
+    /// <param name="origin">The origin of the explosion.</param>
+    /// <param name="isExploded">Whether the component should explode.</param>
     public void UpdateExplodedView(Vector3 origin, bool isExploded)
     {
         transform.position -= _explodedViewOffset;
@@ -149,6 +213,11 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
         }
     }
 
+    /// <summary>
+    /// Ensure that the digital twin component maintans a reference to the states it is linked to.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="e"></param>
     private void OnStatesCollectionChanged(object obj, NotifyCollectionChangedEventArgs e)
     {
         // Unlink removed
@@ -182,6 +251,11 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
         OnStateDataChanged((PTState)obj, e);
     }
 
+    /// <summary>
+    /// Method called whenever the state changes for an object that the digital twin component is linked to. Can be overridenn to define custom behavior on state changes.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="e"></param>
     virtual protected void OnStateDataChanged(PTState obj ,PropertyChangedEventArgs e)
     {
 

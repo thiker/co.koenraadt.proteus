@@ -16,14 +16,25 @@ using Newtonsoft.Json;
 using Packages.co.koenraadt.proteus.Runtime.Other;
 namespace Packages.co.koenraadt.proteus.Runtime.Controllers
 {
+    /// <summary>
+    /// Controls the communication of Proteus and implements an MQTT client and server. 
+    /// </summary>
     public class CommsController
     {
+        /// <summary>
+        /// The IP address of the broker that Proteus should connect to. If left empty, Proteus will create its own broker server.
+        /// </summary>
         public static string BROKER_IP = "";
+
         private static CommsController _instance = null;
         private static MqttFactory _mqttFactory = new();
         private static ConcurrentQueue<MqttApplicationMessage> _mqttMessageQueue = new();
         private IMqttClient _mqttClient;
         private MqttServer _mqttServer;
+
+        /// <summary>
+        /// The singleton instance of the communication controller
+        /// </summary>
         public static CommsController Instance
         {
             get
@@ -50,12 +61,11 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             Debug.Log("PROTEUS: CommsController Init Completed.");
         }
 
-        public void Destroy()
-        {
-            _mqttClient.Dispose();
-            _mqttServer.Dispose();
-        }
 
+        /// <summary>
+        /// Initializes the MQTT client for the communication controller.
+        /// </summary>
+        /// <returns></returns>
         private async Task InitClient()
         {
             _mqttClient = _mqttFactory.CreateMqttClient();
@@ -63,8 +73,10 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             await SubscribeTopics();
         }
 
-  
-
+        /// <summary>
+        /// Initialize the MQTT broker server used by Proteus.
+        /// </summary>
+        /// <returns></returns>
         private async Task InitServer()
         {
             Debug.Log("PROTEUS: creating mqtt server...");
@@ -91,8 +103,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             Debug.Log("PROTEUS: Try disconnecting client...");
             await DisconnectClient();
 
-            Debug.Log("PROTEUS: Setup application message received async.");
             // Setup the message handling so that queued messages are not lost.
+            Debug.Log("PROTEUS: Setup application message received async.");
             _mqttClient.ApplicationMessageReceivedAsync += e =>
             {
                 _mqttMessageQueue.Enqueue(e.ApplicationMessage);
@@ -101,18 +113,19 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
 
             // Connect the client
             Debug.Log("PROTEUS: Connecting client....");
-            string tcpServerIp = "127.0.0.1";
+            string tcpServerIp = "127.0.0.1"; // the tcp server ip defaults to localhost
 
+            // If the broker IP is set override the tcpServerIp
             if (BROKER_IP != null && BROKER_IP != "" && !BROKER_IP.Equals("")) {
                 Debug.Log($"PROTEUS: Overriding client to connnect to external broker ip {BROKER_IP}");
                 tcpServerIp = BROKER_IP;
             }
-            
+
+            // Setup the mqtt client
             var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(tcpServerIp).Build();
             await _mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
             Debug.Log($"PROTEUS: Client connected to {tcpServerIp}.");
-
-            CommsController.Instance.SendMessage("proteus/debug/hello-world", "Hello World from Proteus!");
+            Instance.SendMessage("proteus/debug/hello-world", "Hello World from Proteus!");
         }
 
         /// <summary>
@@ -260,6 +273,11 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             await _mqttClient?.DisconnectAsync(new MqttClientDisconnectOptionsBuilder().WithReason(MqttClientDisconnectReason.NormalDisconnection).Build());
         }
 
+        /// <summary>
+        /// Send a message to the MQTT broker for a specific topic. 
+        /// </summary>
+        /// <param name="topic">The topic to send the message to.</param>
+        /// <param name="payload">The string payload of the message.</param>
         public async void SendMessage(string topic, string payload) {
             Debug.Log($"PROTEUS: Sending MQTT message to {topic}");
             var applicationMessage = new MqttApplicationMessageBuilder()
@@ -271,7 +289,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
         }
 
         /// <summary>
-        /// Called on unity update to ensure the messages are processed in the main thread.
+        /// Update function which should be called by the CommsController gameobject on Unity Update,to ensure the messages are processed in the main thread.
+        /// The CommsController does not inherit from monobehavior and therefore has no Update override itself.
         /// </summary>
         public void Update()
         {
@@ -279,7 +298,16 @@ namespace Packages.co.koenraadt.proteus.Runtime.Controllers
             {
                 ProcessMessage(message);
             }
-            
         }
+
+        /// <summary>
+        /// Destroys and cleans up the client / server created by the communication controller.
+        /// </summary>
+        public void Destroy()
+        {
+            _mqttClient.Dispose();
+            _mqttServer.Dispose();
+        }
+
     }
 }

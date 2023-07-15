@@ -7,6 +7,9 @@ using Packages.co.koenraadt.proteus.Runtime.Interfaces;
 using Packages.co.koenraadt.proteus.Runtime.Other;
 using System.Collections.Generic;
 
+/// <summary>
+/// Component that handles the behavior of the nodes that are used in the viewer to visually represent the nodes in the 3DML formatted model.
+/// </summary>
 public class GONode : MonoBehaviour, IProteusInteraction
 {
     private string _nodeId;
@@ -19,14 +22,20 @@ public class GONode : MonoBehaviour, IProteusInteraction
     private GameObject _displayNameObj;
     private MaterialPropertyBlock _matPropBlock;
 
-    // Initialize the node
+    /// <summary>
+    /// Called to initialize the node and obtain a reference to the viewer its attached to.
+    /// </summary>
+    /// <param name="nodeId">The id of the node that the component is linked to.</param>
+    /// <param name="attachedViewerId">The id of the viewer that the edge component is attached to.</param>
     public void Init(string nodeId, string attachedViewerId)
     {
         _nodeId = nodeId;
         _attachedViewerId = attachedViewerId;
     }
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// Starts and initializes the node. Obtains references to the gameobjects in the node prefab that are used to visualize the node.
+    /// </summary>
     void Start()
     {
         // initialize variables
@@ -37,7 +46,6 @@ public class GONode : MonoBehaviour, IProteusInteraction
         _attachedViewerData = Repository.Instance.Viewers.GetViewerById(_attachedViewerId);
         _globalsData = Repository.Instance.Proteus.GetGlobals();
 
-        // TODO: Reimplement correctly
         // Get the text object
         _displayNameObj = transform.Find("DisplayNameText").gameObject;
         _displayNameTMP = _displayNameObj.GetComponent<TextMeshPro>();
@@ -46,13 +54,15 @@ public class GONode : MonoBehaviour, IProteusInteraction
         _nodeGameObject = transform.Find("Node").gameObject;
 
         // initialize the event listeners
-        linkEventListeners();
+        LinkEventListeners();
 
         // Set presentation
         UpdateNodePresentation();
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Updatest the shader of the node and node's text with the attached viewer's world to local matrix so the node and text is croppped to the viewwindow.
+    /// </summary>
     void Update()
     {
         //set the matrix
@@ -70,8 +80,9 @@ public class GONode : MonoBehaviour, IProteusInteraction
         _displayNameRenderer?.SetPropertyBlock(_matPropBlock);
     }
 
-
-
+    /// <summary>
+    /// Destroys the node and clears any listeners and references to the repository that it created to obtain node data.
+    /// </summary>
     void OnDestroy()
     {
         if (_nodeData != null)
@@ -90,6 +101,10 @@ public class GONode : MonoBehaviour, IProteusInteraction
         }
     }
 
+    /// <summary>
+    /// Selects the node whenever it is clicked.
+    /// </summary>
+    /// <param name="hit">Raycast result from the interaction.</param>
     public void OnPointerDown(RaycastHit hit)
     {
         Debug.Log($"PROTEUS: Clicked on node with identifier, {_nodeData.Id} ");
@@ -99,10 +114,15 @@ public class GONode : MonoBehaviour, IProteusInteraction
         }
     }
 
+    /// <summary>
+    /// Opens the behavioral nodes related to the node in a new viewer when the user alt clicks the node.
+    /// </summary>
+    /// <param name="hit">Raycat result from the interaction.</param>
     public void OnPointerAltClickDown(RaycastHit hit)
     {
         List<PTNode> relatedBehavioralNodes = Repository.Instance.Models.GetRelatedBehavioralNodesById(_nodeData.Id);
         List<string> rootIds = new();
+
         foreach (PTNode node in relatedBehavioralNodes)
         {
             rootIds.Add(node.Id);
@@ -110,13 +130,16 @@ public class GONode : MonoBehaviour, IProteusInteraction
 
         // Get position right of current viewer
         Vector3 startPosition = (Vector3)_attachedViewerData.Position;
-        startPosition = startPosition + new Vector3(0, ((Vector3)(_attachedViewerData.Scale)).y, 0);
+        startPosition += new Vector3(0, ((Vector3)(_attachedViewerData.Scale)).y, 0);
 
         PTViewer behaviorViewer = new() { Id = Helpers.GenerateUniqueId(), RootNodeIds = rootIds.ToArray(), Position = startPosition, Scale = _attachedViewerData.Scale };
         Repository.Instance.Viewers.CreateViewer(behaviorViewer);
     }
 
-    private void linkEventListeners()
+    /// <summary>
+    /// Links the event listeners to be notified of changes to viewer, node or the global Proteus data.
+    /// </summary>
+    private void LinkEventListeners()
     {
         if (_nodeData != null)
         {
@@ -134,6 +157,11 @@ public class GONode : MonoBehaviour, IProteusInteraction
         }
     }
 
+    /// <summary>
+    /// Whenever the  global Proteus data's node selection changes, the node change's its color to reflect if it is selected.
+    /// </summary>
+    /// <param name="obj">The object containing the globals data.</param>
+    /// <param name="e">Object storing the arguments of the property changed event.</param>
     private void OnGlobalsDataChanged(object obj, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == "SelectedNodes")
@@ -150,11 +178,21 @@ public class GONode : MonoBehaviour, IProteusInteraction
         }
     }
 
+    /// <summary>
+    /// Whenever the node's data changes the presentation is updated.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="e"></param>
     private void OnNodeDataChanged(object obj, PropertyChangedEventArgs e)
     {
         UpdateNodePresentation();
     }
 
+    /// <summary>
+    /// Whenever the viewer's properties that affect the node, such as layout, zoom or scale, change the node's presentation is updated.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="e"></param>
     private void OnViewerDataChanged(object obj, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == "LayoutNodes" || e.PropertyName == "ZoomScale" || e.PropertyName == "Scale")
@@ -163,7 +201,9 @@ public class GONode : MonoBehaviour, IProteusInteraction
         }
     }
 
-    // Updates the node's visual representation.
+    /// <summary>
+    /// Updates the visual presentation of the node.
+    /// </summary>
     private void UpdateNodePresentation()
     {
         // Update the position

@@ -9,14 +9,25 @@ using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Gameobject used to implement / control the visualization controller for Proteus. 
+/// </summary>
 public class GOVizController : MonoBehaviour
 {
+    /// <summary>
+    /// The prefab the visualization controller should use to represent a viewer.
+    /// </summary>
     public GameObject ViewerPrefab;
+
+
     private PTGlobals _globalsData;
     private ObservableCollection<PTViewer> _viewersData;
     private Dictionary<string, GameObject> _viewerPrefabGOs;
 
-    // Start is called before the first frame update
+
+    /// <summary>
+    /// Starts and initializes the visualiation controller.
+    /// </summary>
     void Start()
     {
         // Initialize 
@@ -30,7 +41,18 @@ public class GOVizController : MonoBehaviour
         linkEventListeners();
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Links the event listeners so that the visualization is updated when the data it uses changes.
+    /// </summary>
+    private void linkEventListeners()
+    {
+        _viewersData.CollectionChanged += OnViewersDataChanged;
+        _globalsData.PropertyChanged += OnGlobalsDataChanged;
+    }
+
+    /// <summary>
+    /// Handles the interaction for the visualization of Proteus and calls the components that are interacted with.
+    /// </summary>
     void Update()
     {
         RaycastHit[] hits;
@@ -119,8 +141,9 @@ public class GOVizController : MonoBehaviour
         }
     }
 
-
-
+    /// <summary>
+    /// Detroy the visualization controller and unlink the event listeners for data the visualization controller uses.
+    /// </summary>
     void OnDestroy()
     {
         if (_viewersData != null)
@@ -132,17 +155,7 @@ public class GOVizController : MonoBehaviour
         {
             _globalsData.PropertyChanged -= OnGlobalsDataChanged;
         }
-
-
     }
-
-    private void linkEventListeners()
-    {
-        _viewersData.CollectionChanged += OnViewersDataChanged;
-        _globalsData.PropertyChanged += OnGlobalsDataChanged;
-    }
-
-
 
     /// <summary>
     /// Update when the nodes data collection has changed.
@@ -191,9 +204,10 @@ public class GOVizController : MonoBehaviour
     }
 
     /// <summary>
-    /// Spawn a node prefab in the scene.
+    /// Spawns a viewer in the scene.
     /// </summary>
-    /// <param name="nodeData">Data of the node.</param>
+    /// <param name="viewerData">The data of the viewer to add.</param>
+    /// <exception cref="System.Exception">Thrown when a viewer is instantiated but the position is null.</exception>
     private void SpawnViewer(PTViewer viewerData)
     {  
         Debug.Log($"PROTEUS: Spawning viewer {viewerData.Id}...");
@@ -222,10 +236,11 @@ public class GOVizController : MonoBehaviour
         viewerGO.Init(viewerData.Id);
     }
 
+
     /// <summary>
-    /// Destroy a Node in the viewer.
+    /// Destroys a viewer.
     /// </summary>
-    /// <param name="node"></param>
+    /// <param name="viewerId">The id of the viewer to destroy.</param>
     private void DestroyViewer(string viewerId)
     {
         GameObject viewerPrefabGO;

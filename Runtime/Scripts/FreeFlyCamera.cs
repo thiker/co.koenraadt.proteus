@@ -5,7 +5,11 @@ using System.Text;
 using UnityEngine;
 
 /// <summary>
+/// 
 /// A simple free camera to be added to a Unity game object.
+///
+/// Created by ashley davis https://gist.github.com/ashleydavis/f025c03a9221bc840a2b
+/// Modified / used by Thijs Koenraadt for use in  Proteus.
 /// 
 /// Keys:
 ///	wasd / arrows	- movement

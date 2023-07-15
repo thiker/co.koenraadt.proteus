@@ -8,12 +8,18 @@ using System;
 
 namespace Packages.co.koenraadt.proteus.Runtime.Repositories
 {
+    /// <summary>
+    /// Part of the repository that handles the state related data.
+    /// </summary>
     public class StatesRepository
     {
         private static StatesRepository _instance = null;
 
         private ObservableCollection<PTState> _ptStates;
 
+        /// <summary>
+        /// The singleton instance of the StatesRepository.
+        /// </summary>
         public static StatesRepository Instance
         {
             get
@@ -27,12 +33,13 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             }
         }
 
+        /// <summary>
+        /// Initialize the states repository.
+        /// </summary>
         private void Init()
         {
             // Initialise collections
             _ptStates = new();
-
-            // TODO: Initialize the repo and load everything
         }
 
         /// <summary>
@@ -54,6 +61,12 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             }
         }
 
+        /// <summary>
+        /// Sets a new value based on the value's key for a state.
+        /// </summary>
+        /// <param name="id">The id of the state.</param>
+        /// <param name="key">The key of the value to update.</param>
+        /// <param name="value">The new value.</param>
         public void UpdateStateValue(string id, string key, object value)
         {
             PTState ptState = GetStateById(id);
@@ -68,8 +81,11 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             if (ptState.Values == null) { ptState.Values = new(); }
 
             // Clone so property changed event is fired
-            Dictionary<string,object> newDict = new(ptState.Values);
-            newDict[key] = value;
+            Dictionary<string, object> newDict = new(ptState.Values)
+            {
+                [key] = value
+            };
+
             ptState.Values = newDict; 
         }
 
@@ -95,9 +111,9 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         }
 
         /// <summary>
-        /// Removes a state by its id
+        /// Removes a state by its id.
         /// </summary>
-        /// <param name="id">the state's identifier</param>
+        /// <param name="id">The state's identifier.</param>
         public void DeleteStateById(string id)
         {
             PTState stateToDelete = GetStateById(id);

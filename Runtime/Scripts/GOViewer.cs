@@ -8,21 +8,43 @@ using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Component that implements and handle the behvior of a Proteus viewer.
+/// </summary>
 public class GOViewer : MonoBehaviour, IProteusInteraction
 {
+    /// <summary>
+    /// Whether the viewer should be detached from the visualization controller. Used in the VR experiment. Detached viewers are not automatically placed.
+    /// </summary>
     public bool Detached = false;
+
+    /// <summary>
+    /// The list of ids for the root nodes of the viewer. The viewer will visualize the hierarchy of all nodes that are descendants of this root node.
+    /// </summary>
     public string[] RootNodeIds;
+
+    /// <summary>
+    /// The Id of the viewer that can be explicitely set when the viewer is detached.
+    /// </summary>
     public string Id { get; internal set; }
     public string ViewerId = null;
-    private string _linkedViewerId;
 
+    /// <summary>
+    /// Reference to the NodePrefab that the viewer instantiates for each node.
+    /// </summary>
     public GameObject NodePrefab;
+
+    /// <summary>
+    /// Reference to the EdgePrefab that the viewer instantiates for each edge.
+    /// </summary>
     public GameObject EdgePrefab;
+
+    private PTViewer _viewerData;
+    private string _linkedViewerId;
     private GameObject _viewerContainer;
     private GameObject _modelAnchor;
     private GameObject _viewWindow;
     private List<GameObject> _viewWindowBorders;
-    PTViewer _viewerData;
     private PTGlobals _globalsData;
     private ObservableCollection<PTNode> _nodesData;
     private ObservableCollection<PTEdge> _edgesData;
@@ -32,14 +54,17 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
 
 
     /// <summary>
-    /// Inializes a Viewer Instance
+    /// Initializes the viewer and sets its related viewer id.
     /// </summary>
+    /// <param name="viewerId">The id of the viewer.</param>
     public void Init(string viewerId)
     {
         _linkedViewerId = viewerId;
     }
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// Initializes and starts the viewer. This will obtain references to the gameobjects used by the viewer and spawns the nodes and edges used to visualize the viewer's layout.
+    /// </summary>
     void Start()
     {
         if (Detached) {
@@ -71,7 +96,6 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         }
 
         // Get the nodes
-        //TODO: Refactor so that nodes data in viewer is based on nodesLayout instead of global.
         _nodesData = Repository.Instance.Models.GetNodes();
         _edgesData = Repository.Instance.Models.GetEdges();
         _globalsData = Repository.Instance.Proteus.GetGlobals();
@@ -85,9 +109,22 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
 
         UpdateViewerPresentation();
         UpdateModelAnchorOffsetPresentation();
-
     }
 
+    /// <summary>
+    /// Links the event listeners so that the viewer is notified whenever data that the viewer relies on changes.
+    /// </summary>
+    private void LinkEventListeners()
+    {
+        _viewerData.PropertyChanged += OnViewerDataChanged;
+        _globalsData.PropertyChanged += OnGlobalsDataChanged;
+        _nodesData.CollectionChanged += OnNodesDataChanged;
+        _edgesData.CollectionChanged += OnEdgesDataChanged;
+    }
+
+    /// <summary>
+    /// On every update save the viewwindow's WorldToLocalMatrix that is used to crop the contents of the viewer inside this viewwindow. The viewer is also rotated towards the user every update if billboarding is enabled.
+    /// </summary>
     void Update()
     {
         if (_viewWindow != null)
@@ -109,6 +146,9 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         }
     }
 
+    /// <summary>
+    /// Whenever the viewer is destroyed, clean up all data change listeners.
+    /// </summary>
     void OnDestroy()
     {
         _viewerData.PropertyChanged -= OnViewerDataChanged;
@@ -117,19 +157,20 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         _edgesData.CollectionChanged -= OnEdgesDataChanged;
     }
 
+    /// <summary>
+    /// Select the viewer whenever its clicked.
+    /// </summary>
+    /// <param name="hit">The raycast result from the interaction.</param>
     public void OnPointerDown(RaycastHit hit)
     {
         Repository.Instance.Proteus.SelectViewer(_viewerData.Id);
     }
 
-    private void LinkEventListeners()
-    {
-        _viewerData.PropertyChanged += OnViewerDataChanged;
-        _globalsData.PropertyChanged += OnGlobalsDataChanged;
-        _nodesData.CollectionChanged += OnNodesDataChanged;
-        _edgesData.CollectionChanged += OnEdgesDataChanged;
-    }
-
+    /// <summary>
+    /// Whenever the viewer's data changes, the viewer is updated so the visualization reflects the current state. For example, whenever the layout changes, edges and nodes are updated and spawned / removed accordingly.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="e"></param>
     private void OnViewerDataChanged(object obj, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == "ModelAnchorOffset" || e.PropertyName == "Zoom" || e.PropertyName == "MaxZoom" || e.PropertyName == "MinZoom")
@@ -150,6 +191,11 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         UpdateViewerPresentation();
     }
 
+    /// <summary>
+    /// Whenever the viewer selection changes, update the viewer's presentation accordingly to reflect if it is selected.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="e"></param>
     private void OnGlobalsDataChanged(object obj, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == "SelectedViewers")
@@ -159,7 +205,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     }
 
     /// <summary>
-    /// When the layout of the edges has changed update the presentation.
+    /// Spawns the edge prefabs that are used to create a visual representation of the edges in the model.
     /// </summary>
     private void SpawnEdges()
     {
@@ -190,29 +236,33 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     }
 
 
-    //TODO: Only regenerate view layouts on repo level.
+    //TODO: Maybe only regenerate view layouts on repo level.
+    /// <summary>
+    /// Regenerate the viewer's layout when the edges data collection has changed.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="e"></param>
     private void OnEdgesDataChanged(object obj, NotifyCollectionChangedEventArgs e)
     {
         // Regenerate the viewer's layout
         Repository.Instance.Viewers.RegenerateViewerLayout(_viewerData.Id);
     }
 
-
+    //TODO: Maybe only regenerate view layouts on repo level.
     /// <summary>
-    /// Update when the nodes data collection has changed.
+    /// Regenerate the viewer's layout when the nodes data collection has changed.
     /// </summary>
-    /// <param name="sender"></param>
+    /// <param name="obj"></param>
     /// <param name="e"></param>
-    private void OnNodesDataChanged(object sender, NotifyCollectionChangedEventArgs e)
+    private void OnNodesDataChanged(object obj, NotifyCollectionChangedEventArgs e)
     {
         // Regenerate the viewer's layout
         Repository.Instance.Viewers.RegenerateViewerLayout(_viewerData.Id);
     }
 
     /// <summary>
-    /// Spawn nodes in the Viewer.
+    /// Spawns the node prefabs that are used to create a visual representation of the edges in the model.
     /// </summary>
-    /// <param name="node"></param>
     private void SpawnNodes()
     {
         List<string> nodeIds = new();
@@ -242,9 +292,9 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     }
 
     /// <summary>
-    /// Spawn a node prefab in the scene.
+    /// Spawns a node prefab in the scene and links it to the viewer.
     /// </summary>
-    /// <param name="nodeData">Data of the node.</param>
+    /// <param name="nodeData">Data of the node to add.</param>
     private void SpawnNode(PTNode node)
     {
         // Destroy node if already existing
@@ -260,9 +310,9 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     }
 
     /// <summary>
-    /// Spawn a edge prefab in the scene.
+    /// Spawn an edge prefab in the scene and links it to the viewer.
     /// </summary>
-    /// <param name="edgeData">Data of the edge.</param>
+    /// <param name="edgeData">Data of the edge to add.</param>
     private void SpawnEdge(PTEdge edge)
     {
         // Destroy edge if already existing
@@ -280,7 +330,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     /// <summary>
     /// Destroy a Node in the viewer.
     /// </summary>
-    /// <param name="id">id of the node</param>
+    /// <param name="id">Id of the node to destroy.</param>
     private void DestroyNode(string id)
     {
         GameObject nodePrefabGo;
@@ -293,7 +343,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     /// <summary>
     /// Destroy a Edge in the viewer.
     /// </summary>
-    /// <param name="id">id of the edge</param>
+    /// <param name="id">id of the edge to destroy.</param>
     private void DestroyEdge(string id)
     {
         GameObject edgePrefabGo;
@@ -303,6 +353,9 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         }
     }
 
+    /// <summary>
+    /// Updates the position of the viewer's model anchor to set its position and rotation to the offset that is controlled by the user when the user pans the viewer.
+    /// </summary>
     private void UpdateModelAnchorOffsetPresentation()
     {
         // Update the view windows offset
@@ -313,6 +366,9 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
 
     }
 
+    /// <summary>
+    /// Updates the viewer's presentation, such as scale and zoom level.
+    /// </summary>
     private void UpdateViewerPresentation()
     {
         // Update the local scale
@@ -347,7 +403,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
 
         }
 
-        //TODO: Refactor to only run on selection change
+        //TODO: Maybe Refactor to only run on selection change
         bool isSelectedViewer = Repository.Instance.Proteus.IsViewerSelected(_viewerData.Id);
 
         if (isSelectedViewer)

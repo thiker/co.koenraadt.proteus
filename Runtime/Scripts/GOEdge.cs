@@ -5,6 +5,9 @@ using Packages.co.koenraadt.proteus.Runtime.Repositories;
 using UnityEngine.Splines;
 using System.Collections.Generic;
 
+/// <summary>
+/// Component that handles the behavior of the Edges that are used in the viewer to visually represent the edges in the 3DML formatted model.
+/// </summary>
 public class GOEdge : MonoBehaviour
 {
     private string _edgeId;
@@ -15,14 +18,20 @@ public class GOEdge : MonoBehaviour
     private SplineContainer _splineContainerComponent;
     private MaterialPropertyBlock _matPropBlock;
 
-    // Initialize the node
+    /// <summary>
+    /// Called to initialize the edge and obtain a reference to the viewer its attached to.
+    /// </summary>
+    /// <param name="edgeId">The id of the edge that the component is linked to.</param>
+    /// <param name="attachedViewerId">The id of the viewer that the edge component is attached to.</param>
     public void Init(string edgeId, string attachedViewerId)
     {
         _edgeId = edgeId;
         _attachedViewerId = attachedViewerId;
     }
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// Starts and initializes the edge. Obtains reference to the gameobjects in the edge prefab that are used to visualize the edge.
+    /// </summary>
     void Start()
     {
         _matPropBlock = new MaterialPropertyBlock();
@@ -42,13 +51,15 @@ public class GOEdge : MonoBehaviour
         Mesh duplicatedMesh = meshFilter.mesh;
 
         // initialize the event listeners
-        linkEventListeners();
+        LinkEventListeners();
 
         // Set presentation
         UpdateEdgePresentation();
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Updatest the shader of the edge with the attached viewer's world to local matrix so the edge is croppped to the viewwindow.
+    /// </summary>
     void Update()
     {
         //Get a renderer component either of the own gameobject or of a child
@@ -60,8 +71,9 @@ public class GOEdge : MonoBehaviour
         renderer.SetPropertyBlock(_matPropBlock);
     }
 
-
-
+    /// <summary>
+    /// Destroys the edge and clears listeners and reference to the repository that it created to obtain edge data.
+    /// </summary>
     void OnDestroy()
     {
         if (_edgeData != null)
@@ -74,6 +86,12 @@ public class GOEdge : MonoBehaviour
             _attachedViewerData.PropertyChanged -= OnViewerDataChanged;
         }
     }
+
+    /// <summary>
+    /// Updates the edges presentation whenever the viewer's data changes.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="e"></param>
     private void OnViewerDataChanged(object obj, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == "LayoutNodes")
@@ -82,7 +100,10 @@ public class GOEdge : MonoBehaviour
         }
     }
 
-    private void linkEventListeners()
+    /// <summary>
+    /// Links the event listeners that the edge component uses to listen to data changed events from the repository.
+    /// </summary>
+    private void LinkEventListeners()
     {
         if (_edgeData != null)
         {
@@ -95,13 +116,19 @@ public class GOEdge : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Called whenever the edges data changes and then calls the function to update the edge's presentation.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="e"></param>
     private void OnEdgeDataChanged(object obj, PropertyChangedEventArgs e)
     {
         UpdateEdgePresentation();
     }
 
-    // Updates the edge's visual representation.
+    /// <summary>
+    /// Updates the edge's visual representation.
+    /// </summary>
     private void UpdateEdgePresentation()
     {
         List<Spline> splines = _attachedViewerData.LayoutEdges[_edgeData.Id];
