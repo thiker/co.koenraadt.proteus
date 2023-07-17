@@ -1,4 +1,4 @@
-using Packages.co.koenraadt.proteus.Runtime.Controllers;
+using co.koenraadt.proteus.Runtime.Controllers;
 using UnityEngine;
 
 /// <summary>

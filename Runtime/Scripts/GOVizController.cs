@@ -1,7 +1,7 @@
-using Packages.co.koenraadt.proteus.Runtime.Interfaces;
-using Packages.co.koenraadt.proteus.Runtime.Other;
-using Packages.co.koenraadt.proteus.Runtime.Repositories;
-using Packages.co.koenraadt.proteus.Runtime.ViewModels;
+using co.koenraadt.proteus.Runtime.Interfaces;
+using co.koenraadt.proteus.Runtime.Other;
+using co.koenraadt.proteus.Runtime.Repositories;
+using co.koenraadt.proteus.Runtime.ViewModels;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;

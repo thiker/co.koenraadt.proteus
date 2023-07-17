@@ -4,8 +4,8 @@ using MQTTnet.Server;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Packages.co.koenraadt.proteus.Runtime.Repositories;
-using Packages.co.koenraadt.proteus.Runtime.ViewModels;
+using co.koenraadt.proteus.Runtime.Repositories;
+using co.koenraadt.proteus.Runtime.ViewModels;
 using UnityEngine;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -13,8 +13,8 @@ using Newtonsoft.Json;
  using System.Net;
  using System.Net.NetworkInformation;
  using System.Net.Sockets;
-using Packages.co.koenraadt.proteus.Runtime.Other;
-namespace Packages.co.koenraadt.proteus.Runtime.Controllers
+using co.koenraadt.proteus.Runtime.Other;
+namespace co.koenraadt.proteus.Runtime.Controllers
 {
     /// <summary>
     /// Controls the communication of Proteus and implements an MQTT client and server. 

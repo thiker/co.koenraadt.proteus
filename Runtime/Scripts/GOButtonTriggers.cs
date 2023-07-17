@@ -1,9 +1,10 @@
-using Packages.co.koenraadt.proteus.Runtime.Controllers;
-using Packages.co.koenraadt.proteus.Runtime.Repositories;
-using Packages.co.koenraadt.proteus.Runtime.ViewModels;
-using System.Collections.Generic;
+using co.koenraadt.proteus.Runtime.Repositories;
+using co.koenraadt.proteus.Runtime.ViewModels;
 using UnityEngine;
 
+/// <summary>
+/// Used to debug / test the VR Experiment. Can be ignored.
+/// </summary>
 public class GOButtonTriggers : MonoBehaviour
 {
     // Start is called before the first frame update

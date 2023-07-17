@@ -1,6 +1,6 @@
-using Packages.co.koenraadt.proteus.Runtime.Controllers;
-using Packages.co.koenraadt.proteus.Runtime.Repositories;
-using Packages.co.koenraadt.proteus.Runtime.ViewModels;
+using co.koenraadt.proteus.Runtime.Controllers;
+using co.koenraadt.proteus.Runtime.Repositories;
+using co.koenraadt.proteus.Runtime.ViewModels;
 using System.Collections.Generic;
 using UnityEngine;
 

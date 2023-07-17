@@ -1,7 +1,7 @@
-using Packages.co.koenraadt.proteus.Runtime.ViewModels;
+using co.koenraadt.proteus.Runtime.ViewModels;
 using System.ComponentModel;
 using UnityEngine;
-using Packages.co.koenraadt.proteus.Runtime.Repositories;
+using co.koenraadt.proteus.Runtime.Repositories;
 using UnityEngine.Splines;
 using System.Collections.Generic;
 

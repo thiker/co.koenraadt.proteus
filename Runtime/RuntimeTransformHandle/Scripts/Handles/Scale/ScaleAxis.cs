@@ -2,7 +2,7 @@ using System.IO;
 using System.Security.Permissions;
 using UnityEngine;
 
-namespace RuntimeHandle
+namespace co.koenraadt.proteus.Runtime.Other.RuntimeHandle
 {
     /**
      * Created by Peter @sHTiF Stefcek 20.10.2020

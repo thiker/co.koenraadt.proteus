@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
 
-namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
+namespace co.koenraadt.proteus.Runtime.ViewModels
 {
     /// <summary>
     /// Class used to hold the data of the states in the 3DML formatted model.

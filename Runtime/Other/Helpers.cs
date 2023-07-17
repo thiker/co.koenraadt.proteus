@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Packages.co.koenraadt.proteus.Runtime.Interfaces;
+using co.koenraadt.proteus.Runtime.Interfaces;
 using UnityEngine;
-namespace Packages.co.koenraadt.proteus.Runtime.Other
+namespace co.koenraadt.proteus.Runtime.Other
 {
     /// <summary>
     /// Collection of Helper function used by Proteus.
@@ -27,9 +23,8 @@ namespace Packages.co.koenraadt.proteus.Runtime.Other
                 return;
             }
 
-            Debug.Log($"PROTEUS: Combining values for type {t.Name}");
-
             Type t = typeof(T);
+            Debug.Log($"PROTEUS: Combining values for type {t.Name}");
             var properties = t.GetProperties().Where(prop => prop.CanRead && prop.CanWrite);
 
             foreach (var prop in properties)

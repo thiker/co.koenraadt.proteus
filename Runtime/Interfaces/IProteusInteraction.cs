@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Packages.co.koenraadt.proteus.Runtime.Interfaces
+namespace co.koenraadt.proteus.Runtime.Interfaces
 {
     /// <summary>
     /// Interface for the interaction of Proteus.

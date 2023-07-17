@@ -5,8 +5,8 @@ using Microsoft.Msagl.Core.Routing;
 using Microsoft.Msagl.Layout.Layered;
 using Microsoft.Msagl.Miscellaneous;
 using Microsoft.Msagl.Routing;
-using Packages.co.koenraadt.proteus.Runtime.Other;
-using Packages.co.koenraadt.proteus.Runtime.ViewModels;
+using co.koenraadt.proteus.Runtime.Other;
+using co.koenraadt.proteus.Runtime.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,7 +17,7 @@ using UnityEngine;
 using UnityEngine.Splines;
 using static Microsoft.Msagl.Layout.OverlapRemovalFixedSegments.OverlapRemovalFixedSegmentsMst;
 
-namespace Packages.co.koenraadt.proteus.Runtime.Repositories
+namespace co.koenraadt.proteus.Runtime.Repositories
 {
 
     /// <summary>

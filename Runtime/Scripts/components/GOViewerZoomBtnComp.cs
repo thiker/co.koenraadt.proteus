@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Packages.co.koenraadt.proteus.Runtime.ViewModels;
-using Packages.co.koenraadt.proteus.Runtime.Interfaces;
-using Packages.co.koenraadt.proteus.Runtime.Repositories;
+using co.koenraadt.proteus.Runtime.ViewModels;
+using co.koenraadt.proteus.Runtime.Interfaces;
+using co.koenraadt.proteus.Runtime.Repositories;
 
 /// <summary>
 /// Button component for viewer's that can control the level of zoom of a viewer.

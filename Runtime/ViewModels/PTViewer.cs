@@ -1,13 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Msagl.Core.Geometry.Curves;
-using Packages.co.koenraadt.proteus.Runtime.Repositories;
+using co.koenraadt.proteus.Runtime.Repositories;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Splines;
 
 #nullable enable
-namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
+namespace co.koenraadt.proteus.Runtime.ViewModels
 {
     /// <summary>
     /// Class containing the properties of a viewer of Proteus.

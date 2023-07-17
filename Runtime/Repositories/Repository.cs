@@ -1,5 +1,5 @@
-using Packages.co.koenraadt.proteus.Runtime.ViewModels;
-namespace Packages.co.koenraadt.proteus.Runtime.Repositories
+using co.koenraadt.proteus.Runtime.ViewModels;
+namespace co.koenraadt.proteus.Runtime.Repositories
 {
 
     /// <summary>

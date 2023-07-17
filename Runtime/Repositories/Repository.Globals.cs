@@ -1,13 +1,13 @@
-﻿using Packages.co.koenraadt.proteus.Runtime.ViewModels;
-using Packages.co.koenraadt.proteus.Runtime.Controllers;
+﻿using co.koenraadt.proteus.Runtime.ViewModels;
+using co.koenraadt.proteus.Runtime.Controllers;
 using System.Linq;
-using Packages.co.koenraadt.proteus.Runtime.Other;
+using co.koenraadt.proteus.Runtime.Other;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 
-namespace Packages.co.koenraadt.proteus.Runtime.Repositories
+namespace co.koenraadt.proteus.Runtime.Repositories
 {
     /// <summary>
     /// Part of the repository that holds all general Proteus related data.

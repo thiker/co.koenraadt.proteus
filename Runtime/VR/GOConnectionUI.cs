@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Used to debug / test the VR Experiment. Can be ignored.
+/// </summary>
 public class GOConnectionUI : MonoBehaviour
 {
     // Start is called before the first frame update

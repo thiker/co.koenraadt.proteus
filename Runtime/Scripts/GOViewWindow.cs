@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using Packages.co.koenraadt.proteus.Runtime.Interfaces;
-using Packages.co.koenraadt.proteus.Runtime.Repositories;
-using Packages.co.koenraadt.proteus.Runtime.ViewModels;
+using co.koenraadt.proteus.Runtime.Interfaces;
+using co.koenraadt.proteus.Runtime.Repositories;
+using co.koenraadt.proteus.Runtime.ViewModels;
 using UnityEngine;
 
 /// <summary>

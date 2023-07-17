@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
+namespace co.koenraadt.proteus.Runtime.ViewModels
 {
     /// <summary>
     /// Class containing the data of a model element.

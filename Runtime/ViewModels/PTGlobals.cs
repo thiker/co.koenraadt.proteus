@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
+namespace co.koenraadt.proteus.Runtime.ViewModels
 {
     /// <summary>
     /// Class that holds the global data / defaults of Proteus.

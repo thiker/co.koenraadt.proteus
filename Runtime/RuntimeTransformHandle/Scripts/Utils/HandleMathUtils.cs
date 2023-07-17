@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace RuntimeHandle
+namespace co.koenraadt.proteus.Runtime.Other.RuntimeHandle
 {
 	public static class HandleMathUtils
 	{

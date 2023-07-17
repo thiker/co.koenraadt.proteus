@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using Packages.co.koenraadt.proteus.Runtime.Repositories;
-using Packages.co.koenraadt.proteus.Runtime.ViewModels;
+using co.koenraadt.proteus.Runtime.Repositories;
+using co.koenraadt.proteus.Runtime.ViewModels;
 using UnityEngine;
 using System.ComponentModel;
 using MQTTnet;
 
-namespace Packages.co.koenraadt.proteus.Runtime.Controllers
+namespace co.koenraadt.proteus.Runtime.Controllers
 {
     /// <summary>
     /// Controls the connection between Proteus and the Digital Twin components. Furthermore, it handles high-level behavior of the exploded and xray views.

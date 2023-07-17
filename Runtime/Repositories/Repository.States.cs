@@ -1,12 +1,12 @@
-﻿using Packages.co.koenraadt.proteus.Runtime.ViewModels;
+﻿using co.koenraadt.proteus.Runtime.ViewModels;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Packages.co.koenraadt.proteus.Runtime.Other;
+using co.koenraadt.proteus.Runtime.Other;
 using UnityEngine;
 using System.Collections.Generic;
 using System;
 
-namespace Packages.co.koenraadt.proteus.Runtime.Repositories
+namespace co.koenraadt.proteus.Runtime.Repositories
 {
     /// <summary>
     /// Part of the repository that handles the state related data.
