@@ -33,6 +33,7 @@ public class GOViewerGizmoBtnComp : MonoBehaviour, IProteusInteraction, IPTViewe
 
     public void OnPointerDown(RaycastHit hit)
     {
+        Repository.Instance.Proteus.SelectViewer(_linkedViewerData.Id); // select the viewer
         bool newVisible = !(bool)_linkedViewerData.GizmoVisible;
         Repository.Instance.Viewers.SetGizmoVisible(_linkedViewerData.Id, newVisible);
     }

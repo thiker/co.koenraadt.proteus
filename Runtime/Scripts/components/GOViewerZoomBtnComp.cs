@@ -50,6 +50,7 @@ public class GOViewerZoomBtnComp : MonoBehaviour, IProteusInteraction, IPTViewer
 
     public void OnPointerDown(RaycastHit hit)
     {
+        Repository.Instance.Proteus.SelectViewer(_linkedViewerData.Id); // select the viewer
         _isPressed = true;
     }
 

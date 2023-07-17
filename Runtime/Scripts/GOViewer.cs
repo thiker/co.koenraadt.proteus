@@ -50,7 +50,7 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
     private ObservableCollection<PTEdge> _edgesData;
     private Dictionary<string, GameObject> _nodePrefabGOs;
     private Dictionary<string, GameObject> _edgePrefabGOs;
-
+    List<IPTViewerComponent> _viewerComponents;
 
 
     /// <summary>
@@ -90,8 +90,8 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
         _viewWindowBorders.Add(_viewerContainer.transform.Find("ViewWindowBorderTop").gameObject);
 
         // Link viewer components
-        List<IPTViewerComponent> allComponents = transform.GetComponentsInChildren<IPTViewerComponent>().ToList();
-        foreach(var comp in allComponents) {
+        _viewerComponents = transform.GetComponentsInChildren<IPTViewerComponent>().ToList();
+        foreach(var comp in _viewerComponents) {
             comp.Init(_viewerData.Id);
         }
 
@@ -414,7 +414,8 @@ public class GOViewer : MonoBehaviour, IProteusInteraction
             }
         } else
         {
-            //TODO: On Deselection
+            // On Deselection
+            Repository.Instance.Viewers.SetGizmoVisible(_viewerData.Id, false);
             foreach (GameObject border in _viewWindowBorders)
             {
                 border.GetComponent<Renderer>().material.color = Color.white;

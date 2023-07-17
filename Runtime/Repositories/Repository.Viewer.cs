@@ -165,6 +165,7 @@ namespace co.koenraadt.proteus.Runtime.Repositories
             {
                 int ix = _ptViewers.IndexOf(viewerToDelete);
                 _ptViewers.RemoveAt(ix);
+                Repository.Instance.Proteus.ClearViewerSelection();
             }
         }
 

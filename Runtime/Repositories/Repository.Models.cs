@@ -272,6 +272,7 @@ namespace co.koenraadt.proteus.Runtime.Repositories
             {
                 int ix = _ptNodes.IndexOf(nodeToDelete);
                 _ptNodes.RemoveAt(ix);
+                Repository.Instance.Proteus.ClearNodeSelection();
             }
         }
 

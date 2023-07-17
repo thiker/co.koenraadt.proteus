@@ -51,6 +51,7 @@ public class GOViewerScaleBtnComp : MonoBehaviour, IProteusInteraction, IPTViewe
     public void OnPointerDown(RaycastHit hit)
     {
         _isPressed = true;
+        Repository.Instance.Proteus.SelectViewer(_attachedViewerData.Id); // select the viewer
     }
 
     public void OnPointerUp(RaycastHit hit) {
