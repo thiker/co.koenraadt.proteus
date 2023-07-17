@@ -1,0 +1,16 @@
+{
+    "name": "koenraadt.proteus.Samples",
+    "rootNamespace": "",
+    "references": [
+        "GUID:bef44bd6fc9288a4c9e325cbe49bacd1"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

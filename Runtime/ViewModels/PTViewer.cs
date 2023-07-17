@@ -1,20 +1,34 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Msagl.Core.Geometry.Curves;
+using co.koenraadt.proteus.Runtime.Repositories;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Splines;
 
-namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
+#nullable enable
+namespace co.koenraadt.proteus.Runtime.ViewModels
 {
+    /// <summary>
+    /// Class containing the properties of a viewer of Proteus.
+    /// </summary>
     public class PTViewer : ObservableObject
     {
         private string _id;
-        private string _rootNodeId;
+        private bool _detached = false;
+        private bool? _gizmoVisible = false;
+        private bool? _isBillboarding = true;
+        private string[]? _rootNodeIds;
         private Vector3? _position;
+        private Vector3? _scale;
         private Vector3? _modelAnchorOffset = null;
+        private Vector3? _zoomScale;
+        private Vector3? _maxZoomScale;
+        private Vector3? _minZoomScale;
         private Quaternion? _rotation;
         private Matrix4x4? _viewWindowWorldToLocal;
-        private Dictionary<string, Vector3>? _layoutPositions;
-
-        private bool? _isBillboarding = true;
+        private Dictionary<string, Vector3>? _layoutNodes;
+        private Dictionary<string, List<Spline>>? _layoutEdges;
 
         /// <value>
         /// The identifier of the viewer.
@@ -26,12 +40,22 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         }
 
         /// <value>
-        /// The Id of the node that is the root for the viewer.
+        /// Whether or not the viewer is spawned by Proteus. 
+        /// Set to false if you wish to spawn the viewer manually.
         /// </value>
-        public string RootNodeId
+        public bool Detached 
         {
-            get => _rootNodeId;
-            set => SetProperty(ref _rootNodeId, value);
+            get => _detached;
+            set => SetProperty(ref _detached, value);
+        }
+
+        /// <value>
+        /// The Ids of the root nodes for the viewer.
+        /// </value>
+        public string[]? RootNodeIds
+        {
+            get => _rootNodeIds;
+            set => SetProperty(ref _rootNodeIds, value);
         }
 
         /// <value>
@@ -44,12 +68,49 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
         }
 
         /// <value>
+        /// The position of the viewer.
+        /// <value>
+        public Vector3? Scale
+        {
+            get => _scale;
+            set => SetProperty(ref _scale, value);
+        }
+
+
+        /// <value>
         /// The local position of the view window
         /// <value>
         public Vector3? ModelAnchorOffset 
         {
             get => _modelAnchorOffset;
             set => SetProperty(ref _modelAnchorOffset, value);
+        }
+
+        /// <summary>
+        /// The zoom level of the viewer.
+        /// </summary>
+        public Vector3? ZoomScale
+        {
+            get => _zoomScale;
+            set => SetProperty(ref _zoomScale, value);
+        }
+
+        /// <summary>
+        /// The maximum zoom level of the viewer.
+        /// </summary>
+        public Vector3? MaxZoomScale
+        {
+            get => _maxZoomScale;
+            set => SetProperty(ref _maxZoomScale, value);
+        }
+
+        /// <summary>
+        /// The minimum zoom level of the viewer.
+        /// </summary>
+        public Vector3? MinZoomScale
+        {
+            get => _minZoomScale;
+            set => SetProperty(ref _minZoomScale, value);
         }
 
 
@@ -73,7 +134,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
 
 
         /// <value>
-        /// Wether billboarding should be enabled for the viewer.
+        /// Whether billboarding should be enabled for the viewer.
         /// </value>
         public bool? IsBillboarding 
         {
@@ -81,14 +142,36 @@ namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
             set => SetProperty(ref _isBillboarding, value);
         }
 
+
+        /// <value>
+        /// Whether billboarding should be enabled for the viewer.
+        /// </value>
+        public bool? GizmoVisible 
+        {
+            get => _gizmoVisible;
+            set => SetProperty(ref _gizmoVisible, value);
+        }
+
+
         /// <value>
         /// Layout containing the positions of the nodes in the viewer.
         /// </value>
-        public Dictionary<string, Vector3>? LayoutPositions
+        public Dictionary<string, Vector3>? LayoutNodes
         {
-            get => _layoutPositions;
-            set => SetProperty(ref _layoutPositions, value);
+            get => _layoutNodes;
+            set => SetProperty(ref _layoutNodes, value);
         }
+
+        /// <summary>
+        /// Layout containing the curves of the edges in the viewer.
+        /// </summary>
+        public Dictionary<string, List<Spline>>? LayoutEdges
+        {
+            get => _layoutEdges;
+            set => SetProperty(ref _layoutEdges, value);
+        }
+
 
     }
 }
+#nullable disable

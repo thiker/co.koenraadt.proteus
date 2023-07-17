@@ -5,17 +5,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Packages.co.koenraadt.proteus.Runtime.ViewModels
+namespace co.koenraadt.proteus.Runtime.ViewModels
 {
+    /// <summary>
+    /// Class that holds the data for an edge of the 3DML formatted model.
+    /// </summary>
     public class PTEdge : ObservableObject
     {
         private string _id;
         private string _source;
         private string _target;
 
-        /// <value>
+        /// <summary>
         /// The identifier of the edge.
-        /// </value>
+        /// </summary>
         public string Id
         {
             get => _id;

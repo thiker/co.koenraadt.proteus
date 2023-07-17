@@ -1,17 +1,26 @@
-﻿using Packages.co.koenraadt.proteus.Runtime.ViewModels;
+﻿using co.koenraadt.proteus.Runtime.ViewModels;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Packages.co.koenraadt.proteus.Runtime.Other;
+using co.koenraadt.proteus.Runtime.Other;
+using UnityEngine;
+using System.Collections.Generic;
+using System;
 
-namespace Packages.co.koenraadt.proteus.Runtime.Repositories
+namespace co.koenraadt.proteus.Runtime.Repositories
 {
+    /// <summary>
+    /// Part of the repository that handles all model related data.
+    /// </summary>
     public class ModelsRepository
     {
         private static ModelsRepository _instance = null;
-
         private ObservableCollection<PTNode> _ptNodes;
         private ObservableCollection<PTEdge> _ptEdges;
+        private ObservableCollection<PTModelElement> _ptModelElements;
 
+        /// <summary>
+        /// Singleton instance of the part of the repository that handles all model related data.
+        /// </summary>
         public static ModelsRepository Instance
         {
             get
@@ -25,13 +34,14 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             }
         }
 
+        /// <summary>
+        /// Initializes the ModelsRepository.
+        /// </summary>
         private void Init()
         {
-            // Initialise collections
             _ptNodes = new();
             _ptEdges = new();
-
-            // TODO: Initialize the repo and load everything
+            _ptModelElements = new();
         }
 
         /// <summary>
@@ -49,6 +59,20 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
             } else
             {
                 Helpers.CombineValues(oldNode, newNode);
+            }
+        }
+
+        /// <summary>
+        /// Updates the texture of a node.
+        /// </summary>
+        /// <param name="id">The id of the node to update the texture for.</param>
+        /// <param name="tex">The texture to set for the node.</param>
+        public void UpdateNodeTexture(string id, Texture2D tex) 
+        {
+            PTNode node = GetNodeById(id);
+
+            if (node != null) {
+                node.ImageTexture = tex;
             }
         }
 
@@ -72,6 +96,25 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         }
 
         /// <summary>
+        /// Adds a PTModelElement to the ModelsRepository.
+        /// </summary>
+        /// <param name="modelElement">The PTModelElement to add.</param>
+        public void UpdateModelElement(PTModelElement newModelElement)
+        {
+            PTModelElement oldModelElement = GetModelElementById(newModelElement.Id);
+
+            // If not already existing add the edge
+            if (oldModelElement is null)
+            {
+                _ptModelElements.Add(newModelElement);
+            }
+            else
+            {
+                Helpers.CombineValues(oldModelElement, newModelElement);
+            }
+        }
+
+        /// <summary>
         /// Get the collection of nodes.
         /// </summary>
         /// <returns>Collection of PTNodes</returns>
@@ -83,7 +126,7 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         /// <summary>
         /// Get the collection of edges.
         /// </summary>
-        /// <returns>Collection of PTEdges</returns>
+        /// <returns>Collection of PTEdges.</returns>
         public ObservableCollection<PTEdge> GetEdges()
         {
             return _ptEdges;
@@ -93,9 +136,10 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         /// Get a PTNode by its Id.
         /// </summary>
         /// <param name="id">the node's identifier.</param>
-        /// <returns>The PTNode with the respective Id</returns>
+        /// <returns>The PTNode with the respective Id.</returns>
         public PTNode GetNodeById(string id)
         {
+            if (string.IsNullOrEmpty(id)) { return null; }
             PTNode foundNode = _ptNodes.FirstOrDefault(x => x.Id == id);
             return foundNode;
         }
@@ -104,11 +148,117 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         /// Get a PTEdge by its Id.
         /// </summary>
         /// <param name="id">the edge's identifier.</param>
-        /// <returns>The PTEdge with the respective Id</returns>
+        /// <returns>The PTEdge with the respective Id.</returns>
         public PTEdge GetEdgeById(string id)
         {
+            if (string.IsNullOrEmpty(id)) { return null; }
             PTEdge foundEdge = _ptEdges.FirstOrDefault(x => x.Id == id);
             return foundEdge;
+        }
+
+        /// <summary>
+        /// Get a PTModelElement by its Id.
+        /// </summary>
+        /// <param name="id">the element's identifier.</param>
+        /// <returns>The PTModelElement with the respective Id.</returns>
+        public PTModelElement GetModelElementById(string id)
+        {
+            if (string.IsNullOrEmpty(id)) { return null; }
+
+            PTModelElement foundModelElement = _ptModelElements.FirstOrDefault(x => x.Id == id);
+            return foundModelElement;
+        }
+
+
+
+        /// <summary>
+        /// Get a PTNode by its name.
+        /// </summary>
+        /// <param name="id">the node's name.</param>
+        /// <returns>The PTNode with the respective Name.</returns>
+        public PTNode GetNodeByName(string name)
+        {
+            if (string.IsNullOrEmpty(name)) { return null; }
+            PTNode foundNode = _ptNodes.FirstOrDefault(x => x.Name == name);
+            return foundNode;
+        }
+
+        /// <summary>
+        /// Get all behavioral nodes / diagrams that are related to a specific node based on the id of the node.
+        /// </summary>
+        /// <param name="id">The id of the node to find the related behavioral nodes for.</param>
+        /// <returns>List containing all behavioral nodes related to the given node.</returns>
+        public List<PTNode> GetRelatedBehavioralNodesById(string id)
+        {
+            List<PTNode> relatedBehavioralNodes = new();
+            List<PTNode> relatedNodes = new();
+
+            PTNode rootNode = GetNodeById(id);
+
+            if (rootNode != null)
+            {
+                foreach (string el in rootNode.ModelElements) {
+                    PTModelElement element = GetModelElementById(el);
+
+                    if (element != null && element?.RelatedNodes != null)
+                    {
+                        foreach (string relatedNodeId in element.RelatedNodes)
+                        {
+                            PTNode relatedNode = GetNodeById(relatedNodeId);
+
+                            if (relatedNode != null)
+                            {
+                                relatedNodes.Add(relatedNode);
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            // Filter to only include behavioral nodes
+            relatedBehavioralNodes = relatedNodes.Where(x => Helpers.IsBehavioralMetaClass(x.MetaClass)).ToList();
+
+            return relatedBehavioralNodes;
+        }
+
+        /// <summary>
+        /// Gets the related nodes and edges of a root node.
+        /// </summary>
+        /// <param name="rootNodeId">the id of the root node</param>
+        /// <returns>a tuple containing the nodes and edges related to the root node.</returns>
+        public Tuple<List<string>, List<string>> FindRelatedNodesAndEdgesOfRootNode(string rootNodeId)
+        {
+            HashSet<string> seenEdges = new();
+            List<string> relatedNodeIds = new();
+            List<string> relatedEdgeIds = new();
+
+            PTNode rootNode = GetNodeById(rootNodeId);
+
+            if (rootNode == null) { Debug.LogWarning($"PROTEUS: Tried to find related nodes and edges of root node but root node with {rootNodeId} is null."); return Tuple.Create(relatedNodeIds, relatedEdgeIds); };
+            if (rootNode.Edges == null) {  Debug.LogWarning($"PROTEUS: Tried to find edges of root node {rootNode.Id} {rootNode.Name} but rootNode.Edges is null"); return Tuple.Create(relatedNodeIds, relatedEdgeIds); };
+            
+            foreach(string edgeId in rootNode.Edges)
+            {
+                PTEdge edge = GetEdgeById(edgeId);
+                string targetNodeId = edge.Target;
+
+                if (seenEdges.Contains(edge.Id) || targetNodeId == rootNodeId)
+                {
+                    break;
+                }
+
+                seenEdges.Add(edge.Id);
+
+                relatedNodeIds.Add(targetNodeId);
+                relatedEdgeIds.Add(edge.Id);
+
+                var result = FindRelatedNodesAndEdgesOfRootNode(targetNodeId);
+                relatedNodeIds = relatedNodeIds.Concat(result.Item1).ToList();
+                relatedEdgeIds = relatedEdgeIds.Concat(result.Item2).ToList();
+            }
+
+            return Tuple.Create(relatedNodeIds, relatedEdgeIds);
         }
 
         /// <summary>
@@ -118,24 +268,40 @@ namespace Packages.co.koenraadt.proteus.Runtime.Repositories
         public void DeleteNodeById(string id)
         {
             PTNode nodeToDelete = GetNodeById(id);
-            if (nodeToDelete is not null)
+            if (nodeToDelete != null)
             {
                 int ix = _ptNodes.IndexOf(nodeToDelete);
                 _ptNodes.RemoveAt(ix);
+                Repository.Instance.Proteus.ClearNodeSelection();
             }
         }
 
         /// <summary>
-        /// Removes an edge by its id
+        /// Removes an edge by its id.
         /// </summary>
-        /// <param name="id">the edge's identifier</param>
+        /// <param name="id">the edge's identifier.</param>
         public void DeleteEdgeById(string id)
         {
             PTEdge edgeToDelete = GetEdgeById(id);
-            if (edgeToDelete is not null)
+            if (edgeToDelete != null)
             {
                 int ix = _ptEdges.IndexOf(edgeToDelete);
                 _ptEdges.RemoveAt(ix);
+            }
+        }
+
+        /// <summary>
+        /// Removes a model element by its id.
+        /// </summary>
+        /// <param name="id">the model element's identifier.</param>
+        public void DeleteModelElementById(string id)
+        {
+            PTModelElement modelElementToDelete = GetModelElementById(id);
+            
+            if (modelElementToDelete != null)
+            {
+                int ix = _ptModelElements.IndexOf(modelElementToDelete);
+                _ptModelElements.RemoveAt(ix);
             }
         }
     }

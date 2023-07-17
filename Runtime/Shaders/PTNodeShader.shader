@@ -1,3 +1,4 @@
+// Clip box shader based on the work from: https://discussions.unity.com/t/render-only-whats-inside-a-box/239114
 Shader "Custom/PTNodeShader"
 {
     Properties
@@ -52,6 +53,7 @@ Shader "Custom/PTNodeShader"
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
             o.Alpha = c.a;
+            o.Emission = c.rgb * 0.5;
         }
         ENDCG
     }
