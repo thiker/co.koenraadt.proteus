@@ -49,6 +49,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: VizControllerPrefab
       objectReference: {fileID: 0}
+    - target: {fileID: 1649140267949761825, guid: 673003ffee6bf4da5812672a7a2b2acb, type: 3}
+      propertyPath: ViewerPrefab
+      value: 
+      objectReference: {fileID: 627360608257119728, guid: 8bf0ad35643af0f45be9f6cf8fea16bf, type: 3}
     - target: {fileID: 4329046145700158845, guid: 673003ffee6bf4da5812672a7a2b2acb, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -254,15 +258,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4214672442745833396, guid: 737fdb201b3ae473bba319ef07dec611, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -71.404686
+      value: 9999
       objectReference: {fileID: 0}
     - target: {fileID: 4214672442745833396, guid: 737fdb201b3ae473bba319ef07dec611, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.7825165
+      value: 9999
       objectReference: {fileID: 0}
     - target: {fileID: 4214672442745833396, guid: 737fdb201b3ae473bba319ef07dec611, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 9.075614
+      value: 9999
       objectReference: {fileID: 0}
     - target: {fileID: 4214672442745833396, guid: 737fdb201b3ae473bba319ef07dec611, type: 3}
       propertyPath: m_LocalRotation.w

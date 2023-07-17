@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -8,10 +7,7 @@ using co.koenraadt.proteus.Runtime.Controllers;
 using co.koenraadt.proteus.Runtime.Interfaces;
 using co.koenraadt.proteus.Runtime.Repositories;
 using co.koenraadt.proteus.Runtime.ViewModels;
-using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
@@ -89,16 +85,22 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
     /// </summary>
     virtual protected void Start()
     {
-        Debug.Log("Starting digi twin component..");
+        Debug.Log($"PROTEUS: Starting Digi Twin component{transform.name}... ");
         _globalsData = Repository.Instance.Proteus.GetGlobals();
         _statesCollection = Repository.Instance.States.GetStates();
 
         _statesCollection.CollectionChanged += OnStatesCollectionChanged;
 
-        _renderer = GetComponent<Renderer>();
-        _originalRendererEnabled = _renderer.enabled;
-        _originalMaterial = new Material(_renderer.material.shader);
-        _originalMaterial.CopyPropertiesFromMaterial(_renderer.material);
+        if (TryGetComponent(out _renderer))
+        {
+            _originalRendererEnabled = _renderer.enabled;
+            _originalMaterial = new Material(_renderer.material.shader);
+            _originalMaterial.CopyPropertiesFromMaterial(_renderer.material);
+        } else
+        {
+            Debug.LogWarning($"PROTEUS: Tried to get renderer of {transform.name} DigiTwin Component but has none");
+        }
+
 
         handle = Addressables.LoadAssetAsync<Material>(_xrayMatAddress);
         handle.Completed += Handle_Completed;
@@ -172,18 +174,23 @@ public class GODigiTwinComponent : MonoBehaviour, IProteusInteraction
         // If no active selection disable xray
         if (!_globalsData.XrayViewEnabled || isInSelection || _globalsData.SelectedNodes.Count == 0)
         {
-            _renderer.enabled = _originalRendererEnabled;
-            _renderer.material = _originalMaterial;
+            if (_renderer != null)
+            {
+                _renderer.enabled = _originalRendererEnabled;
+                _renderer.material = _originalMaterial;
+            }
+
             return;
         }
 
         // Make transparent if not linked to a node in the selection
-        if (isInSelection)
+        if (isInSelection && _renderer != null)
         {
+
             _renderer.enabled = _originalRendererEnabled;
             _renderer.material = _originalMaterial;
         }
-        else if (_globalsData.XrayViewEnabled && ReactsToXray)
+        else if (_globalsData.XrayViewEnabled && ReactsToXray && _renderer != null)
         {
             _renderer.material = _xrayMaterial;
             _renderer.material.color = new Color(1f, 1f, 1f, XrayOpacityFactor);
