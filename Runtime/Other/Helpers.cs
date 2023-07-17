@@ -10,7 +10,8 @@ namespace co.koenraadt.proteus.Runtime.Other
     public class Helpers
     {
         /// <summary>
-        /// Merges values of a source into a target object.
+        /// Merges values of a source into a target object. NOTE: This function ideally only be used to perform bulk updates. When changing specific properties,
+        /// instead implement / use a function such as SetNodeTexture or SetViewerName.
         /// </summary>
         /// <typeparam name="T">the type of the objects to merge.</typeparam>
         /// <param name="target">Object to merge into.</param>
@@ -34,14 +35,14 @@ namespace co.koenraadt.proteus.Runtime.Other
 
                 if (value != null && !value.Equals(targetValue) && value != targetValue)
                 {
-                    Debug.Log($"Changing Property: {prop.Name} to value {value}");
+                    Debug.Log($"PROTEUS: Changing Property: {prop.Name} to value {value}");
                     prop.SetValue(target, value, null);
                 }
             }
         }
 
         /// <summary>
-        /// Generates a new Guid.
+        /// Generates a new Proteus Guid.
         /// </summary>
         /// <returns>A string containing the generated Guid.</returns>
         public static string GenerateUniqueId() {
