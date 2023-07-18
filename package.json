@@ -23,5 +23,12 @@
         "name": "Koenraadt",
         "email": "thijs@koenraadt.co",
         "url": "https://example.com"
-    }
+    },
+    "samples": [
+        {
+            "displayName": "Proteus Demo",
+            "description": "Examples assets used by the ProteusDemo",
+            "path": "Samples~/Demo"
+        }
+    ]
 }

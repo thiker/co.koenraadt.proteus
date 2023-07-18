@@ -6,7 +6,7 @@ using System.ComponentModel;
 /// </summary>
 public class SampleCarPartDigiTwinComponent : GODigiTwinComponent
 {
-    private void Start()
+    override protected void Start()
     {
         base.Start(); // always call the parents start as well.
     }
