@@ -4,7 +4,7 @@ using System.ComponentModel;
 /// <summary>
 /// Example of a simple Digital Twin Component
 /// </summary>
-public class SampleCarPartDigiTwinComponent : GODigiTwinComponent
+public class SampleDigiTwinComponentCarPart : GODigiTwinComponent
 {
     override protected void Start()
     {
