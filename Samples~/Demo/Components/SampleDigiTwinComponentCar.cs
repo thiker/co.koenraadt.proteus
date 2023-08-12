@@ -6,7 +6,7 @@ using co.koenraadt.proteus.Runtime.ViewModels;
 /// <summary>
 /// Example of a custom digital twin component for a car that listens to changes of the engine's state and changes the car's offset accordingly / emits exhaust particles.
 /// </summary>
-public class SampleCarDigiTwinComponent : GODigiTwinComponent
+public class SampleDigiTwinComponentCar : GODigiTwinComponent
 {
     /// <summary>
     /// The position that the car should be offset when the engine starts running.
