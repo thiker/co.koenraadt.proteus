@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// ViewCube widget that helps a user to orient themselves in 3D space.
 /// </summary>
-public class GOViewCubeWidget : MonoBehaviour
+public class GOViewCubeWidgetComp : MonoBehaviour
 {
     /// <summary>
     /// Updates the GOViewCubeWidgets rotation.
