@@ -2,7 +2,6 @@
 
 # Installation Unity
 
-The steps are seen in the video: Unity-installation-instruction-video.
 
 1. Install Unity
 2. Add the package from the git url
