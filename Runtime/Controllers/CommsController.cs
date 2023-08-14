@@ -85,7 +85,7 @@ namespace co.koenraadt.proteus.Runtime.Controllers
             Debug.Log($"PROTEUS: Local ip found is {ipAddress.ToString()}");
 
             MqttServerOptions optionsBuilder = new MqttServerOptionsBuilder()
-            .WithDefaultEndpointBoundIPAddress(ipAddress).WithDefaultEndpointPort(1883).Build();
+            .WithDefaultEndpointPort(1883).Build();
             _mqttServer = _mqttFactory.CreateMqttServer(optionsBuilder);
 
 
